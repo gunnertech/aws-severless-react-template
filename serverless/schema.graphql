@@ -1,0 +1,200 @@
+type Organization {
+  id: ID!
+	name: String!
+	logoUrl: String
+	createdAt: String
+	updatedAt: String
+	ownerId: ID
+	owner: User!
+	campaigns: CampaignConnection
+	users: UserConnection
+}
+
+type User {
+	id: ID!
+	name: String!
+	title: String
+	phone: String
+	email: String
+	organizationId: ID!
+	organization: Organization
+}
+
+type UserConnection {
+	items: [User]
+	nextToken: String
+}
+
+type Campaign {
+	id: ID!
+	name: String!
+	templateId: ID
+	organizationId: ID
+	organization: Organization
+	template: CampaignTemplate
+	surveys: SurveyConnection
+}
+
+type CampaignConnection {
+	items: [Campaign]
+	nextToken: String
+}
+
+type CampaignTemplate {
+	id: ID!
+	name: String!
+	campaigns: CampaignConnection
+	prompts: PromptConnection
+}
+
+type CampaignTemplateConnection {
+	items: [CampaignTemplate]
+	nextToken: String
+}
+
+type Prompt {
+	id: ID!
+	body: String!
+	templateId: ID
+	template: CampaignTemplate
+	options: OptionConnection
+}
+
+type PromptConnection {
+	items: [Prompt]
+	nextToken: String
+}
+
+type Option {
+	id: ID!
+	value: Int!
+	name: String!
+	iconUrl: String
+	promptId: ID!
+	prompt: Prompt
+	responses: ResponseConnection
+}
+
+type OptionConnection {
+	items: [Option]
+	nextToken: String
+}
+
+type Survey {
+	id: ID!
+	userId: ID!
+	campaignId: ID!
+	phone: String
+	email: String
+	patientIdentifier: String
+	caregiverIdentifier: String
+	user: User!
+	campaign: Campaign!
+	responses: ResponseConnection
+}
+
+type SurveyConnection {
+	items: [Survey]
+	nextToken: String
+}
+
+type Response {
+	id: ID!
+	optionId: ID!
+	surveyId: ID!
+	option: Option!
+	survey: Survey
+}
+
+type ResponseConnection {
+	items: [Response]
+	nextToken: String
+}
+
+input CreateOrganizationInput {
+	id: ID
+	name: String!
+	logoUrl: String
+	createdAt: String
+	updatedAt: String
+	ownerId: ID
+}
+
+input CreateResponseInput {
+	id: ID
+	optionId: ID!
+	surveyId: ID!
+}
+
+input CreateSurveyInput {
+	id: ID
+	userId: ID!
+	campaignId: ID!
+	phone: String
+	email: String
+	patientIdentifier: String
+	caregiverIdentifier: String
+}
+
+input CreateOptionInput {
+	id: ID
+	value: Int!
+	name: String!
+	iconUrl: String
+	promptId: ID!
+}
+
+input CreatePromptInput {
+	id: ID
+	body: String!
+	templateId: ID!
+}
+
+input CreateCampaignTemplateInput {
+	id: ID
+	name: String!
+}
+
+input CreateCampaignInput {
+	id: ID
+	name: String!
+	templateId: ID!
+	organizationId: ID!
+}
+
+input CreateUserInput {
+	id: ID
+	name: String!
+	title: String
+	phone: String
+	email: String
+	organizationId: ID!
+}
+
+
+type Mutation {
+	createOrganization(input: CreateOrganizationInput!): Organization
+	createResponse(input: CreateResponseInput!): Response
+	createSurvey(input: CreateSurveyInput!): Survey
+	createOption(input: CreateOptionInput!): Option
+	createPrompt(input: CreatePromptInput!): Prompt
+	createCampaignTemplate(input: CreateCampaignTemplateInput!): CampaignTemplate
+	createCampaign(input: CreateCampaignInput!): Campaign
+	createUser(input: CreateUserInput!): User
+}
+
+type Query {
+	listCampaignTemplates(first: Int, after: String): CampaignTemplateConnection
+}
+
+type Subscription {
+  onCreateOrganization: Organization
+		@aws_subscribe(mutations: ["createOrganization"])
+}
+
+
+schema {
+	query: Query
+	mutation: Mutation
+	subscription: Subscription
+}
