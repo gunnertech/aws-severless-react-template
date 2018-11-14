@@ -24,7 +24,7 @@ $ yarn install
 
 ## React Client: https://github.com/facebook/create-react-app
 $ cd <project-name>
-$ npx create-react-app <project-name>
+$ yarn create <project-name>
 $ mv <project-name> client (or react-client)
 
 See App.js file from another project for configuring Amplify

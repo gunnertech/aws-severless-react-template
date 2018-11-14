@@ -3,6 +3,7 @@ service:
 
 custom:
   environment: ${file(env.yml):${self:custom.stage}, file(env.yml):dev}
+  pinpointAppId: ${self:custom.environment.PINPOINT_APP_ID, 'NONE'}
   stage: ${opt:stage, self:provider.stage}
   devAccountId: "658832833553" #TODO: REPLACE THIS
   stagingAccountId: "658832833553" #TODO: REPLACE THIS
@@ -181,10 +182,120 @@ resources:
     authSelections: 
       Type: String
       Default: identityPoolAndUserPool
+    appId:
+      Type: String
+      Default: ${self:custom.pinpointAppId}
+    appName:
+      Type: String
+      Default: "${self:service.name}-${self:custom.stage}"
+
 ####END STANDARD PARAMS
+
+####BEGIN STANDARD CONDITIONS
+  Conditions:
+    ShouldCreatePinpointApp:
+      Fn::Equals:
+        - Ref: appId
+        - "NONE"
+####END STANDARD CONDITIONS
 
   Resources:
 ####BEGIN STANDARD RESOURCES
+    LambdaExecutionRole:
+      Condition: ShouldCreatePinpointApp
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: "${self:service.name}-${self:custom.stage}-PinpointRole"
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+              - lambda.amazonaws.com
+            Action:
+            - sts:AssumeRole
+        Policies:
+        - PolicyName: "${self:service.name}-${self:custom.stage}-PinpointCloudWatchPolicy"
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+              Resource: arn:aws:logs:*:*:*
+        - PolicyName: "${self:service.name}-${self:custom.stage}-PinpointPolicy"
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Action:
+              - mobileanalytics:*
+              - mobiletargeting:*
+              Resource: "*"
+
+    PinpointFunction:
+      Type: AWS::Lambda::Function
+      Condition: ShouldCreatePinpointApp
+      Properties:
+        Code:
+          ZipFile:
+            Fn::Join:
+            - "\n"
+            - - const response = require('cfn-response');
+              - const aws = require('aws-sdk');
+              - 'const pinpoint = new aws.Pinpoint({ apiVersion: ''2016-12-01'', region:
+                ''us-east-1'' });'
+              - exports.handler = function(event, context) {
+              - "    if (event.RequestType == 'Delete') {"
+              - "        response.send(event, context, response.SUCCESS);"
+              - "        return;"
+              - "    }"
+              - "    if (event.RequestType == 'Update') {"
+              - "        response.send(event, context, response.SUCCESS);"
+              - "        return;"
+              - "    }"
+              - "    if (event.RequestType == 'Create') {"
+              - "       const appName = event.ResourceProperties.appName;"
+              - "       let responseData = {};"
+              - "       const params = {"
+              - "           CreateApplicationRequest: {"
+              - "               Name: appName"
+              - "           }"
+              - "       };"
+              - "       return pinpoint.createApp(params).promise()"
+              - "           .then((res) => {"
+              - "               responseData = res.ApplicationResponse;"
+              - "               response.send(event, context, response.SUCCESS, responseData);"
+              - "           }).catch((err) => {"
+              - "               console.log(err.stack);"
+              - "               responseData = {Error: err};"
+              - "               response.send(event, context, response.FAILED, responseData);"
+              - "               throw err;"
+              - "           });"
+              - "    }"
+              - "};"
+        Handler: index.handler
+        Runtime: nodejs6.10
+        Timeout: '300'
+        Role:
+          Fn::GetAtt:
+          - LambdaExecutionRole
+          - Arn
+
+    PinpointFunctionOutputs:
+      Type: Custom::LambdaCallout
+      Condition: ShouldCreatePinpointApp
+      Properties:
+        ServiceToken:
+          Fn::GetAtt:
+          - PinpointFunction
+          - Arn
+        appName:
+          Ref: appName
+          
     authRole:
       Type: AWS::IAM::Role
       Properties:
@@ -212,7 +323,8 @@ resources:
                     - "s3:CreateBucket"
                     - "s3:GetObject"
                     - "s3:PutObject"
-                    - "mobileanalytics:PutEvent"
+                    - "mobiletargeting:UpdateEndpoint"
+                    - "mobiletargeting:PutEvents"
                     - "cognito-sync:*"
                     - "cognito-identity:*"
                   Resource: "*" 
@@ -257,7 +369,8 @@ resources:
                     - "s3:CreateBucket"
                     - "s3:GetObject"
                     - "s3:PutObject"
-                    - "mobileanalytics:PutEvent"
+                    - "mobiletargeting:UpdateEndpoint"
+                    - "mobiletargeting:PutEvents"
                     - "cognito-sync:*"
                     - "cognito-identity:*"
                   Resource: "*" 
