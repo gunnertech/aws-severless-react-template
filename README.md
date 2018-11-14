@@ -1,3 +1,11 @@
+1) Add Branch to react-native-client
+2) Add Sentry to react-client
+3) Add Amplify to react-client
+4) Add directions for creating AWS account
+5) Add directions for getting this from repo
+6) Clean out info from react-client
+
+
 # Setup
 ## Project Structure
 $ mkdir <project-name>
@@ -24,7 +32,7 @@ $ yarn install
 
 ## React Client: https://github.com/facebook/create-react-app
 $ cd <project-name>
-$ yarn create <project-name>
+$ yarn create react-app <project-name>
 $ mv <project-name> client (or react-client)
 
 See App.js file from another project for configuring Amplify

@@ -8,9 +8,7 @@ import AWSAppSyncClient, { createAppSyncLink, createLinkWithCache } from "aws-ap
 import { ApolloLink } from 'apollo-link';
 import Sentry from 'sentry-expo';
 import { withClientState } from 'apollo-link-state';
-import gql from 'graphql-tag';
 
-//TODO: COPY THESE FROM ANOTHER PROJECT
 import AppNavigator from './src/Navigators/App'
 import muiTheme from './src/Styles/muiTheme'
 import ENV from './src/environment'
@@ -23,7 +21,7 @@ import ENV from './src/environment'
 // Remove this once Sentry is correctly setup.
 Sentry.enableInExpoDevelopment = true;
 
-Sentry.config('https://4dfede1615e74fd7b7ee6217b3d2386c@sentry.io/1321423').install();
+Sentry.config('https://b9af8b89206f42c48c69bc4274a427ac@sentry.io/1323219').install(); //TODO: Set up project and copy info here
 
 
 console.disableYellowBox = true;
@@ -43,6 +41,19 @@ Amplify.configure({
   Storage: {
     bucket: ENV.bucket,
     region: ENV.awsRegion
+  },
+  Analytics: {
+    disabled: false,
+    autoSessionRecord: true,
+
+    AWSPinpoint: {
+      appId: ENV.pinpoint_app_id,
+      region: ENV.awsRegion,
+      bufferSize: 1000,
+      flushInterval: 5000,
+      flushSize: 100,
+      resendLimit: 5
+    }
   }
 });
 
@@ -85,7 +96,7 @@ class App extends React.Component {
 
   async componentDidMount() {
     await Font.loadAsync({
-      'Roboto': require('./assets/fonts/Roboto-Regular.ttf'), //TODO: COPY FONTS FOLDER FROM ANOTHER PROJECT
+      'Roboto': require('./assets/fonts/Roboto-Regular.ttf'),
     });
     this.setState({ fontLoaded: true });
   }

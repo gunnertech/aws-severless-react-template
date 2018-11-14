@@ -1,0 +1,53 @@
+{
+  "name": "simplisurvey",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "latest",
+    "@material-ui/icons": "latest",
+    "apollo-client": "latest",
+    "apollo-link": "latest",
+    "apollo-link-state": "latest",
+    "aws-amplify": "latest",
+    "aws-amplify-react": "latest",
+    "aws-appsync": "latest",
+    "aws-appsync-react": "latest",
+    "aws-sdk": "latest",
+    "classnames": "^2.2.6",
+    "dotenv": "^6.0.0",
+    "graphql": "^14.0.2",
+    "graphql-tag": "^2.10.0",
+    "hoist-non-react-statics": "^3.0.1",
+    "jss": "latest",
+    "mdi-material-ui": "latest",
+    "moment": "^2.22.2",
+    "react": "^16.6.3",
+    "react-apollo": "latest",
+    "react-countup": "latest",
+    "react-dom": "^16.6.3",
+    "react-helmet": "^5.2.0",
+    "react-images": "^0.5.19",
+    "react-jss": "latest",
+    "react-mdi-props": "latest",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "2.1.1",
+    "react-text-mask": "^5.4.3",
+    "recharts": "latest",
+    "uuid-v4": "^0.1.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
