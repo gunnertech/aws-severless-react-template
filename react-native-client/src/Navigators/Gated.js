@@ -5,6 +5,7 @@ import { withAuthenticator } from 'aws-amplify-react-native';
 
 // import AmplifyTheme from '../Styles/amplifyTheme'; theme={AmplifyTheme}
 import Home from '../Screens/Home';
+import SignOut from '../Screens/SignOut';
 
 
 const screens = {
@@ -12,7 +13,8 @@ const screens = {
     screen: createStackNavigator({
       Home,
     })
-  }
+  },
+  SignOut
 }
 
 class DrawerComponent extends React.Component {
@@ -24,6 +26,7 @@ class DrawerComponent extends React.Component {
     return (
       Object.assign(({
         "Home": { icon: 'home', value: 'Home' },
+        "SignOut": { icon: 'exit-to-app', value: 'Sign Out' },
       }[item.key] || {}), {
         onPress: () => 
           this.setState({

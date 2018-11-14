@@ -3,7 +3,9 @@ import { View, Text } from 'react-native'
 import {
   Button,
   Card,
+  Toolbar
 } from 'react-native-material-ui';
+
 
 import { withMuiTheme } from '../Styles/muiTheme';
 import Container from '../Components/Container'
@@ -19,6 +21,18 @@ const styles = theme => ({
 });
 
 class Home extends React.Component {
+  static navigationOptions = navigationProps => ({
+    header: <Toolbar
+      leftElement={
+        "menu"
+      }
+      centerElement={
+        "Home"
+      }
+      onLeftElementPress={() => navigationProps.navigation.toggleDrawer() }
+    />
+  })
+
   render() {
     const { classes } = this.props;
     return (
