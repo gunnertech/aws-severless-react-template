@@ -8,8 +8,9 @@
 $ cd ~/workspace/aws
 $ ./organization add -n <project-name> -e <project-name>@gunnertech.com -u <your root username> -g OrganizationAdministrators
 
-## Project Structure
-$ mkdir <project-name>
+## Project 
+$ cd ~/workspace/javascript/serverless
+$ git clone --single-branch -b template https://git-codecommit.us-east-1.amazonaws.com/v1/repos/simplisurvey
 
 ## Serverless
 $ cd <project-name>
