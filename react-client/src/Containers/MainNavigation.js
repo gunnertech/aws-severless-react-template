@@ -16,21 +16,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { ListItem, ListItemIcon, ListItemText, ListSubheader } from '@material-ui/core';
 
 import MenuIcon from '@material-ui/icons/Menu';
-import BuildIcon from '@material-ui/icons/Build';
-import BusinessIcon from '@material-ui/icons/Business';
-import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import HomeIcon from '@material-ui/icons/Home';
 import ContactPhoneIcon from '@material-ui/icons/ContactPhone';
-import GroupIcon from '@material-ui/icons/Group';
-import BusinessCenterIcon from '@material-ui/icons/BusinessCenter';
-import BriefcaseIcon from 'mdi-material-ui/Briefcase'
-import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
-import StarsIcon from '@material-ui/icons/Stars';
-import WhatshotIcon from '@material-ui/icons/Whatshot';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
-import CreateIcon from '@material-ui/icons/Create';
-import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
-import OndemandVideoIcon from '@material-ui/icons/OndemandVideo';
-import BookIcon from '@material-ui/icons/Book';
+
 
 import { Facebook, Twitter, Instagram, Youtube, GithubCircle, Itunes, Linkedin } from 'mdi-material-ui'
 
@@ -142,8 +131,6 @@ class MainNavigation extends React.Component {
     const { classes, theme } = this.props;
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
-    const entities = (((this.props.data||{}).entities||[]).edges||[]);
-    const testimonials = (((this.props.data||{}).testimonials||[]).edges||[]);
 
 
     const drawer = (
@@ -151,168 +138,45 @@ class MainNavigation extends React.Component {
         <div className={classes.toolbar} />
         <Divider />
         <List subheader={
-          <ListSubheader>Our Clients</ListSubheader>
-        }>
-          {entities.map(({ node }, i) => (
-            <ListItem 
-              component={Link} 
-              to={`/${node.slug}`} 
-              button  
-              key={`${node.id}nav`}
-              onClick={this.handleDrawerToggle}
-            >
-              <ListItemIcon>
-                {
-                  node.slug === 'public-sector' ? (
-                    <AccountBalanceIcon />
-                  ) : node.slug === 'private-sector' ? (
-                    <BriefcaseIcon />
-                  ) : (
-                    <BuildIcon />
-                  )
-                }
-              </ListItemIcon>
-              <ListItemText><Typography  className={classes.link}>{node.name}</Typography></ListItemText>
-            </ListItem>
-          ))}
-            <ListItem 
-              component={Link} 
-              to={`/industries`} 
-              button
-              onClick={this.handleDrawerToggle}
-            >
-              <ListItemIcon>
-                <BusinessIcon />
-              </ListItemIcon>
-              <ListItemText><Typography className={classes.link}>Industries</Typography></ListItemText>
-            </ListItem>
-        </List>
-        <Divider />
-        <List subheader={
-          <ListSubheader>About Us</ListSubheader>
+          <ListSubheader>Sub Header</ListSubheader>
         }>
           <ListItem 
             component={Link} 
-            to={`/employees`} 
-            button
-            onClick={this.handleDrawerToggle}  
+            to={`/`} 
+            button  
+            onClick={this.handleDrawerToggle}
           >
             <ListItemIcon>
-              <GroupIcon />
+              <HomeIcon />
             </ListItemIcon>
-            <ListItemText><Typography  className={classes.link}>Employees</Typography></ListItemText>
-          </ListItem>
-
-          <ListItem 
-            component={Link} 
-            to={`/locations`} 
-            button
-            onClick={this.handleDrawerToggle}  
-          >
-            <ListItemIcon>
-              <LocationOnIcon />
-            </ListItemIcon>
-            <ListItemText><Typography  className={classes.link}>Locations</Typography></ListItemText>
-          </ListItem>
-
-          <ListItem 
-            component={Link} 
-            to={`/terms`} 
-            button
-            onClick={this.handleDrawerToggle}  
-          >
-            <ListItemIcon>
-              <BookIcon />
-            </ListItemIcon>
-            <ListItemText><Typography  className={classes.link}>Terms</Typography></ListItemText>
-          </ListItem>
-
-          <ListItem 
-            component={Link} 
-            to={`/proficiencies`} 
-            button
-            onClick={this.handleDrawerToggle}  
-          >
-            <ListItemIcon>
-              <WhatshotIcon />
-            </ListItemIcon>
-            <ListItemText><Typography  className={classes.link}>Proficiencies</Typography></ListItemText>
-          </ListItem>
-
-          <ListItem 
-            component={Link} 
-            to={`/certifications`} 
-            button
-            onClick={this.handleDrawerToggle}  
-          >
-            <ListItemIcon>
-              <VerifiedUserIcon />
-            </ListItemIcon>
-            <ListItemText><Typography  className={classes.link}>Certifications</Typography></ListItemText>
-          </ListItem>
-
-          <ListItem 
-            component={Link} 
-            to={`/awards`} 
-            button
-            onClick={this.handleDrawerToggle}  
-          >
-            <ListItemIcon>
-              <StarsIcon />
-            </ListItemIcon>
-            <ListItemText><Typography  className={classes.link}>Awards</Typography></ListItemText>
+            <ListItemText><Typography  className={classes.link}>Home</Typography></ListItemText>
           </ListItem>
         </List>
         <Divider />
         <List subheader={
-          <ListSubheader>Media Center</ListSubheader>
+          <ListSubheader>Sub Header</ListSubheader>
         }>
           <ListItem 
             component={Link} 
-            to={`/posts`} 
-            button
-            onClick={this.handleDrawerToggle}  
+            to={`/splash/`} 
+            button  
+            onClick={this.handleDrawerToggle}
           >
             <ListItemIcon>
-              <CreateIcon />
+              <HomeIcon />
             </ListItemIcon>
-            <ListItemText><Typography  className={classes.link}>Blog</Typography></ListItemText>
+            <ListItemText><Typography  className={classes.link}>Splash</Typography></ListItemText>
           </ListItem>
-
           <ListItem 
             component={Link} 
-            to={`/articles`} 
-            button
-            onClick={this.handleDrawerToggle}  
+            to={`/sign-out/`} 
+            button  
+            onClick={this.handleDrawerToggle}
           >
             <ListItemIcon>
-              <BusinessCenterIcon />
+              <ExitToAppIcon />
             </ListItemIcon>
-            <ListItemText><Typography  className={classes.link}>Press</Typography></ListItemText>
-          </ListItem>
-
-          <ListItem 
-            component={Link} 
-            to={`/publications`} 
-            button
-            onClick={this.handleDrawerToggle}  
-          >
-            <ListItemIcon>
-              <LibraryBooksIcon />
-            </ListItemIcon>
-            <ListItemText><Typography  className={classes.link}>Publications</Typography></ListItemText>
-          </ListItem>
-
-          <ListItem 
-            component={Link} 
-            to={`/videos`} 
-            button
-            onClick={this.handleDrawerToggle}  
-          >
-            <ListItemIcon>
-              <OndemandVideoIcon />
-            </ListItemIcon>
-            <ListItemText><Typography  className={classes.link}>Tech Show</Typography></ListItemText>
+            <ListItemText><Typography  className={classes.link}>Sign Out</Typography></ListItemText>
           </ListItem>
         </List>
       </div>

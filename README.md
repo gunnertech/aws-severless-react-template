@@ -1,12 +1,13 @@
-1) Add Branch to react-native-client
-2) Add Sentry to react-client
-3) Add Amplify to react-client
-4) Add directions for creating AWS account
+1) Add Branch to react-native-client -> can't do this until after the app is approved in app stores
 5) Add directions for getting this from repo
-6) Clean out info from react-client
 
 
 # Setup
+## AWS account
+
+$ cd ~/workspace/aws
+$ ./organization add -n <project-name> -e <project-name>@gunnertech.com -u <your root username> -g OrganizationAdministrators
+
 ## Project Structure
 $ mkdir <project-name>
 
@@ -25,8 +26,8 @@ $ cd <project-name>
 $ expo init <project-name>
 $ mv <project-name> client (or react-native-client)
 
-See App.js file from another project for configuring Amplify
-See package.json from other project. Probably copy most, if not all to this project
+Modify app.json and environment.js to fit your project
+Global search for TODO (and do them)
 
 $ yarn install
 
@@ -35,15 +36,11 @@ $ cd <project-name>
 $ yarn create react-app <project-name>
 $ mv <project-name> client (or react-client)
 
-See App.js file from another project for configuring Amplify
-See package.json from other project. Probably copy most, if not all to this project
+Global search for TODO (and do them)
+change .env.* info to match your project
+
 
 $ yarn install
 
 ## Git
-$ cd <project-name>
-$ git init
-cp ../<other-project>/.git/config .git/
-$ code .git/config
-
-change info to match project
+modify .git/config to match project

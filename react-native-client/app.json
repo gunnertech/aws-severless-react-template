@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "simplisurvey",
+    "scheme": "simplisurvey",
     "description": "This project is really great.",
     "slug": "simplisurvey",
     "privacy": "public",
@@ -32,8 +33,20 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "android": {
+      "config": {
+        "branch": {
+          "apiKey": "key_live_djIahXDtsxh0VrlEgrm9qniouxpWclLZ"
+        }
+      }
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "config": {
+        "branch": {
+          "apiKey": "key_live_djIahXDtsxh0VrlEgrm9qniouxpWclLZ"
+        }
+      }
     }
   }
 }

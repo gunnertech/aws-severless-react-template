@@ -33,11 +33,11 @@ const styles = theme => ({
       'font-family': '"Roboto", "Helvetica", "Arial", sans-serif'
     }, 
     'strong': {
-      ...theme.typography.body2
+      ...theme.typography.body1
     },
     'h3': {
-      ...theme.typography.subheading,
-      color: theme.typography.display3.color
+      ...theme.typography.subheading1,
+      color: theme.typography.h2.color
     }
   },
   [theme.breakpoints.up('md')]: {

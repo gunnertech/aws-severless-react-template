@@ -5,6 +5,7 @@
   "dependencies": {
     "@material-ui/core": "latest",
     "@material-ui/icons": "latest",
+    "@sentry/browser": "^4.3.0",
     "apollo-client": "latest",
     "apollo-link": "latest",
     "apollo-link-state": "latest",

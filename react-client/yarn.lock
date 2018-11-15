@@ -840,6 +840,47 @@
     "@babel/runtime" "^7.1.2"
     redux-persist "^4.6.0"
 
+"@sentry/browser@^4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@sentry/browser/-/browser-4.3.0.tgz#07660b2b17b12a6d8953be20eb8efaa8683fafb9"
+  dependencies:
+    "@sentry/core" "4.3.0"
+    "@sentry/types" "4.3.0"
+    "@sentry/utils" "4.3.0"
+
+"@sentry/core@4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@sentry/core/-/core-4.3.0.tgz#f51f86b380637b5f2348cd35fdb96c224023c103"
+  dependencies:
+    "@sentry/hub" "4.3.0"
+    "@sentry/minimal" "4.3.0"
+    "@sentry/types" "4.3.0"
+    "@sentry/utils" "4.3.0"
+
+"@sentry/hub@4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@sentry/hub/-/hub-4.3.0.tgz#ed7731583d81664057de73e3221a393116362b04"
+  dependencies:
+    "@sentry/types" "4.3.0"
+    "@sentry/utils" "4.3.0"
+
+"@sentry/minimal@4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@sentry/minimal/-/minimal-4.3.0.tgz#d83826e713d54c95d4986187d223ef1fabc4e1ed"
+  dependencies:
+    "@sentry/hub" "4.3.0"
+    "@sentry/types" "4.3.0"
+
+"@sentry/types@4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@sentry/types/-/types-4.3.0.tgz#a5cec425764a72a0817329ac212c5ce085ecdd05"
+
+"@sentry/utils@4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@sentry/utils/-/utils-4.3.0.tgz#4d278b55deb6175ada2a78b56716aa2df97cd389"
+  dependencies:
+    "@sentry/types" "4.3.0"
+
 "@svgr/core@^2.4.1":
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/@svgr/core/-/core-2.4.1.tgz#03a407c28c4a1d84305ae95021e8eabfda8fa731"

@@ -7,8 +7,9 @@ import { createMuiTheme, createGenerateClassName } from '@material-ui/core/style
 // It's optional.
 const theme = createMuiTheme({
   typography: {
+    useNextVariants: true,
     fontSize: 18,
-    subheading: {
+    subtitle1: {
       color: "#EF4035" 
     }
   },

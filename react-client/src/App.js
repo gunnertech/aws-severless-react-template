@@ -1,17 +1,31 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import Amplify, { Auth } from 'aws-amplify';
 import { Rehydrated } from 'aws-appsync-react';
 import { ApolloProvider } from 'react-apollo';
 import AWSAppSyncClient, { createAppSyncLink, createLinkWithCache } from "aws-appsync";
 import { ApolloLink } from 'apollo-link';
 import { withClientState } from 'apollo-link-state';
+import * as Sentry from '@sentry/browser';
+import { withAuthenticator } from 'aws-amplify-react';
 
+import Home from "./Screens/Home";
+import Splash from "./Screens/Splash";
+import SignOut from "./Screens/SignOut";
 
-import logo from './logo.svg';
+// import logo from './logo.svg';
 // import './App.css';
 
 import Layout from './Components/Layout'
+
+const PrivateRoute = ({ component: Component, ...rest }) => (
+  <Route {...rest} render={props => {
+    const ComponentWithAuth = withAuthenticator(Component, false);
+    return (
+      <ComponentWithAuth {...props} />
+    )
+  }} />
+)
 
 const defaults = {};
 const resolvers = {};
@@ -43,6 +57,10 @@ const appSyncLink = createAppSyncLink({
 
 const link = ApolloLink.from([stateLink, appSyncLink]);
 const client = new AWSAppSyncClient({disableOffline: false}, { link });
+
+Sentry.init({
+  dsn: "https://b9af8b89206f42c48c69bc4274a427ac@sentry.io/1323219" //TODO: SETUP AND CHANGE THIS
+});
 
 Amplify.configure({
   Auth: {
@@ -84,22 +102,9 @@ class App extends Component {
         <Rehydrated>
           <Router>
             <Layout>
-              <div className="App">
-                <header className="App-header">
-                  <img src={logo} className="App-logo" alt="logo" />
-                  <p>
-                    Edit <code>src/App.js</code> and save to reload.
-                  </p>
-                  <a
-                    className="App-link"
-                    href="https://reactjs.org"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Learn React
-                  </a>
-                </header>
-              </div>
+              <Route path='/splash' exact component={Splash} />
+              <Route path='/sign-out' exact component={SignOut} />
+              <PrivateRoute path='/' exact component={Home} />
             </Layout>
           </Router>
         </Rehydrated>
