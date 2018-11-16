@@ -200,6 +200,447 @@ resources:
 ####END STANDARD CONDITIONS
 
   Resources:
+    OrganizationTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: "${self:custom.stage}-Organizations"
+    UserTable:
+      DependsOn: OrganizationTable
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+          -
+            AttributeName: createdAt
+            AttributeType: S
+          -
+            AttributeName: organizationId
+            AttributeType: S
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: "${self:custom.stage}-Users"
+        GlobalSecondaryIndexes: 
+          - 
+            IndexName: "organizationId-createdAt-index"
+            KeySchema: 
+              - 
+                AttributeName: "organizationId"
+                KeyType: "HASH"
+              - 
+                AttributeName: "createdAt"
+                KeyType: "RANGE"
+            Projection: 
+              ProjectionType: "ALL"
+            ProvisionedThroughput: 
+              ReadCapacityUnits: "1"
+              WriteCapacityUnits: "1"
+    AssignedRoleTable:
+      DependsOn: UserTable
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+          -
+            AttributeName: roleId
+            AttributeType: S
+          -
+            AttributeName: userId
+            AttributeType: S
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: "${self:custom.stage}-AssignedRoles"
+        GlobalSecondaryIndexes: 
+          - 
+            IndexName: "roleId-userId-index"
+            KeySchema: 
+              - 
+                AttributeName: "roleId"
+                KeyType: "HASH"
+              - 
+                AttributeName: "userId"
+                KeyType: "RANGE"
+            Projection: 
+              ProjectionType: "ALL"
+            ProvisionedThroughput: 
+              ReadCapacityUnits: "1"
+              WriteCapacityUnits: "1"
+          - 
+            IndexName: "userId-roleId-index"
+            KeySchema: 
+              - 
+                AttributeName: "userId"
+                KeyType: "HASH"
+              - 
+                AttributeName: "roleId"
+                KeyType: "RANGE"
+            Projection: 
+              ProjectionType: "ALL"
+            ProvisionedThroughput: 
+              ReadCapacityUnits: "1"
+              WriteCapacityUnits: "1"
+    RoleTable:
+      DependsOn: AssignedRoleTable
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+          -
+            AttributeName: name
+            AttributeType: S
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: "${self:custom.stage}-Roles"
+        GlobalSecondaryIndexes: 
+          - 
+            IndexName: "name-id-index"
+            KeySchema: 
+              - 
+                AttributeName: "name"
+                KeyType: "HASH"
+              - 
+                AttributeName: "id"
+                KeyType: "RANGE"
+            Projection: 
+              ProjectionType: "ALL"
+            ProvisionedThroughput: 
+              ReadCapacityUnits: "1"
+              WriteCapacityUnits: "1"
+    CampaignTable:
+      DependsOn: RoleTable
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+          -
+            AttributeName: organizationId
+            AttributeType: S
+          -
+            AttributeName: templateId
+            AttributeType: S
+          -
+            AttributeName: createdAt
+            AttributeType: S
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: "${self:custom.stage}-Campaigns"
+        GlobalSecondaryIndexes: 
+          - 
+            IndexName: "organizationId-createdAt-index"
+            KeySchema: 
+              - 
+                AttributeName: "organizationId"
+                KeyType: "HASH"
+              - 
+                AttributeName: "createdAt"
+                KeyType: "RANGE"
+            Projection: 
+              ProjectionType: "ALL"
+            ProvisionedThroughput: 
+              ReadCapacityUnits: "1"
+              WriteCapacityUnits: "1"
+          - 
+            IndexName: "templateId-createdAt-index"
+            KeySchema: 
+              - 
+                AttributeName: "templateId"
+                KeyType: "HASH"
+              - 
+                AttributeName: "createdAt"
+                KeyType: "RANGE"
+            Projection: 
+              ProjectionType: "ALL"
+            ProvisionedThroughput: 
+              ReadCapacityUnits: "1"
+              WriteCapacityUnits: "1"
+    CampaignTemplateTable:
+      DependsOn: CampaignTable
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: "${self:custom.stage}-CampaignTemplates"
+    PromptTable:
+      DependsOn: CampaignTemplateTable
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+          -
+            AttributeName: surveyTemplateId
+            AttributeType: S
+          -
+            AttributeName: position
+            AttributeType: N
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: "${self:custom.stage}-Prompts"
+        GlobalSecondaryIndexes: 
+          - 
+            IndexName: "surveyTemplateId-position-index"
+            KeySchema: 
+              - 
+                AttributeName: "surveyTemplateId"
+                KeyType: "HASH"
+              - 
+                AttributeName: "position"
+                KeyType: "RANGE"
+            Projection: 
+              ProjectionType: "ALL"
+            ProvisionedThroughput: 
+              ReadCapacityUnits: "1"
+              WriteCapacityUnits: "1"
+    OptionTable:
+      DependsOn: PromptTable
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+          -
+            AttributeName: promptId
+            AttributeType: S
+          -
+            AttributeName: position
+            AttributeType: N
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: "${self:custom.stage}-Options"
+        GlobalSecondaryIndexes: 
+          - 
+            IndexName: "promptId-position-index"
+            KeySchema: 
+              - 
+                AttributeName: "promptId"
+                KeyType: "HASH"
+              - 
+                AttributeName: "position"
+                KeyType: "RANGE"
+            Projection: 
+              ProjectionType: "ALL"
+            ProvisionedThroughput: 
+              ReadCapacityUnits: "1"
+              WriteCapacityUnits: "1"      
+    SurveyTemplateTable:
+      DependsOn: OptionTable
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+          -
+            AttributeName: campaignTemplateId
+            AttributeType: S
+          -
+            AttributeName: position
+            AttributeType: N
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: "${self:custom.stage}-SurveyTemplates"
+        GlobalSecondaryIndexes: 
+          - 
+            IndexName: "campaignTemplateId-position-index"
+            KeySchema: 
+              - 
+                AttributeName: "campaignTemplateId"
+                KeyType: "HASH"
+              - 
+                AttributeName: "position"
+                KeyType: "RANGE"
+            Projection: 
+              ProjectionType: "ALL"
+            ProvisionedThroughput: 
+              ReadCapacityUnits: "1"
+              WriteCapacityUnits: "1"  
+    SurveyTable:
+      DependsOn: SurveyTemplateTable
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+          -
+            AttributeName: userId
+            AttributeType: S
+          -
+            AttributeName: campaignId
+            AttributeType: S
+          -
+            AttributeName: surveyTemplateId
+            AttributeType: S
+          -
+            AttributeName: createdAt
+            AttributeType: S
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: "${self:custom.stage}-Surveys"
+        GlobalSecondaryIndexes: 
+          - 
+            IndexName: "surveyTemplateId-createdAt-index"
+            KeySchema: 
+              - 
+                AttributeName: "surveyTemplateId"
+                KeyType: "HASH"
+              - 
+                AttributeName: "createdAt"
+                KeyType: "RANGE"
+            Projection: 
+              ProjectionType: "ALL"
+            ProvisionedThroughput: 
+              ReadCapacityUnits: "1"
+              WriteCapacityUnits: "1" 
+          - 
+            IndexName: "campaignId-createdAt-index"
+            KeySchema: 
+              - 
+                AttributeName: "campaignId"
+                KeyType: "HASH"
+              - 
+                AttributeName: "createdAt"
+                KeyType: "RANGE"
+            Projection: 
+              ProjectionType: "ALL"
+            ProvisionedThroughput: 
+              ReadCapacityUnits: "1"
+              WriteCapacityUnits: "1" 
+          - 
+            IndexName: "userId-createdAt-index"
+            KeySchema: 
+              - 
+                AttributeName: "userId"
+                KeyType: "HASH"
+              - 
+                AttributeName: "createdAt"
+                KeyType: "RANGE"
+            Projection: 
+              ProjectionType: "ALL"
+            ProvisionedThroughput: 
+              ReadCapacityUnits: "1"
+              WriteCapacityUnits: "1"  
+    ResponseTable:
+      DependsOn: SurveyTable
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+          -
+            AttributeName: optionId
+            AttributeType: S
+          -
+            AttributeName: surveyId
+            AttributeType: S
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: "${self:custom.stage}-Responses"
+        GlobalSecondaryIndexes: 
+          - 
+            IndexName: "optionId-id-index"
+            KeySchema: 
+              - 
+                AttributeName: "optionId"
+                KeyType: "HASH"
+              - 
+                AttributeName: "id"
+                KeyType: "RANGE"
+            Projection: 
+              ProjectionType: "ALL"
+            ProvisionedThroughput: 
+              ReadCapacityUnits: "1"
+              WriteCapacityUnits: "1" 
+          - 
+            IndexName: "surveyId-id-index"
+            KeySchema: 
+              - 
+                AttributeName: "surveyId"
+                KeyType: "HASH"
+              - 
+                AttributeName: "id"
+                KeyType: "RANGE"
+            Projection: 
+              ProjectionType: "ALL"
+            ProvisionedThroughput: 
+              ReadCapacityUnits: "1"
+              WriteCapacityUnits: "1"                                
+
 ####BEGIN STANDARD RESOURCES
     LambdaExecutionRole:
       Condition: ShouldCreatePinpointApp
@@ -387,8 +828,8 @@ resources:
                   - "cognito-identity.amazonaws.com"
         RoleName: 
           Ref: unAuthRoleName
+    
     SNSRole: 
-    # Created to allow the UserPool SMS Config to publish via the Simple Notification Service during MFA Process
       Type: AWS::IAM::Role
       Properties:
         RoleName: 
@@ -418,10 +859,8 @@ resources:
                   Action: 
                     - "sns:Publish"
                   Resource: "*"
-    # BEGIN USER POOL RESOURCES
+    
     UserPool:
-    # Created upon user selection
-    # Depends on SNS Role for Arn if MFA is enabled
       Type: AWS::Cognito::UserPool
       Properties:
         UserPoolName: 
@@ -462,8 +901,6 @@ resources:
             Ref: roleExternalId 
       
     UserPoolClientWeb:
-    # Created provide application access to user pool
-    # Depends on UserPool for ID reference
       Type: "AWS::Cognito::UserPoolClient"
       Properties:
         ClientName: cognito${self:custom.stage}_app_clientWeb
@@ -473,9 +910,8 @@ resources:
         UserPoolId: 
           Ref: UserPool
       DependsOn: UserPool
+
     UserPoolClient:
-    # Created provide application access to user pool
-    # Depends on UserPool for ID reference
       Type: "AWS::Cognito::UserPoolClient"
       Properties:
         ClientName: 
@@ -488,9 +924,8 @@ resources:
         UserPoolId: 
           Ref: UserPool
       DependsOn: UserPool
-    # BEGIN USER POOL LAMBDA RESOURCES
+
     UserPoolClientRole:
-    # Created to execute Lambda which gets userpool app client config values
       Type: 'AWS::IAM::Role'
       Properties:
         RoleName: 
@@ -505,10 +940,8 @@ resources:
               Action:
                 - 'sts:AssumeRole'
       DependsOn: UserPoolClient
+    
     UserPoolClientLambda:
-    # Lambda which gets userpool app client config values
-    # Depends on UserPool for id
-    # Depends on UserPoolClientRole for role ARN
       Type: 'AWS::Lambda::Function'
       Properties:
         Code:
@@ -542,10 +975,8 @@ resources:
         Role: 
            "Fn::GetAtt": [ UserPoolClientRole, Arn ]
       DependsOn: UserPoolClientRole
+
     UserPoolClientLambdaPolicy:
-    # Sets userpool policy for the role that executes the Userpool Client Lambda
-    # Depends on UserPool for Arn
-    # Marked as depending on UserPoolClientRole for easier to understand CFN sequencing
       Type: 'AWS::IAM::Policy'
       Properties:
         PolicyName: 

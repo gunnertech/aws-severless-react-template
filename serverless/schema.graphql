@@ -17,12 +17,36 @@ type User {
 	phone: String
 	email: String
 	organizationId: ID!
+	createdAt: String
+	updatedAt: String
+	assignedRoles: AssignedRoleConnection
 	organization: Organization
 }
 
 type UserConnection {
 	items: [User]
 	nextToken: String
+}
+
+type AssignedRole {
+	id: ID!
+	roleId: ID!
+	userId: ID!
+	createdAt: String
+	updatedAt: String
+	role: Role
+	user: User
+}
+
+type AssignedRoleConnection {
+	items: [AssignedRole]
+	nextToken: String
+}
+
+type Role {
+	id: ID!
+	name: String!
+	assignedRoles: AssignedRoleConnection
 }
 
 type Campaign {
@@ -44,7 +68,7 @@ type CampaignTemplate {
 	id: ID!
 	name: String!
 	campaigns: CampaignConnection
-	prompts: PromptConnection
+	surveyTemplates: SurveyTemplateConnection
 }
 
 type CampaignTemplateConnection {
@@ -52,11 +76,27 @@ type CampaignTemplateConnection {
 	nextToken: String
 }
 
+type SurveyTemplate {
+	id: ID!
+	name: String!
+	position: Int!
+	campaignTemplateId: ID!
+	campaignTemplate: CampaignTemplate
+	prompts: PromptConnection
+	surveys: SurveyConnection
+}
+
+type SurveyTemplateConnection {
+	items: [SurveyTemplate]
+	nextToken: String
+}
+
 type Prompt {
 	id: ID!
 	body: String!
-	templateId: ID
-	template: CampaignTemplate
+	position: Int!
+	surveyTemplateId: ID
+	surveyTemplate: SurveyTemplate
 	options: OptionConnection
 }
 
@@ -71,6 +111,7 @@ type Option {
 	name: String!
 	iconUrl: String
 	promptId: ID!
+	position: Int!
 	prompt: Prompt
 	responses: ResponseConnection
 }
@@ -84,13 +125,16 @@ type Survey {
 	id: ID!
 	userId: ID!
 	campaignId: ID!
+	surveyTemplateId: ID!
 	phone: String
 	email: String
 	patientIdentifier: String
 	caregiverIdentifier: String
 	user: User!
 	campaign: Campaign!
+	surveyTemplate: SurveyTemplate!
 	responses: ResponseConnection
+	createdAt: String
 }
 
 type SurveyConnection {
@@ -120,6 +164,19 @@ input CreateOrganizationInput {
 	ownerId: ID
 }
 
+input CreateRoleInput {
+	id: ID
+	name: String!
+}
+
+input CreateAssignedRoleInput {
+	id: ID
+	roleId: ID!
+	userId: ID!
+	createdAt: String
+	updatedAt: String
+}
+
 input CreateResponseInput {
 	id: ID
 	optionId: ID!
@@ -130,10 +187,13 @@ input CreateSurveyInput {
 	id: ID
 	userId: ID!
 	campaignId: ID!
+	surveyTemplateId: ID!
+	position: Int!
 	phone: String
 	email: String
 	patientIdentifier: String
 	caregiverIdentifier: String
+	createdAt: String
 }
 
 input CreateOptionInput {
@@ -141,13 +201,15 @@ input CreateOptionInput {
 	value: Int!
 	name: String!
 	iconUrl: String
+	position: Int!
 	promptId: ID!
 }
 
 input CreatePromptInput {
 	id: ID
 	body: String!
-	templateId: ID!
+	position: Int!
+	surveyTemplateId: ID!
 }
 
 input CreateCampaignTemplateInput {
@@ -168,14 +230,25 @@ input CreateUserInput {
 	title: String
 	phone: String
 	email: String
+	createdAt: String
+	updatedAt: String
 	organizationId: ID!
 }
 
+input CreateSurveyTemplateInput {
+	id: ID
+	name: String!
+	position: Int!
+	campaignTemplateId: ID!
+}
 
 type Mutation {
 	createOrganization(input: CreateOrganizationInput!): Organization
 	createResponse(input: CreateResponseInput!): Response
+	createAssignedRole(input: CreateAssignedRoleInput!): AssignedRole
+	createRole(input: CreateRoleInput!): Role
 	createSurvey(input: CreateSurveyInput!): Survey
+	createSurveyTemplate(input: CreateSurveyTemplateInput!): SurveyTemplate
 	createOption(input: CreateOptionInput!): Option
 	createPrompt(input: CreatePromptInput!): Prompt
 	createCampaignTemplate(input: CreateCampaignTemplateInput!): CampaignTemplate
