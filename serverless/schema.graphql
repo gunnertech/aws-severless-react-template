@@ -16,6 +16,7 @@ type User {
 	title: String
 	phone: String
 	email: String
+	active: Boolean
 	organizationId: ID!
 	createdAt: String
 	updatedAt: String
@@ -51,11 +52,11 @@ type Role {
 
 type Campaign {
 	id: ID!
-	name: String!
-	templateId: ID
+	campaignTemplateId: ID
 	organizationId: ID
+	active: Boolean
 	organization: Organization
-	template: CampaignTemplate
+	campaignTemplate: CampaignTemplate
 	surveys: SurveyConnection
 }
 
@@ -220,7 +221,7 @@ input CreateCampaignTemplateInput {
 input CreateCampaignInput {
 	id: ID
 	name: String!
-	templateId: ID!
+	campaignTemplateId: ID!
 	organizationId: ID!
 }
 

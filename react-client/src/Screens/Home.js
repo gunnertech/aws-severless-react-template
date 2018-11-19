@@ -11,7 +11,7 @@ const Home = props => {
   const { classes } = props;
   return (
     <div className={classes.root}>
-      I am home
+      This is your dashboard
     </div>
   );
 }

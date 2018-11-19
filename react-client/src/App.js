@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from "react-router-dom";
-import Amplify, { Auth } from 'aws-amplify';
+import Amplify, { Auth, Hub } from 'aws-amplify';
 import { Rehydrated } from 'aws-appsync-react';
 import { ApolloProvider } from 'react-apollo';
 import AWSAppSyncClient, { createAppSyncLink, createLinkWithCache } from "aws-appsync";
@@ -9,9 +9,16 @@ import { withClientState } from 'apollo-link-state';
 import * as Sentry from '@sentry/browser';
 import { withAuthenticator } from 'aws-amplify-react';
 
-import Home from "./Screens/Home";
-import Splash from "./Screens/Splash";
-import SignOut from "./Screens/SignOut";
+
+import HomeScreen from "./Screens/Home";
+import SplashScreen from "./Screens/Splash";
+import SignOutScreen from "./Screens/SignOut";
+import UserListScreen from "./Screens/UserList";
+import CampaignListScreen from "./Screens/CampaignList";
+
+import CurrentUserContext from './Contexts/CurrentUser';
+import { ActionMenuProvider } from './Contexts/ActionMenu';
+
 
 // import logo from './logo.svg';
 // import './App.css';
@@ -96,17 +103,53 @@ Amplify.configure({
 
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    Hub.listen('auth', this, 'AppListener');
+  }
+
+  state = {
+    currentUser: null
+  }
+
+  onHubCapsule = capsule => {
+    switch (capsule.payload.event) {
+      case 'signOut':
+        this.setState({currentUser: null})
+        break;
+      case 'signIn':
+        Auth.currentAuthenticatedUser()
+          .then(currentUser => this.setState({currentUser}))
+          .catch(err => this.setState({currentUser: null}));
+        break;
+      default:
+        break;
+    }
+}
+
+  componentDidMount() {
+    Auth.currentAuthenticatedUser()
+      .then(currentUser => this.setState({currentUser}))
+      .catch(err => this.setState({currentUser: null}));
+  }
+
   render() {
     return (
       <ApolloProvider client={client}>
         <Rehydrated>
-          <Router>
-            <Layout>
-              <Route path='/splash' exact component={Splash} />
-              <Route path='/sign-out' exact component={SignOut} />
-              <PrivateRoute path='/' exact component={Home} />
-            </Layout>
-          </Router>
+          <CurrentUserContext.Provider value={{currentUser: this.state.currentUser}}>
+            <ActionMenuProvider>
+              <Router>
+                <Layout>
+                  <PrivateRoute path='/users' exact component={UserListScreen} />
+                  <PrivateRoute path='/campaigns' exact component={CampaignListScreen} />
+                  <Route path='/splash' exact component={SplashScreen} />
+                  <Route path='/sign-out' exact component={SignOutScreen} />
+                  <PrivateRoute path='/' exact component={HomeScreen} />
+                </Layout>
+              </Router>
+            </ActionMenuProvider>
+          </CurrentUserContext.Provider>
         </Rehydrated>
       </ApolloProvider>
     );
