@@ -11,48 +11,14 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-import Divider from '@material-ui/core/Divider';
+import CampaignTemplate from './CampaignTemplate';
 
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import Typography from '@material-ui/core/Typography';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import options from '../Mocks/options'
 
-
-const options = [
-  {
-    id: "1",
-    value: 1,
-    name: "Extremely Unsatisfied",
-    position: 1
-  },
-  {
-    id: "2",
-    value: 2,
-    name: "Unsatisfied",
-    position: 2
-  },
-  {
-    id: "3",
-    value: 3,
-    name: "Neutral",
-    position: 3
-  },
-  {
-    id: "4",
-    value: 4,
-    name: "Satisfied",
-    position: 4
-  },
-  {
-    id: "5",
-    value: 5,
-    name: "Extremely Satisfied",
-    position: 5
-  }
-]
+const PanelActions = props =>
+  <Button size="small" color="primary" onClick={() => props.onActionClick(props.id)}>
+    Select
+  </Button>
 
 const styles = theme => ({
   panelDetails: {
@@ -124,7 +90,7 @@ class CampaignNew extends React.PureComponent {
                 }
               },
               {
-                id: "1",
+                id: "2",
                 name: "Survey #2",
                 prompts: {
                   items: [
@@ -187,52 +153,14 @@ class CampaignNew extends React.PureComponent {
           </DialogContentText>
           {
             this.state.campaignTemplates.map(campaignTemplate => 
-              <ExpansionPanel 
+              <CampaignTemplate 
+                expanded={expanded} 
                 key={campaignTemplate.id} 
-                expanded={expanded === `panel${campaignTemplate.id}`} 
-                onChange={this._handleChange.bind(this, `panel${campaignTemplate.id}`)}>
-              >
-                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography className={classes.heading}>{campaignTemplate.name}</Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails className={classes.panelDetails}>
-                  {
-                    campaignTemplate.surveyTemplates.items.map(surveyTemplate =>
-                      <div className={classes.surveyTemplate} key={`surveyTemplate-${surveyTemplate.id}`}>
-                        <div className={classes.surveyTemplateBody}>
-                          <Typography variant="h6">{surveyTemplate.name}</Typography>
-                          {
-                            surveyTemplate.prompts.items.map(prompt =>
-                              <div className={classes.promptWrapper} key={`prompt-${prompt.id}`}>
-                                <Typography variant="subtitle1">{prompt.body}</Typography>
-                                <div className={classes.prompt}>
-                                  {
-                                    prompt.options.items.map(option => 
-                                      <div className={classes.option} key={`option-${option.id}`}>
-                                        <img 
-                                          src={require(`../assets/images/survey/${option.position}.png`)} 
-                                          style={{width: '100%', height: 'auto'}} 
-                                        />
-                                        <Typography variant="caption" align={`center`}>{option.name}</Typography>
-                                      </div>
-                                    )
-                                  }
-                                </div>
-                              </div>
-                            )
-                          }
-                        </div>
-                      </div>
-                    )
-                  }
-                </ExpansionPanelDetails>
-                <Divider />
-                <ExpansionPanelActions>
-                  <Button size="small" color="primary" onClick={() => this.setState({selectedCampaignId: campaignTemplate.id})}>
-                    Select
-                  </Button>
-                </ExpansionPanelActions>
-              </ExpansionPanel>
+                campaignTemplate={campaignTemplate}
+                onSelect={selectedCampaignId => this.setState({selectedCampaignId})}  
+                onChange={this._handleChange.bind(this)}
+                PanelActions={PanelActions}
+              />
             )
           }
           {

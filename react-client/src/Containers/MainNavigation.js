@@ -11,8 +11,6 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
 import Divider from '@material-ui/core/Divider';
-// import Menu from '@material-ui/core/Menu';
-// import MenuItem from '@material-ui/core/MenuItem';
 import { ListItem, ListItemIcon, ListItemText, ListSubheader } from '@material-ui/core';
 
 import MenuIcon from '@material-ui/icons/Menu';
@@ -23,10 +21,10 @@ import DescriptionIcon from '@material-ui/icons/Description';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 
 import AccountKeyIcon from 'mdi-material-ui/AccountKey'
+import SettingsIcon from 'mdi-material-ui/Settings';
 
 import withCurrentUser from '../Hocs/withCurrentUser';
 import { ActionMenuConsumer } from '../Contexts/ActionMenu';
-// import { Facebook, Twitter, Instagram, Youtube, GithubCircle, Itunes, Linkedin } from 'mdi-material-ui'
 
 
 
@@ -142,43 +140,57 @@ class MainNavigation extends React.Component {
       <div>
         <div className={classes.toolbar} />
         <Divider />
-        <List subheader={
-          <ListSubheader>Organization #1</ListSubheader>
-        }>
-          <ListItem 
-            component={Link} 
-            to={`/`} 
-            button  
-            onClick={this.handleDrawerToggle}
-          >
-            <ListItemIcon>
-              <AssessmentIcon />
-            </ListItemIcon>
-            <ListItemText><Typography  className={classes.link}>Dashboard</Typography></ListItemText>
-          </ListItem>
-          <ListItem 
-            component={Link} 
-            to={`/users`} 
-            button  
-            onClick={this.handleDrawerToggle}
-          >
-            <ListItemIcon>
-              <AccountCircleIcon />
-            </ListItemIcon>
-            <ListItemText><Typography  className={classes.link}>Users</Typography></ListItemText>
-          </ListItem>
-          <ListItem 
-            component={Link} 
-            to={`/campaigns`} 
-            button  
-            onClick={this.handleDrawerToggle}
-          >
-            <ListItemIcon>
-              <DescriptionIcon />
-            </ListItemIcon>
-            <ListItemText><Typography  className={classes.link}>Campaigns</Typography></ListItemText>
-          </ListItem>
-        </List>
+        {
+          !!currentUser &&
+          <List subheader={
+            <ListSubheader>Hospice of Michigan</ListSubheader>
+          }>
+            <ListItem 
+              component={Link} 
+              to={`/`} 
+              button  
+              onClick={this.handleDrawerToggle}
+            >
+              <ListItemIcon>
+                <AssessmentIcon />
+              </ListItemIcon>
+              <ListItemText><Typography  className={classes.link}>Dashboard</Typography></ListItemText>
+            </ListItem>
+            <ListItem 
+              component={Link} 
+              to={`/users`} 
+              button  
+              onClick={this.handleDrawerToggle}
+            >
+              <ListItemIcon>
+                <AccountCircleIcon />
+              </ListItemIcon>
+              <ListItemText><Typography  className={classes.link}>Users</Typography></ListItemText>
+            </ListItem>
+            <ListItem 
+              component={Link} 
+              to={`/campaigns`} 
+              button  
+              onClick={this.handleDrawerToggle}
+            >
+              <ListItemIcon>
+                <DescriptionIcon />
+              </ListItemIcon>
+              <ListItemText><Typography  className={classes.link}>Campaigns</Typography></ListItemText>
+            </ListItem>
+            <ListItem 
+              component={Link} 
+              to={`/settings`} 
+              button  
+              onClick={this.handleDrawerToggle}
+            >
+              <ListItemIcon>
+                <SettingsIcon />
+              </ListItemIcon>
+              <ListItemText><Typography className={classes.link}>Settings</Typography></ListItemText>
+            </ListItem>
+          </List>
+        }
         <Divider />
         <List>
           <ListItem 
@@ -223,6 +235,12 @@ class MainNavigation extends React.Component {
       </div>
     );
 
+    // <img 
+    //             src={require('../assets/images/nav-logo.png')}
+    //             className={classes.logo}
+    //             alt="Home"
+    //           />
+
     return (
       <div className={classes.root}>
         <AppBar className={classes.appBar}>
@@ -236,11 +254,7 @@ class MainNavigation extends React.Component {
               <MenuIcon />
             </IconButton>
             <Link to="/" className={classes.flex}>
-              <img 
-                src={require('../assets/images/nav-logo.png')}
-                className={classes.logo}
-                alt="Home"
-              />
+              <Typography style={{color: 'white'}}>SimpliSurvey</Typography>
             </Link>
             <ActionMenuConsumer>
               {({Element}) => Element ? Element : null}

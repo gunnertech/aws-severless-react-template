@@ -1,19 +1,16 @@
 import React from 'react';
 
-import Modal from '@material-ui/core/Modal';
 import MaskedInput from 'react-text-mask';
 import { withStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
-import { Paper, TextField, FormControl, InputLabel, Input, MenuItem } from '@material-ui/core';
+import { TextField, FormControl, InputLabel, Input, MenuItem } from '@material-ui/core';
 // import Typography from '@material-ui/core/Typography';
-import AccountPlusIcon from 'mdi-material-ui/AccountPlus';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import withMobileDialog from '@material-ui/core/withMobileDialog'
 
 const TextMaskCustom = props =>
   <MaskedInput
@@ -89,7 +86,7 @@ class UserNew extends React.PureComponent {
         <DialogTitle id="responsive-dialog-title">{"Add a User"}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Fill in the form below to add a new user to your organization. 
+            Users may administer surveys but cannot view the dashboard. 
           </DialogContentText>
           <form className={classes.container} noValidate autoComplete="off">
             <TextField
@@ -164,7 +161,7 @@ class UserNew extends React.PureComponent {
                   <Button onClick={onClose} color="primary">
                     Cancel
                   </Button>
-                  <Button onClick={this._handleSubmit.bind(this, {...this.state}, onSubmit)} color="primary" autoFocus>
+                  <Button variant="contained" onClick={this._handleSubmit.bind(this, {...this.state}, onSubmit)} color="primary" autoFocus>
                     Add User
                   </Button>
                 </DialogActions>

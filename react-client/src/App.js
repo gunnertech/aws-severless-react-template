@@ -15,6 +15,7 @@ import SplashScreen from "./Screens/Splash";
 import SignOutScreen from "./Screens/SignOut";
 import UserListScreen from "./Screens/UserList";
 import CampaignListScreen from "./Screens/CampaignList";
+import OrganizationEditScreen from "./Screens/OrganizationEdit";
 
 import CurrentUserContext from './Contexts/CurrentUser';
 import { ActionMenuProvider } from './Contexts/ActionMenu';
@@ -143,6 +144,7 @@ class App extends Component {
                 <Layout>
                   <PrivateRoute path='/users' exact component={UserListScreen} />
                   <PrivateRoute path='/campaigns' exact component={CampaignListScreen} />
+                  <PrivateRoute path='/settings' exact component={OrganizationEditScreen} />
                   <Route path='/splash' exact component={SplashScreen} />
                   <Route path='/sign-out' exact component={SignOutScreen} />
                   <PrivateRoute path='/' exact component={HomeScreen} />

@@ -1,17 +1,10 @@
 import React from 'react'
 
-import List from '@material-ui/core/List';
 import { 
-  ListItem, 
-  ListItemText, 
-  ListSubheader, 
-  Paper, 
-  ListItemSecondaryAction, 
-  Switch,
   IconButton,
-  Button
-  // Menu,
-  // MenuItem 
+  Button,
+  Typography,
+  Switch
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
@@ -23,6 +16,16 @@ import FilePlusIcon from 'mdi-material-ui/FilePlus';
 import CampaignNew from '../Components/CampaignNew';
 import Container from '../Components/Container'
 import withActionMenu from '../Hocs/withActionMenu'
+import CampaignTemplate from '../Components/CampaignTemplate';
+
+import campaigns from '../Mocks/campaigns';
+
+
+const panelActions = active => props =>
+  <Switch
+    onChange={props.onActionClick(props.id)}
+    checked={active}
+  />
 
 const ActionMenu = ({onClick}) => (
   <IconButton
@@ -63,18 +66,11 @@ const styles = theme => ({
 
 class CampaignList extends React.PureComponent {
   state = {
+    expanded: null,
     showFormModal: false,
     submittingForm: false,
-    campaigns: [],
-    dcampaigns: [
-      {
-        id: '1',
-        active: true,
-        campaignTemplate: {
-          name: 'Campaign #1',
-        }
-      }
-    ]
+    dcampaigns: [],
+    campaigns: campaigns
   }
 
   _handleSubmit = data =>
@@ -92,6 +88,11 @@ class CampaignList extends React.PureComponent {
   _handleMenuClick = () =>
     this.setState({showFormModal: true})
 
+  _handleChange = (panel, event, expanded) =>
+    this.setState({
+      expanded: expanded ? panel : false,
+    })
+
   _updateCampaignStatus = (campaign, active) =>
     console.log(active)
 
@@ -104,49 +105,47 @@ class CampaignList extends React.PureComponent {
   }
 
   render() {
-    const { classes, onSubmit } = this.props;
+    const { classes } = this.props;
+    const { expanded } = this.state;
     return (
       <Container>
         {
           this.state.showFormModal ? (
-            <CampaignNew onClose={() => this.setState({showFormModal: false})} open={this.state.showFormModal} onSubmit={this._handleSubmit.bind(this)} submitting={this.state.submittingForm} />
+            <CampaignNew 
+              onClose={() => this.setState({showFormModal: false})} 
+              open={this.state.showFormModal} 
+              onSubmit={this._handleSubmit.bind(this)} 
+              submitting={this.state.submittingForm} 
+            />
           ) : (
             null
           )
         }
-        <Paper elevation={2}>
-          <List subheader={
-            <ListSubheader>Manage Campaigns</ListSubheader>
-          }>
-            {
-              !!this.state.campaigns.length ? (
-                this.state.campaigns.map(campaign =>
-                  <ListItem key={campaign.id}>
-                    <ListItemText 
-                      primary={campaign.campaignTemplate.name} 
-                      />
-                      <ListItemSecondaryAction>
-                        <Switch
-                          onChange={this._updateCampaignStatus.bind(this, campaign, !campaign.active)}
-                          checked={!!campaign.active}
-                        />
-                      </ListItemSecondaryAction>
-                  </ListItem>      
-                )
-              ) : (
-                <Button 
-                  variant="contained" 
-                  color="primary" 
-                  className={classes.button}
-                  onClick={this._handleMenuClick.bind(this)}  
-                >
-                  Add Your First Campaign
-                  <FilePlusIcon className={classes.rightIcon} />
-                </Button>
-              )
-            }
-          </List>
-        </Paper>
+        <Typography variant="h6">Manage Campaigns</Typography>
+        {
+          !!this.state.campaigns.length ? (
+            this.state.campaigns.map(campaign => campaign.campaignTemplate).map(campaignTemplate =>
+              <CampaignTemplate 
+                expanded={expanded} 
+                key={campaignTemplate.id} 
+                campaignTemplate={campaignTemplate}
+                onSelect={selectedCampaignId => this.setState({selectedCampaignId})}  
+                onChange={this._handleChange.bind(this)}
+                PanelActions={panelActions(campaignTemplate.active)}
+              />      
+            )
+          ) : (
+            <Button 
+              variant="contained" 
+              color="primary" 
+              className={classes.button}
+              onClick={this._handleMenuClick.bind(this)}  
+            >
+              Add Your First Campaign
+              <FilePlusIcon className={classes.rightIcon} />
+            </Button>
+          )
+        }
       </Container>
     )
   }

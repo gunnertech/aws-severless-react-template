@@ -11,7 +11,7 @@ const Splash = props => {
   const { classes } = props;
   return (
     <div className={classes.root}>
-      I'm the splash page
+      I'm the public landing page that everyone can see
     </div>
   );
 }

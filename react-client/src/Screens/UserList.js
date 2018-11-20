@@ -140,8 +140,8 @@ class UserList extends React.PureComponent {
             <ListSubheader>Manage Users</ListSubheader>
           }>
             {
-              this.state.users.map(user =>
-                <ListItem key={user.id}>
+              this.state.users.map((user, i) =>
+                <ListItem key={user.id} divider={i !== this.state.users.length-1}>
                   <ListItemText 
                     primary={user.name} 
                     secondary={user.assignedRoles.items.map( role => role.name).join(",")}
