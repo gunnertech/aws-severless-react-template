@@ -147,7 +147,7 @@ class MainNavigation extends React.Component {
           }>
             <ListItem 
               component={Link} 
-              to={`/`} 
+              to={`/dashboard`} 
               button  
               onClick={this.handleDrawerToggle}
             >
@@ -195,7 +195,7 @@ class MainNavigation extends React.Component {
         <List>
           <ListItem 
             component={Link} 
-            to={`/splash/`} 
+            to={`/`} 
             button  
             onClick={this.handleDrawerToggle}
           >
@@ -220,7 +220,7 @@ class MainNavigation extends React.Component {
             ) : (
               <ListItem 
                 component={Link} 
-                to={`/`} 
+                to={`/dashboard/`} 
                 button  
                 onClick={this.handleDrawerToggle}
               >
@@ -235,12 +235,6 @@ class MainNavigation extends React.Component {
       </div>
     );
 
-    // <img 
-    //             src={require('../assets/images/nav-logo.png')}
-    //             className={classes.logo}
-    //             alt="Home"
-    //           />
-
     return (
       <div className={classes.root}>
         <AppBar className={classes.appBar}>
@@ -254,7 +248,11 @@ class MainNavigation extends React.Component {
               <MenuIcon />
             </IconButton>
             <Link to="/" className={classes.flex}>
-              <Typography style={{color: 'white'}}>SimpliSurvey</Typography>
+              <img 
+                src={require('../assets/images/logo.png')}
+                className={classes.logo}
+                alt="Home"
+              />
             </Link>
             <ActionMenuConsumer>
               {({Element}) => Element ? Element : null}

@@ -13,14 +13,14 @@ const theme = createMuiTheme({
     //   color: "#EF4035" 
     // }
   },
-  // palette: {
-  //   primary: {
-  //     main: "#222222"
-  //   },
-  //   secondary: {
-  //     main: "#EF4035"
-  //   }
-  // }
+  palette: {
+    // primary: {
+    //   main: "#222222"
+    // },
+    secondary: {
+      main: "#44e200"
+    }
+  }
 });
 
 function createPageContext() {

@@ -65,10 +65,10 @@ class CampaignTemplate extends React.PureComponent {
                                   style={{width: '100%', height: 'auto'}} 
                                   alt={option.name}
                                 />
-                                <Hidden mdUp>
-                                  <Typography style={{fontSize: 10}} variant="caption" align={`center`}>{option.name}</Typography>
+                                <Hidden smUp>
+                                  <Typography style={{fontSize: 8}} variant="caption" align={`center`}>{option.name}</Typography>
                                 </Hidden>
-                                <Hidden smDown>
+                                <Hidden xsDown>
                                   <Typography variant="caption" align={`center`}>{option.name}</Typography>
                                 </Hidden>
                               </div>

@@ -16,6 +16,7 @@ import SignOutScreen from "./Screens/SignOut";
 import UserListScreen from "./Screens/UserList";
 import CampaignListScreen from "./Screens/CampaignList";
 import OrganizationEditScreen from "./Screens/OrganizationEdit";
+import SurveyNewScreen from "./Screens/SurveyNew";
 
 import CurrentUserContext from './Contexts/CurrentUser';
 import { ActionMenuProvider } from './Contexts/ActionMenu';
@@ -24,7 +25,7 @@ import { ActionMenuProvider } from './Contexts/ActionMenu';
 // import logo from './logo.svg';
 // import './App.css';
 
-import Layout from './Components/Layout'
+import { LayoutProvider } from './Contexts/Layout'
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={props => {
@@ -110,7 +111,8 @@ class App extends Component {
   }
 
   state = {
-    currentUser: null
+    currentUser: null,
+    showNav: true
   }
 
   onHubCapsule = capsule => {
@@ -141,14 +143,15 @@ class App extends Component {
           <CurrentUserContext.Provider value={{currentUser: this.state.currentUser}}>
             <ActionMenuProvider>
               <Router>
-                <Layout>
+                <LayoutProvider showNav={true}>
                   <PrivateRoute path='/users' exact component={UserListScreen} />
                   <PrivateRoute path='/campaigns' exact component={CampaignListScreen} />
                   <PrivateRoute path='/settings' exact component={OrganizationEditScreen} />
-                  <Route path='/splash' exact component={SplashScreen} />
+                  <Route path='/' exact component={SplashScreen} />
                   <Route path='/sign-out' exact component={SignOutScreen} />
-                  <PrivateRoute path='/' exact component={HomeScreen} />
-                </Layout>
+                  <Route path='/survey/:surveyTemplateId' exact component={SurveyNewScreen} />
+                  <PrivateRoute path='/dashboard' exact component={HomeScreen} />
+                </LayoutProvider>
               </Router>
             </ActionMenuProvider>
           </CurrentUserContext.Provider>

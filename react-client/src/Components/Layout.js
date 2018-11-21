@@ -54,11 +54,11 @@ const styles = theme => ({
   
 
 
-const Template = ({ navigate, location, data, children }) => 
+const Template = ({ navigate, location, data, children, showNav }) => 
   <Container>
     <Helmet
       encodeSpecialCharacters={true}
-      title="Gunner Technology"
+      title="SimpliSurvey"
       meta={[
         { name: `description`, content: `TODO` },
         { name: `keywords`, content: `TODO` },
@@ -68,9 +68,15 @@ const Template = ({ navigate, location, data, children }) =>
         { rel: "canonical", value: `TODO${location.pathname}`}
       ]}
     />
-    <MainNavigation data={ data }>
-      {children}
-    </MainNavigation>
+    {
+      !showNav ? (
+        children  
+      ) : (
+        <MainNavigation data={ data }>
+          {children}
+        </MainNavigation>
+      )
+    }
   </Container>
   
 

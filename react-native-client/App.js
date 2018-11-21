@@ -13,6 +13,8 @@ import AppNavigator from './src/Navigators/App'
 import muiTheme from './src/Styles/muiTheme'
 import ENV from './src/environment'
 
+import CurrentUserContext from './src/Contexts/CurrentUser';
+
 
 
 
@@ -92,6 +94,7 @@ const client = new AWSAppSyncClient({disableOffline: false}, { link });
 class App extends React.Component {
   state = {
     fontLoaded: false,
+    currentUser: null
   };
 
   async componentDidMount() {
@@ -99,6 +102,10 @@ class App extends React.Component {
       'Roboto': require('./assets/fonts/Roboto-Regular.ttf'),
     });
     this.setState({ fontLoaded: true });
+
+    Auth.currentAuthenticatedUser()
+      .then(currentUser => console.log("CURRENT USER", !!currentUser) || this.setState({currentUser}))
+      .catch(err => this.setState({currentUser: null}));
   }
 
   render() {
@@ -108,9 +115,11 @@ class App extends React.Component {
       ) : (
         <ApolloProvider client={client}>
           <Rehydrated>
-            <ThemeContext.Provider value={getTheme(muiTheme)}>
-              <AppNavigator />
-            </ThemeContext.Provider>
+            <CurrentUserContext.Provider value={{currentUser: this.state.currentUser}}>
+              <ThemeContext.Provider value={getTheme(muiTheme)}>
+                <AppNavigator />
+              </ThemeContext.Provider>
+            </CurrentUserContext.Provider>
           </Rehydrated>
         </ApolloProvider>
       )

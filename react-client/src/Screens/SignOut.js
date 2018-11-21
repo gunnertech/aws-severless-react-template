@@ -19,7 +19,7 @@ class SignOut extends Component {
   render() {
     return (
       this.state.signedOut ? (
-        <Redirect to="/splash"/>
+        <Redirect to="/"/>
       ) : (
         null
       )
