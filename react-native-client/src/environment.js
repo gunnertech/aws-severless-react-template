@@ -1,6 +1,6 @@
 import { Constants } from 'expo'
 
-//TODO: SET ALL THESE VARIABLES
+//TODO: SET ALL THESE VARIABLES AFTER YOU DEPLOY BACKEND FOR THE FIRST TIME
 
 const ENV = {
   dev: {

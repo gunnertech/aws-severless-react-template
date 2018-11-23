@@ -19,29 +19,25 @@ $ git clone --single-branch -b template https://git-codecommit.us-east-1.amazona
 $ mv simplisurvey <project-name>
 
 ## Serverless
-$ cd <project-name>
+$ cd <project-name>/serverless
 1) Global search for TODO (and do them)
 $ yarn
 $ sls deploy
 
 ## React Native Client:https://github.com/react-community/create-react-native-app
 $ yarn global add expo-cli
-$ cd <project-name>
-$ expo init <project-name>
-$ mv <project-name> client (or react-native-client)
+$ cd <project-name>/react-native-client
 
-Modify app.json and environment.js to fit your project
-Global search for TODO (and do them)
+1) Modify app.json and environment.js to fit your project
+2) Global search for TODO (and do them)
 
 $ yarn install
 
 ## React Client: https://github.com/facebook/create-react-app
-$ cd <project-name>
-$ yarn create react-app <project-name>
-$ mv <project-name> client (or react-client)
+$ cd <project-name>/react-client
 
-Global search for TODO (and do them)
-change .env.* info to match your project
+1) Global search for TODO (and do them)
+2) change .env.* info to match your project
 
 
 $ yarn install
