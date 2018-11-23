@@ -12,7 +12,7 @@ import { withClientState } from 'apollo-link-state';
 import AppNavigator from './src/Navigators/App'
 import muiTheme from './src/Styles/muiTheme'
 import ENV from './src/environment'
-
+import { CurrentUserProvider } from './src/Contexts/CurrentUser'
 
 
 
@@ -92,13 +92,20 @@ const client = new AWSAppSyncClient({disableOffline: false}, { link });
 class App extends React.Component {
   state = {
     fontLoaded: false,
+    currentUser: undefined
   };
 
-  async componentDidMount() {
-    await Font.loadAsync({
-      'Roboto': require('./assets/fonts/Roboto-Regular.ttf'),
-    });
-    this.setState({ fontLoaded: true });
+  componentDidMount() {
+    Promise.all([
+      Font.loadAsync({
+        'Roboto': require('./assets/fonts/Roboto-Regular.ttf'),
+      })
+        .then(() => this.setState({ fontLoaded: true }))
+      ,
+      Auth.currentAuthenticatedUser()
+        .then(currentUser => this.setState({currentUser}))
+        .catch(err => this.setState({currentUser: null}))
+    ])
   }
 
   render() {
@@ -108,9 +115,17 @@ class App extends React.Component {
       ) : (
         <ApolloProvider client={client}>
           <Rehydrated>
-            <ThemeContext.Provider value={getTheme(muiTheme)}>
-              <AppNavigator />
-            </ThemeContext.Provider>
+            <CurrentUserProvider currentUser={this.state.currentUser}>
+              <ThemeContext.Provider value={getTheme(muiTheme)}>
+                {
+                  typeof(this.state.currentUser) === 'undefined' ? (
+                    null
+                  ) : (
+                    <AppNavigator />
+                  )
+                }
+              </ThemeContext.Provider>
+            </CurrentUserProvider>
           </Rehydrated>
         </ApolloProvider>
       )

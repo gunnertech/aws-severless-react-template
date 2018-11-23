@@ -1,5 +1,4 @@
 1) Add Branch to react-native-client -> can't do this until after the app is approved in app stores
-5) Add directions for getting this from repo
 
 
 # Setup
@@ -7,16 +6,22 @@
 
 $ cd ~/workspace/aws
 $ ./organization add -n <project-name> -e <project-name>@gunnertech.com -u <your root username> -g OrganizationAdministrators
+# add helper to ~/.gitconfig
+[credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/simplisurvey/"]
+UseHttpPath = true
+helper = !aws --profile simplisurveydeveloper codecommit credential-helper $@
+
+
 
 ## Project 
 $ cd ~/workspace/javascript/serverless
 $ git clone --single-branch -b template https://git-codecommit.us-east-1.amazonaws.com/v1/repos/simplisurvey
+$ mv simplisurvey <project-name>
 
 ## Serverless
 $ cd <project-name>
 1) Copy serverless directory from another project
 2) Global search for TODO (and do them)
-3) Remove uneeded functions and resources
 
 $ yarn
 $ sls deploy
