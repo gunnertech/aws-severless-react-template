@@ -1,13 +1,13 @@
 service:
-  name: "aztech-voiceover"
+  name: simplisurvey #TODO: REPLACE THIS
 
 custom:
   environment: ${file(env.yml):${self:custom.stage}, file(env.yml):dev}
   pinpointAppId: ${self:custom.environment.PINPOINT_APP_ID, 'NONE'}
   stage: ${opt:stage, self:provider.stage}
-  devAccountId: "080329606386"
-  stagingAccountId: "080329606386"
-  prodAccountId: "080329606386"
+  devAccountId: "658832833553" #TODO: REPLACE THIS
+  stagingAccountId: "658832833553" #TODO: REPLACE THIS
+  prodAccountId: "658832833553" #TODO: REPLACE THIS
   accountId: ${self:custom.${self:custom.stage}AccountId}
   region: ${opt:region, self:provider.region}
   uploadBucketName: "com-gunnertech-${self:service.name}-${self:custom.stage}"
@@ -40,8 +40,8 @@ provider:
   name: aws
   runtime: nodejs8.10
   stage: ${opt:stage, 'dev'}
-  region: 'us-east-1'
-  profile: "aztech-voiceover"
+  region: 'us-east-1'  #TODO: REPLACE THIS (Optional)
+  profile: simplisurveydeveloper #TODO: REPLACE THIS
   iamRoleStatements:
     - Effect: Allow
       Action:
