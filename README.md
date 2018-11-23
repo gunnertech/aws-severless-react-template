@@ -20,9 +20,7 @@ $ mv simplisurvey <project-name>
 
 ## Serverless
 $ cd <project-name>
-1) Copy serverless directory from another project
-2) Global search for TODO (and do them)
-
+1) Global search for TODO (and do them)
 $ yarn
 $ sls deploy
 
