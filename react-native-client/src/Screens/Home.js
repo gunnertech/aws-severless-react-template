@@ -46,4 +46,4 @@ class Home extends React.Component {
   }
 }
 
-export default withCurrentUswer()(withMuiTheme(styles)(Home));
+export default withCurrentUser()(withMuiTheme(styles)(Home));
