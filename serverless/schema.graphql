@@ -12,12 +12,12 @@ type Organization {
 
 type User {
 	id: ID!
-	name: String!
+	name: String
 	title: String
 	phone: String
 	email: String
 	active: Boolean
-	organizationId: ID!
+	organizationId: ID
 	createdAt: String
 	updatedAt: String
 	assignedRoles: AssignedRoleConnection
@@ -48,6 +48,11 @@ type Role {
 	id: ID!
 	name: String!
 	assignedRoles: AssignedRoleConnection
+}
+
+type RoleConnection {
+	items: [Role]
+	nextToken: String
 }
 
 type Campaign {
@@ -220,20 +225,37 @@ input CreateCampaignTemplateInput {
 
 input CreateCampaignInput {
 	id: ID
-	name: String!
 	campaignTemplateId: ID!
 	organizationId: ID!
+	active: Boolean
 }
 
 input CreateUserInput {
-	id: ID
-	name: String!
+	id: ID!
+	name: String
 	title: String
 	phone: String
 	email: String
-	createdAt: String
-	updatedAt: String
-	organizationId: ID!
+	organizationId: ID
+	active: Boolean!
+}
+
+input UpdateUserInput {
+	id: ID!
+	name: String
+	title: String
+	organizationId: ID
+	active: Boolean
+}
+
+input UpdateCampaignInput {
+	id: ID!
+	active: Boolean
+}
+
+input UpdateOrganizationInput {
+	id: ID!
+	name: String
 }
 
 input CreateSurveyTemplateInput {
@@ -255,10 +277,16 @@ type Mutation {
 	createCampaignTemplate(input: CreateCampaignTemplateInput!): CampaignTemplate
 	createCampaign(input: CreateCampaignInput!): Campaign
 	createUser(input: CreateUserInput!): User
+
+	updateUser(input: UpdateUserInput!): User
+	updateCampaign(input: UpdateCampaignInput!): Campaign
+	updateOrganization(input: UpdateOrganizationInput!): Organization
 }
 
 type Query {
 	listCampaignTemplates(first: Int, after: String): CampaignTemplateConnection
+	queryRolesByNameIdIndex(name: String!, first: Int, after: String): RoleConnection
+	getUser(id: ID!): User
 }
 
 type Subscription {

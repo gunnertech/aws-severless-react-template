@@ -1,0 +1,16 @@
+#set($ctx.args.input.createdAt = $util.time.nowISO8601())
+#set($ctx.args.input.updatedAt = $util.time.nowISO8601())
+{
+    "version" : "2017-02-28",
+    "operation" : "PutItem",
+    "key" : {
+        "id": $util.dynamodb.toDynamoDBJson($ctx.args.input.id),
+    },
+    "attributeValues" : $util.dynamodb.toMapValuesJson($ctx.args.input),
+    "condition": {
+    "expression": "attribute_not_exists(#id)",
+    "expressionNames": {
+      "#id": "id",
+    },
+  },
+}

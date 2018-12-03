@@ -45,7 +45,8 @@ class SurveyNew extends React.PureComponent {
 
   componentDidMount() {
     if(typeof(window) !== "undefined" && window.screen && window.screen.orientation && window.screen.orientation.lock) {
-      window.screen.orientation.lock("landscape");
+      window.screen.orientation.lock("landscape")
+        .catch(console.log)
     }
     this.props.hideNav()
   }

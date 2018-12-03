@@ -13,7 +13,8 @@ import AppNavigator from './src/Navigators/App'
 import muiTheme from './src/Styles/muiTheme'
 import ENV from './src/environment'
 
-import CurrentUserContext from './src/Contexts/CurrentUser';
+import { CurrentUserProvider } from './src/Contexts/CurrentUser'
+
 
 
 
@@ -94,18 +95,20 @@ const client = new AWSAppSyncClient({disableOffline: false}, { link });
 class App extends React.Component {
   state = {
     fontLoaded: false,
-    currentUser: null
+    currentUser: undefined
   };
 
-  async componentDidMount() {
-    await Font.loadAsync({
-      'Roboto': require('./assets/fonts/Roboto-Regular.ttf'),
-    });
-    this.setState({ fontLoaded: true });
-
-    Auth.currentAuthenticatedUser()
-      .then(currentUser => console.log("CURRENT USER", !!currentUser) || this.setState({currentUser}))
-      .catch(err => this.setState({currentUser: null}));
+  componentDidMount() {
+    Promise.all([
+      Font.loadAsync({
+        'Roboto': require('./assets/fonts/Roboto-Regular.ttf'),
+      })
+        .then(() => this.setState({ fontLoaded: true }))
+      ,
+      Auth.currentAuthenticatedUser()
+        .then(currentUser => this.setState({currentUser}))
+        .catch(err => this.setState({currentUser: null}))
+    ])
   }
 
   render() {
@@ -115,11 +118,17 @@ class App extends React.Component {
       ) : (
         <ApolloProvider client={client}>
           <Rehydrated>
-            <CurrentUserContext.Provider value={{currentUser: this.state.currentUser}}>
+            <CurrentUserProvider currentUser={this.state.currentUser}>
               <ThemeContext.Provider value={getTheme(muiTheme)}>
-                <AppNavigator />
+                {
+                  typeof(this.state.currentUser) === 'undefined' ? (
+                    null
+                  ) : (
+                    <AppNavigator />
+                  )
+                }
               </ThemeContext.Provider>
-            </CurrentUserContext.Provider>
+            </CurrentUserProvider>
           </Rehydrated>
         </ApolloProvider>
       )

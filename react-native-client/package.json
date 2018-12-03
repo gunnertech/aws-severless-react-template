@@ -31,7 +31,7 @@
     "react-native-elements": "latest",
     "react-native-htmlview": "^0.13.0",
     "react-native-iphone-x-helper": "^1.2.0",
-    "react-native-material-dropdown": "^0.11.1",
+    "react-native-material-dropdown": "latest",
     "react-native-material-textfield": "latest",
     "react-native-material-ui": "latest",
     "react-native-paper": "^2.0.1",

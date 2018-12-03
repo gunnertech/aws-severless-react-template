@@ -1,0 +1,28 @@
+$ git checkout -b <issue-number>
+
+- work, work, work
+- test, test, test
+
+$ git commit -am “closes <issue-number>”; git push <dev-name> <issue-number>
+$ sls deploy 
+$ amplify publish # if a web project
+$ expo publish --release-channel <dev-name> # if react native project
+
+- test, test, test
+
+$ git checkout staging
+$ git merge <issue-number>; git push staging staging
+$ sls deploy
+$ amplify publish # if a web project
+$ expo publish --release-channel staging # if react native project
+
+- test, test, test
+
+$ git checkout master
+$ git merge staging; git push origin master
+$ sls deploy
+$ amplify publish # if a web project
+$ expo publish --release-channel production # if react native project
+
+
+

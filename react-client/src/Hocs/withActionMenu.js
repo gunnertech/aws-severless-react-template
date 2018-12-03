@@ -5,7 +5,7 @@ import { ActionMenuConsumer } from '../Contexts/ActionMenu';
 
 const withActionMenu = () => {
   return WrappedComponent => {
-    class ActionMenuComponent extends React.PureComponent {
+    class ActionMenuComponent extends React.Component {
       render() {
         return (
           <ActionMenuConsumer>

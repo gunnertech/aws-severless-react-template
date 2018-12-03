@@ -1,6 +1,3 @@
-1) Add Branch to react-native-client -> can't do this until after the app is approved in app stores
-5) Add directions for getting this from repo
-
 
 # Setup
 ## AWS account
@@ -45,3 +42,9 @@ $ yarn install
 
 ## Git
 modify .git/config to match project
+
+
+
+
+Added mapping-templates folder
+Refactored Web and Native CurrentUserContext

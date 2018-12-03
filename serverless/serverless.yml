@@ -1,37 +1,160 @@
 service:
-  name: simplisurvey #TODO: REPLACE THIS
+  name: simplisurvey
 
 custom:
   environment: ${file(env.yml):${self:custom.stage}, file(env.yml):dev}
   pinpointAppId: ${self:custom.environment.PINPOINT_APP_ID, 'NONE'}
   stage: ${opt:stage, self:provider.stage}
-  devAccountId: "658832833553" #TODO: REPLACE THIS
-  stagingAccountId: "658832833553" #TODO: REPLACE THIS
-  prodAccountId: "658832833553" #TODO: REPLACE THIS
+  devAccountId: "658832833553"
+  stagingAccountId: "658832833553"
+  prodAccountId: "658832833553"
   accountId: ${self:custom.${self:custom.stage}AccountId}
   region: ${opt:region, self:provider.region}
   uploadBucketName: "com-gunnertech-${self:service.name}-${self:custom.stage}"
   appSync:
     name:  "${self:custom.stage}-api"
-    #TODO: RUN $sls deploy with authenticationType: API_KEY THEN RUN authenticationType: AMAZON_COGNITO_USER_POOLS and userPoolConfig commented in and API_KEY commented out
-    authenticationType: API_KEY
-    # authenticationType: AMAZON_COGNITO_USER_POOLS
-    # userPoolConfig:
-    #   awsRegion: ${self:custom.region}
-    #   defaultAction: ALLOW
-    #   userPoolId: { Ref: UserPool }
-    # mappingTemplates:
-    #   - dataSource: Consents
-    #     type: Mutation
-    #     field: createConsent
-    #     request: "createConsent-request-mapping-template.vtl"
-    #     response: "createConsent-response-mapping-template.vtl"
-    # dataSources:
-    #   - type: AMAZON_DYNAMODB
-    #     name: Consents
-    #     description: 'Consents table'
-    #     config:
-    #       tableName: { Ref: ConsentTable }
+    authenticationType: AMAZON_COGNITO_USER_POOLS
+    userPoolConfig:
+      awsRegion: ${self:custom.region}
+      defaultAction: ALLOW
+      userPoolId: { Ref: UserPool }
+    mappingTemplates:
+      - dataSource: Campaigns
+        type: Organization
+        field: campaigns
+        request: "Organization.campaigns-request.vtl"
+        response: "Organization.campaigns-response.vtl"
+      - dataSource: Roles
+        type: Query
+        field: queryRolesByNameIdIndex
+        request: "queryRolesByNameIdIndex-request.vtl"
+        response: "queryRolesByNameIdIndex-response.vtl"
+      - dataSource: Organizations
+        type: User
+        field: organization
+        request: "User.organization-request.vtl"
+        response: "User.organization-response.vtl"
+      - dataSource: AssignedRoles
+        type: User
+        field: assignedRoles
+        request: "User.assignedRoles-request.vtl"
+        response: "User.assignedRoles-response.vtl"
+      - dataSource: SurveyTemplates
+        type: CampaignTemplate
+        field: surveyTemplates
+        request: "CampaignTemplate.surveyTemplates-request.vtl"
+        response: "CampaignTemplate.surveyTemplates-response.vtl"
+      - dataSource: Prompts
+        type: SurveyTemplate
+        field: prompts
+        request: "SurveyTemplate.prompts-request.vtl"
+        response: "SurveyTemplate.prompts-response.vtl"
+      - dataSource: Options
+        type: Prompt
+        field: options
+        request: "Prompt.options-request.vtl"
+        response: "Prompt.options-response.vtl"
+      - dataSource: CampaignTemplates
+        type: Campaign
+        field: campaignTemplate
+        request: "Campaign.campaignTemplate-request.vtl"
+        response: "Campaign.campaignTemplate-response.vtl"
+      - dataSource: Users
+        type: Mutation
+        field: createUser
+        request: "createUser-request.vtl"
+        response: "createUser-response.vtl"
+      - dataSource: Users
+        type: Mutation
+        field: updateUser
+        request: "updateUser-request.vtl"
+        response: "updateUser-response.vtl"
+      - dataSource: Campaigns
+        type: Mutation
+        field: updateCampaign
+        request: "updateCampaign-request.vtl"
+        response: "updateCampaign-response.vtl"
+      - dataSource: Organizations
+        type: Mutation
+        field: updateOrganization
+        request: "updateOrganization-request.vtl"
+        response: "updateOrganization-response.vtl"
+      - dataSource: Users
+        type: Query
+        field: getUser
+        request: "getUser-request.vtl"
+        response: "getUser-response.vtl"
+      - dataSource: CampaignTemplates
+        type: Query
+        field: listCampaignTemplates
+        request: "listCampaignTemplates-request.vtl"
+        response: "listCampaignTemplates-response.vtl"
+      - dataSource: Organizations
+        type: Mutation
+        field: createOrganization
+        request: "createOrganization-request.vtl"
+        response: "createOrganization-response.vtl"
+      - dataSource: Campaigns
+        type: Mutation
+        field: createCampaign
+        request: "createCampaign-request.vtl"
+        response: "createCampaign-response.vtl"
+      - dataSource: Roles
+        type: Mutation
+        field: createRole
+        request: "createRole-request.vtl"
+        response: "createRole-response.vtl"
+      - dataSource: AssignedRoles
+        type: Mutation
+        field: createAssignedRole
+        request: "createAssignedRole-request.vtl"
+        response: "createAssignedRole-response.vtl"
+    dataSources:
+      - type: AMAZON_DYNAMODB
+        name: Users
+        description: 'Users table'
+        config:
+          tableName: { Ref: UserTable }
+      - type: AMAZON_DYNAMODB
+        name: Organizations
+        description: 'Organizations table'
+        config:
+          tableName: { Ref: OrganizationTable }
+      - type: AMAZON_DYNAMODB
+        name: Roles
+        description: 'Roles table'
+        config:
+          tableName: { Ref: RoleTable }
+      - type: AMAZON_DYNAMODB
+        name: AssignedRoles
+        description: 'AssignedRoles table'
+        config:
+          tableName: { Ref: AssignedRoleTable }
+      - type: AMAZON_DYNAMODB
+        name: Campaigns
+        description: 'Campaigns table'
+        config:
+          tableName: { Ref: CampaignTable }
+      - type: AMAZON_DYNAMODB
+        name: CampaignTemplates
+        description: 'Campaign Templates table'
+        config:
+          tableName: { Ref: CampaignTemplateTable }
+      - type: AMAZON_DYNAMODB
+        name: SurveyTemplates
+        description: 'SurveyTemplates table'
+        config:
+          tableName: { Ref: SurveyTemplateTable }
+      - type: AMAZON_DYNAMODB
+        name: Prompts
+        description: 'Prompts table'
+        config:
+          tableName: { Ref: PromptTable }
+      - type: AMAZON_DYNAMODB
+        name: Options
+        description: 'Options table'
+        config:
+          tableName: { Ref: OptionTable }
 
 plugins:
   - serverless-webpack
@@ -40,8 +163,8 @@ provider:
   name: aws
   runtime: nodejs8.10
   stage: ${opt:stage, 'dev'}
-  region: 'us-east-1'  #TODO: REPLACE THIS (Optional)
-  profile: simplisurveydeveloper #TODO: REPLACE THIS
+  region: 'us-east-1'
+  profile: simplisurveydeveloper
   iamRoleStatements:
     - Effect: Allow
       Action:

@@ -10,10 +10,13 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { Query } from 'react-apollo';
+
 
 import CampaignTemplate from './CampaignTemplate';
 
 import options from '../Mocks/options'
+import ListCampaignTemplates from '../api/Queries/ListCampaignTemplates';
 
 const PanelActions = props =>
   <Button size="small" color="primary" onClick={() => props.onActionClick(props.id)}>
@@ -146,23 +149,34 @@ class CampaignNew extends React.PureComponent {
         onClose={onClose}
         aria-labelledby="responsive-dialog-title"
       >
-        <DialogTitle id="responsive-dialog-title">{"Select a Campaign"}</DialogTitle>
+        <DialogTitle id="responsive-dialog-title">{"Create a Campaign"}</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Select a campaign from the following templates. 
           </DialogContentText>
-          {
-            this.state.campaignTemplates.map(campaignTemplate => 
-              <CampaignTemplate 
-                expanded={expanded} 
-                key={campaignTemplate.id} 
-                campaignTemplate={campaignTemplate}
-                onSelect={selectedCampaignId => this.setState({selectedCampaignId})}  
-                onChange={this._handleChange.bind(this)}
-                PanelActions={PanelActions}
-              />
-            )
-          }
+          <Query
+            query={ ListCampaignTemplates }
+            fetchPolicy="cache-and-network"
+          >
+            {({ data: {listCampaignTemplates}, loading }) =>
+              loading ? (
+                "Loding..."
+              ) : listCampaignTemplates && listCampaignTemplates.items ? (
+                listCampaignTemplates.items.map(campaignTemplate => 
+                  <CampaignTemplate 
+                    expanded={expanded} 
+                    key={campaignTemplate.id} 
+                    campaignTemplate={campaignTemplate}
+                    onSelect={selectedCampaignId => this.setState({selectedCampaignId})}  
+                    onChange={this._handleChange.bind(this)}
+                    PanelActions={PanelActions}
+                  />
+                )
+              ) : (
+                "Something went wrong..."
+              )
+            }
+          </Query>
           {
             submitting ? (
               <CircularProgress className={classes.progress} color="secondary" />

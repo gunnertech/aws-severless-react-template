@@ -174,8 +174,6 @@ class Home extends React.PureComponent {
             <Dropdown
               label='Select Survey'
               data={
-                console.log(campaigns.find(campaign => campaign.campaignTemplate.id === this.state.selectedCampaignTemplateId))
-                ||
                 campaigns
                   .find(campaign => campaign.campaignTemplate.id === this.state.selectedCampaignTemplateId)
                   .campaignTemplate.surveyTemplates.items.map(surveyTemplate => ({value: surveyTemplate.name, id: surveyTemplate.id}))

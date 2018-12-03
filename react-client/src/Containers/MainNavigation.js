@@ -132,18 +132,14 @@ class MainNavigation extends React.Component {
 
   render() {
     const { classes, theme, currentUser } = this.props;
-    // const { anchorEl } = this.state;
-    // const open = Boolean(anchorEl);
-
-
     const drawer = (
       <div>
         <div className={classes.toolbar} />
         <Divider />
         {
-          !!currentUser &&
+          !!currentUser && !!currentUser.organization &&
           <List subheader={
-            <ListSubheader>Hospice of Michigan</ListSubheader>
+            <ListSubheader>{currentUser.organization.name}</ListSubheader>
           }>
             <ListItem 
               component={Link} 

@@ -37,28 +37,28 @@ const styles = theme => ({
 
 class CampaignTemplate extends React.PureComponent {
   render() {
-    const { campaignTemplate, expanded, onChange, onSelect, classes, PanelActions } = this.props;
+    const { campaignTemplate, expanded, onChange, onSelect, classes, PanelActions, campaign } = this.props;
     return (
       <ExpansionPanel 
         expanded={expanded === `panel${campaignTemplate.id}`} 
-        onChange={onChange.bind(null, `panel${campaignTemplate.id}`)}>
+        onChange={onChange.bind(null, `panel${campaignTemplate.id}`)}
       >
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <Typography className={classes.heading}>{campaignTemplate.name}</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.panelDetails}>
           {
-            campaignTemplate.surveyTemplates.items.map(surveyTemplate =>
+            ((campaignTemplate.surveyTemplates||{}).items||[]).map(surveyTemplate =>
               <div className={classes.surveyTemplate} key={`surveyTemplate-${surveyTemplate.id}-${campaignTemplate.id}`}>
                 <div className={classes.surveyTemplateBody}>
                   <Typography variant="h6">{surveyTemplate.name}</Typography>
                   {
-                    surveyTemplate.prompts.items.map(prompt =>
+                    ((surveyTemplate.prompts||{}).items||[]).map(prompt =>
                       <div className={classes.promptWrapper} key={`prompt-${prompt.id}`}>
                         <Typography variant="subtitle1">{prompt.body}</Typography>
                         <div className={classes.prompt}>
                           {
-                            prompt.options.items.map(option => 
+                            ((prompt.options||{}).items||[]).map(option => 
                               <div className={classes.option} key={`option-${option.id}`}>
                                 <img 
                                   src={require(`../assets/images/survey/${option.position}.png`)} 
@@ -85,7 +85,7 @@ class CampaignTemplate extends React.PureComponent {
         </ExpansionPanelDetails>
         <Divider />
         <ExpansionPanelActions>
-          <PanelActions id={campaignTemplate.id} onActionClick={onSelect} />
+          <PanelActions id={campaign ? campaign.id : campaignTemplate.id} onActionClick={onSelect} />
         </ExpansionPanelActions>
       </ExpansionPanel>
     )

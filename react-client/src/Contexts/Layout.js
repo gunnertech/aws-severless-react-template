@@ -6,7 +6,7 @@ const Layout = React.createContext({
   hideNav: () => null
 });
 
-export class LayoutProvider extends React.PureComponent {
+export class LayoutProvider extends React.Component {
   constructor(props) {
     super(props);
 

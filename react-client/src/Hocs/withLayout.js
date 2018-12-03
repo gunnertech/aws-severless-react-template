@@ -5,7 +5,7 @@ import { LayoutConsumer } from '../Contexts/Layout';
 
 const withLayout = () => {
   return WrappedComponent => {
-    class LayoutComponent extends React.PureComponent {
+    class LayoutComponent extends React.Component {
       render() {
         return (
           <LayoutConsumer>
