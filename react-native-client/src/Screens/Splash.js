@@ -29,7 +29,7 @@ class Splash extends React.Component {
     return (
       <Container>
         <Card>
-          <View><Text>Welcome to SimpliSurvey! To send a survey, log in with your account</Text></View>
+          <View><Text>Welcome to SimpliSurvey! To send a survey, sign in with your account or, if you were invited, register for a new account.</Text></View>
           <Button onPress={() => this.props.navigation.navigate("Gated")} style={{container: classes.commentButtonContainer}} primary text="Sign In" iconSet="FontAwesome" icon="sign-in" raised />
         </Card>
       </Container>

@@ -1,7 +1,5 @@
 import { Constants } from 'expo'
 
-//TODO: SET ALL THESE VARIABLES
-
 const ENV = {
   dev: {
     userPoolId: 'us-east-1_4hXYouKxr',

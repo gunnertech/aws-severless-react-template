@@ -6,14 +6,20 @@ import {
   Toolbar
 } from 'react-native-material-ui';
 
+import SES from 'aws-sdk/clients/ses';
+import SNS from 'aws-sdk/clients/sns';
+import { Auth } from 'aws-amplify';
+
 import { Card, Text } from 'react-native-elements'
 import { Dropdown } from 'react-native-material-dropdown';
 import { TextField } from 'react-native-material-textfield';
+import { compose } from 'react-apollo';
 
 import Toast from 'react-native-root-toast';
 
 
 import { withMuiTheme } from '../Styles/muiTheme';
+import withCurrentUser from '../Hocs/withCurrentUser';
 import Container from '../Components/Container'
 
 class SubmissionToast extends React.Component {
@@ -46,44 +52,7 @@ class SubmissionToast extends React.Component {
   }
 }
 
-const campaigns = [
-  {
-    campaignTemplate: {
-      id: 1,
-      name: "Campaign #1",
-      surveyTemplates: {
-        items: [
-          {
-            id: 1,
-            name: "Survey #1"
-          },
-          {
-            id: 2,
-            name: "Survey #2"
-          }
-        ]
-      }
-    },
-  },
-  {
-    campaignTemplate: {
-      id: 2,
-      name: "Campaign #2",
-      surveyTemplates: {
-        items: [
-          {
-            id: 1,
-            name: "Survey #1"
-          },
-          {
-            id: 2,
-            name: "Survey #2"
-          }
-        ]
-      }
-    },
-  }
-]
+
 
 const styles = theme => ({
   cardContainer: {
@@ -124,21 +93,88 @@ class Home extends React.PureComponent {
     submitted: false
   }
 
+  _sendSms = (to) =>
+    Auth.currentCredentials()
+      .then(credentials =>
+        new SNS({
+          apiVersion: '2010-12-01',
+          credentials: Auth.essentialCredentials(credentials),
+          region: "us-east-1"
+        })
+        .publish({
+          Message: `Please take this survey - http://localhost:3000/surveys/${this.state.selectedSurveyTemplateId}`,
+          PhoneNumber: '+18609404747'
+        })
+        .promise()
+      )
+
+  _sendEmail = (to) =>
+    Auth.currentCredentials()
+      .then(credentials =>
+        new SES({
+          apiVersion: '2010-12-01',
+          credentials: Auth.essentialCredentials(credentials),
+          region: "us-east-1"
+        })
+        .sendEmail({
+          Destination: { /* required */
+            BccAddresses: [
+              'cody@gunnertech.com',
+            ],
+            ToAddresses: [
+              to
+            ]
+          },
+          Message: { /* required */
+            Body: { /* required */
+              Html: {
+              Charset: "UTF-8",
+              Data: `<html>
+                        <body>
+                          <a href="http://localhost:3000/surveys/${this.state.selectedSurveyTemplateId}">Please take this survey</a>
+                        </body>
+                      </html>`
+              },
+              Text: {
+                Charset: "UTF-8",
+                Data: `
+                  Please take this survey - http://localhost:3000/surveys/${this.state.selectedSurveyTemplateId}
+                `
+              }
+            },
+            Subject: {
+              Charset: 'UTF-8',
+              Data: 'SimpliSurvey Invitation'
+            }
+          },
+          Source: 'cody@gunnertech.com', /* required */
+          ReplyToAddresses: [
+            'cody@gunnertech.com',
+          ],
+        })
+        .promise()
+      )
+
   _handleSubmit = () =>
     new Promise(resolve => 
-      this.setState({submitting: true}, () => resolve())
+      this.setState({submitting: true}, resolve)
+    )
+    .then(() =>
+      this.state.recipientContact.match(/@/) ? (
+        this._sendEmail(this.state.recipientContact)
+      ) : (
+        this._sendSms(this.state.recipientContact)
+      )
     )
     .then(() =>
       new Promise(resolve => 
-        setTimeout(
-          () => this.setState(
-            {submitting: false, submitted: true, selectedCampaignTemplateId: null, selectedSurveyTemplateId: null, recipientContact: null, recipientIdentifier: null},
-            () => resolve()
-          ), 
-          3000
+        this.setState(
+          {submitting: false, submitted: true, selectedCampaignTemplateId: null, selectedSurveyTemplateId: null, recipientContact: null, recipientIdentifier: null},
+          resolve
         )
       )
     )
+    .catch(console.log)
 
 
   componentDidUpdate() {
@@ -152,6 +188,10 @@ class Home extends React.PureComponent {
     if(isValid !== wasValid) {
       this.props.navigation.setParams({valid: isValid})
     }
+
+    if(this.props.currentUser && this.props.currentUser.organization.campaigns.items.length === 1 && !this.state.selectedCampaignTemplateId) {
+      this.setState({selectedCampaignTemplateId: this.props.currentUser.organization.campaigns.items[0].campaignTemplate.id})
+    }
   }
 
   componentDidMount() {
@@ -159,22 +199,31 @@ class Home extends React.PureComponent {
   }
 
   render() {
-    const { classes } = this.props;
-    return (
+    const { classes, currentUser } = this.props;
+    return !currentUser ? null : (
       <Container>
         <Card style={{container: classes.cardContainer}}>
           <Text>Fill out the form below to send a survey</Text>
           <Dropdown
             label='Select Campaign'
-            data={campaigns.map(campaign => ({value: campaign.campaignTemplate.name, id: campaign.campaignTemplate.id}))}
+            data={currentUser.organization.campaigns.items.map(campaign => ({value: campaign.campaignTemplate.name, id: campaign.campaignTemplate.id}))}
             onChangeText={(value, index, data) => this.setState({selectedCampaignTemplateId: data[index].id})}
+            value={
+              !!this.state.selectedCampaignTemplateId ? (
+                currentUser.organization.campaigns.items
+                  .find(campaign => campaign.campaignTemplate.id === this.state.selectedCampaignTemplateId)
+                  .campaignTemplate.name
+              ) : (
+                ""
+              )
+              }
           />
           {
             this.state.selectedCampaignTemplateId &&
             <Dropdown
               label='Select Survey'
               data={
-                campaigns
+                currentUser.organization.campaigns.items
                   .find(campaign => campaign.campaignTemplate.id === this.state.selectedCampaignTemplateId)
                   .campaignTemplate.surveyTemplates.items.map(surveyTemplate => ({value: surveyTemplate.name, id: surveyTemplate.id}))
               }
@@ -220,4 +269,10 @@ class Home extends React.PureComponent {
   }
 }
 
-export default withMuiTheme(styles)(Home)
+
+export default compose(
+  withCurrentUser(),
+  withMuiTheme(styles),
+  // graphql(CreateCampaign, { name: "createCampaign" }),
+  // graphql(UpdateCampaign, { name: "updateCampaign" }),
+)(Home);

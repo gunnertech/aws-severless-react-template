@@ -127,7 +127,6 @@ class App extends Component {
     Promise.resolve(null)
 
   _createOrganization = user =>
-    console.log("_createOrganization", "user", user) ||
     client.mutate({
       mutation: CreateOrganization,
       onError: e => console.log("_createOrganization", e),
@@ -138,7 +137,6 @@ class App extends Component {
     })
 
   _addUserToOrganization = (user, organization) =>
-    console.log("_addUserToOrganization", "Organization", organization) ||
     client.mutate({
       mutation: UpdateUser,
       onError: e => console.log("_addUserToOrganization", e),
@@ -147,18 +145,18 @@ class App extends Component {
         organizationId: organization.id
       },
     })
-      .then(({data: {updateUser}}) => console.log("updateUser", updateUser) || Promise.resolve(updateUser))
+      .then(({data: {updateUser}}) => Promise.resolve(updateUser))
 
   _acceptInvitationForUser = (invitation, user) =>
     this._addRoleToUser(invitation.role, user)
       .then(() => Promise.resolve(null))
 
-  _addRoleToUser = (roleName, user) => console.log("Let's add a role!", roleName) ||
+  _addRoleToUser = (roleName, user) =>
     client.query({
       query: QueryRolesByNameIdIndex,
       variables: {name: roleName},
     })
-    .then(({data: { queryRolesByNameIdIndex }}) => console.log("Huh?", queryRolesByNameIdIndex) ||
+    .then(({data: { queryRolesByNameIdIndex }}) =>
       (
         !queryRolesByNameIdIndex || !queryRolesByNameIdIndex.items.length ? (
           client.mutate({
@@ -168,12 +166,12 @@ class App extends Component {
               name: roleName,
             },
           })
-          .then(({data: {createRole}}) => console.log("ENTRY", createRole) || Promise.resolve(createRole))
+          .then(({data: {createRole}}) => Promise.resolve(createRole))
         ) : (
           Promise.resolve(queryRolesByNameIdIndex.items[0])
         )
       )
-      .then(role => console.log("ROLE", role) ||
+      .then(role =>
         client.mutate({
           mutation: CreateAssignedRole,
           onError: e => console.log("CreateAssignedRole", e),
@@ -186,7 +184,7 @@ class App extends Component {
       )
     )
 
-  _createNewUser = cognitoUser => console.log("Creating user") ||
+  _createNewUser = cognitoUser =>
     client.mutate({
       mutation: CreateUser,
       onError: e => console.log("_createNewUser", e),
@@ -199,25 +197,25 @@ class App extends Component {
     })
     .then(({data: {createUser}}) => console.log("got user", createUser) || Promise.resolve(createUser))
 
-  _handleSignIn = () => console.log("Doing signin") ||
+  _handleSignIn = () =>
     new Promise(resolve => this.setState({currentUser: undefined}, resolve))
       .then(() =>
         Auth.currentAuthenticatedUser()
       )
-      .then(cognitoUser => Promise.all([
+      .then(cognitoUser => console.log(cognitoUser.username) || Promise.all([
         client.query({
           query: GetUser,
           variables: {id: cognitoUser.username},
         }),
         cognitoUser
       ]))
-      .then(([{data: { getUser }, loading}, cognitoUser]) => (console.log("CALLED!") || !!getUser) ? (
-          console.log("We have a user") || Promise.resolve(getUser)
+      .then(([{data: { getUser }, loading}, cognitoUser]) => !!getUser ? (
+          console.log("GOT USER!!!") || Promise.resolve(getUser)
         ) : (
-          console.log("We don't have a user") || this._createNewUser(cognitoUser)
+          console.log("DONT GOT USER!!!") || this._createNewUser(cognitoUser)
         )
       )
-      .then(user => console.log("Find invitation for", user) || Promise.all([
+      .then(user => Promise.all([
         user, this._findInvitation(user)
       ]))
       .then(([user, invitation]) => 
@@ -226,7 +224,7 @@ class App extends Component {
             .then(() => this._acceptInvitationForUser(invitation, user))
         ) : (
           user.organization ? (
-            console.log("Has an organization") || Promise.resolve(user)
+            Promise.resolve(user)
           ) : (
             this._createOrganization(user)
               .then(({data: { createOrganization }}) => this._addUserToOrganization(user, createOrganization))
@@ -240,7 +238,7 @@ class App extends Component {
           )
         )
       )
-      .then(currentUser => console.log("WE DONE") || new Promise(resolve => this.setState({currentUser}, resolve.bind(null, currentUser))))
+      .then(currentUser => new Promise(resolve => this.setState({currentUser}, resolve.bind(null, currentUser))))
       .catch(err => console.log("ERROR", err) || this.setState({currentUser: null}));
 
   onHubCapsule = capsule => {
@@ -266,7 +264,7 @@ class App extends Component {
         <Rehydrated>
           <CurrentUserProvider currentUser={this.state.currentUser}>
             {
-              (console.log("this.state.currentUser", this.state.currentUser) || typeof(this.state.currentUser) === 'undefined') ? (
+              typeof(this.state.currentUser) === 'undefined' ? (
                 null
               ) : (
                 <ActionMenuProvider>
@@ -278,7 +276,7 @@ class App extends Component {
                         <PrivateRoute path='/settings' exact component={OrganizationEditScreen} />
                         <Route path='/' exact component={SplashScreen} />
                         <Route path='/sign-out' exact component={SignOutScreen} />
-                        <Route path='/survey/:surveyTemplateId' exact component={SurveyNewScreen} />
+                        <Route path='/surveys/:surveyTemplateId' exact component={SurveyNewScreen} />
                         <PrivateRoute path='/dashboard' exact component={HomeScreen} />
                       </Switch>
                     </LayoutProvider>

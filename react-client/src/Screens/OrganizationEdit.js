@@ -152,5 +152,3 @@ export default compose(
   withActionMenu(),
   graphql(UpdateOrganization, { name: "updateOrganization" }),
 )(OrganizationEdit);
-
-// export default withMobileDialog()(withStyles(styles)(withActionMenu()(OrganizationEdit)));

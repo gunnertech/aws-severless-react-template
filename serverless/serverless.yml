@@ -25,10 +25,25 @@ custom:
         request: "Organization.campaigns-request.vtl"
         response: "Organization.campaigns-response.vtl"
       - dataSource: Roles
+        type: AssignedRole
+        field: role
+        request: "AssignedRole.role-request.vtl"
+        response: "AssignedRole.role-response.vtl"
+      - dataSource: Roles
         type: Query
         field: queryRolesByNameIdIndex
         request: "queryRolesByNameIdIndex-request.vtl"
         response: "queryRolesByNameIdIndex-response.vtl"
+      - dataSource: Invitations
+        type: Query
+        field: queryInvitationsByOrganizationIdIdIndex
+        request: "queryInvitationsByOrganizationIdIdIndex-request.vtl"
+        response: "queryInvitationsByOrganizationIdIdIndex-response.vtl"
+      - dataSource: Users
+        type: Query
+        field: queryUsersByOrganizationIdCreatedAtIndex
+        request: "queryUsersByOrganizationIdCreatedAtIndex-request.vtl"
+        response: "queryUsersByOrganizationIdCreatedAtIndex-response.vtl"
       - dataSource: Organizations
         type: User
         field: organization
@@ -64,6 +79,11 @@ custom:
         field: createUser
         request: "createUser-request.vtl"
         response: "createUser-response.vtl"
+      - dataSource: Invitations
+        type: Mutation
+        field: createInvitation
+        request: "createInvitation-request.vtl"
+        response: "createInvitation-response.vtl"
       - dataSource: Users
         type: Mutation
         field: updateUser
@@ -89,6 +109,11 @@ custom:
         field: listCampaignTemplates
         request: "listCampaignTemplates-request.vtl"
         response: "listCampaignTemplates-response.vtl"
+      - dataSource: Invitations
+        type: Query
+        field: listInvitations
+        request: "listInvitations-request.vtl"
+        response: "listInvitations-response.vtl"
       - dataSource: Organizations
         type: Mutation
         field: createOrganization
@@ -110,6 +135,11 @@ custom:
         request: "createAssignedRole-request.vtl"
         response: "createAssignedRole-response.vtl"
     dataSources:
+      - type: AMAZON_DYNAMODB
+        name: Invitations
+        description: 'Invitations table'
+        config:
+          tableName: { Ref: InvitationTable }
       - type: AMAZON_DYNAMODB
         name: Users
         description: 'Users table'
@@ -171,6 +201,7 @@ provider:
         - s3:*
         - SNS:Publish
         - SES:Publish
+        - SNS:*
       Resource: "*"
 
 resources:
@@ -323,6 +354,12 @@ resources:
 ####END STANDARD CONDITIONS
 
   Resources:
+    SMSTopic:
+      Type: AWS::SNS::Topic
+      Properties: 
+        DisplayName: "sms${self:custom.stage}"
+        TopicName: "sms${self:custom.stage}"
+
     OrganizationTable:
       Type: 'AWS::DynamoDB::Table'
       Properties:
@@ -338,6 +375,42 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         TableName: "${self:custom.stage}-Organizations"
+    
+
+    InvitationTable:
+      DependsOn: UserTable
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        AttributeDefinitions:
+          -
+            AttributeName: organizationId
+            AttributeType: S
+          -
+            AttributeName: id
+            AttributeType: S
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: "${self:custom.stage}-Invitations"
+        GlobalSecondaryIndexes: 
+          - 
+            IndexName: "organizationId-id-index"
+            KeySchema: 
+              - 
+                AttributeName: "organizationId"
+                KeyType: "HASH"
+              - 
+                AttributeName: "id"
+                KeyType: "RANGE"
+            Projection: 
+              ProjectionType: "ALL"
+            ProvisionedThroughput: 
+              ReadCapacityUnits: "1"
+              WriteCapacityUnits: "1"
     UserTable:
       DependsOn: OrganizationTable
       Type: 'AWS::DynamoDB::Table'
@@ -875,6 +948,7 @@ resources:
                   Action:
                     - "ses:SendRawEmail"
                     - "ses:SendEmail"
+                    - "sns:Publish"
                     - "cloudformation:CreateStack"
                     - "cloudformation:UpdateStack"
                     - "cloudformation:DeleteStack"

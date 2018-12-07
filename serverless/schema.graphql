@@ -39,8 +39,25 @@ type AssignedRole {
 	user: User
 }
 
+
 type AssignedRoleConnection {
 	items: [AssignedRole]
+	nextToken: String
+}
+
+type Invitation {
+	id: ID!
+	name: String!
+	phone: String
+	email: String
+	organizationId: ID!
+	invitorId: ID!
+	roleName: String!
+	title: String
+}
+
+type InvitationConnection {
+	items: [Invitation]
 	nextToken: String
 }
 
@@ -230,6 +247,17 @@ input CreateCampaignInput {
 	active: Boolean
 }
 
+input CreateInvitationInput {
+	id: ID
+	name: String!
+	phone: String
+	email: String
+	organizationId: ID!
+	invitorId: ID!
+	roleName: String!
+	title: String
+}
+
 input CreateUserInput {
 	id: ID!
 	name: String
@@ -277,6 +305,7 @@ type Mutation {
 	createCampaignTemplate(input: CreateCampaignTemplateInput!): CampaignTemplate
 	createCampaign(input: CreateCampaignInput!): Campaign
 	createUser(input: CreateUserInput!): User
+	createInvitation(input: CreateInvitationInput!): Invitation
 
 	updateUser(input: UpdateUserInput!): User
 	updateCampaign(input: UpdateCampaignInput!): Campaign
@@ -285,7 +314,10 @@ type Mutation {
 
 type Query {
 	listCampaignTemplates(first: Int, after: String): CampaignTemplateConnection
+	listInvitations(first: Int, after: String): InvitationConnection
+	queryInvitationsByOrganizationIdIdIndex(organizationId: ID!, first: Int, after: String): InvitationConnection
 	queryRolesByNameIdIndex(name: String!, first: Int, after: String): RoleConnection
+	queryUsersByOrganizationIdCreatedAtIndex(organizationId: ID!, first: Int, after: String): UserConnection
 	getUser(id: ID!): User
 }
 

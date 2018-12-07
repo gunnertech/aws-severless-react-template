@@ -7,6 +7,7 @@ const User = {
       fragment UserEntry on User {
         __typename
         id
+        name
         title
         phone
         email
@@ -21,6 +22,10 @@ const User = {
         assignedRoles {
           items {
             id
+            role {
+              id
+              name
+            }
           }
         }
       }

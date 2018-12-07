@@ -48,14 +48,17 @@ const styles = theme => ({
   }
 });
 
-class UserNew extends React.PureComponent {
+class UserForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      phone: "",
-      email: "",
-      name: "",
-      title: "",
+      user: {
+        phone: "",
+        email: "",
+        name: "",
+        title: "",
+        role: "user"
+      },
       submitting: false
     }
 
@@ -69,13 +72,24 @@ class UserNew extends React.PureComponent {
     ])
 
   _handleChange = (field, event) =>
-    this.setState({[field]: event.target.value})
+    this.setState({
+      user: {
+        ...this.state.user,
+        [field]: event.target.value
+      }
+    })
 
   _resetState = () =>
     this.setState(this._initialState)
 
+  componentDidMount() {
+    if(this.props.user) {
+      this.setState({user: this.props.user});
+    }
+  }
+  
   render() {
-    const { classes, open, submitting, onSubmit, onClose, fullScreen } = this.props;
+    const { classes, open, submitting, onSubmit, onClose, fullScreen, user } = this.props;
     return (
       <Dialog
         fullScreen={fullScreen}
@@ -83,17 +97,19 @@ class UserNew extends React.PureComponent {
         onClose={onClose}
         aria-labelledby="responsive-dialog-title"
       >
-        <DialogTitle id="responsive-dialog-title">{"Add a User"}</DialogTitle>
+        <DialogTitle id="responsive-dialog-title">{!!user ? `Edit User: ${user.name || user.id}` : "Add a User"}</DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          {
+            !user && <DialogContentText>
             Users may administer surveys but cannot view the dashboard. 
-          </DialogContentText>
+            </DialogContentText>
+          }
           <form className={classes.container} noValidate autoComplete="off">
             <TextField
               id="standard-name"
               label="Name"
               className={classes.textField}
-              value={this.state.name}
+              value={this.state.user.name || ""}
               onChange={this._handleChange.bind(this, 'name')}
               margin="normal"
               fullWidth
@@ -103,7 +119,7 @@ class UserNew extends React.PureComponent {
               id="standard-title"
               label="Title"
               className={classes.textField}
-              value={this.state.title}
+              value={this.state.user.title || ""}
               onChange={this._handleChange.bind(this, 'title')}
               margin="normal"
               fullWidth
@@ -112,10 +128,11 @@ class UserNew extends React.PureComponent {
             <FormControl className={classes.formControl} fullWidth>
               <InputLabel htmlFor="phone">Phone</InputLabel>
               <Input
-                value={this.state.phone}
+                value={this.state.user.phone.replace("+1","")}
                 onChange={this._handleChange.bind(this, 'phone')}
                 id="phone"
                 inputComponent={TextMaskCustom}
+                disabled={!!this.props.user}
               />
             </FormControl>
 
@@ -129,7 +146,8 @@ class UserNew extends React.PureComponent {
               margin="normal"
               onChange={this._handleChange.bind(this, 'email')}
               fullWidth
-              value={this.state.email}
+              disabled={!!this.props.user}
+              value={this.state.user.email}
             />
 
             <TextField
@@ -137,7 +155,8 @@ class UserNew extends React.PureComponent {
               select
               label="Select"
               className={classes.textField}
-              value={this.state.role || 'Admin'}
+              disabled={!!this.props.user}
+              value={!!this.props.user ? this.props.user.assignedRoles.items[0].role.name : this.state.user.role || 'admin'}
               onChange={this._handleChange.bind(this, 'role')}
               SelectProps={{
                 MenuProps: {
@@ -147,7 +166,7 @@ class UserNew extends React.PureComponent {
               helperText="Please select the user's role"
               margin="normal"
             >
-              {[{value: 'Admin', label: 'Admin'}, {value: 'User', label: 'User'}].map(option => (
+              {[{value: 'admin', label: 'admin'}, {value: 'user', label: 'user'}].map(option => (
                 <MenuItem key={option.value} value={option.value}>
                   {option.label}
                 </MenuItem>
@@ -162,7 +181,9 @@ class UserNew extends React.PureComponent {
                     Cancel
                   </Button>
                   <Button variant="contained" onClick={this._handleSubmit.bind(this, {...this.state}, onSubmit)} color="primary" autoFocus>
-                    Add User
+                    {
+                      !!this.props.user ? "Update User" : "Add User"
+                    }
                   </Button>
                 </DialogActions>
               )
@@ -175,4 +196,4 @@ class UserNew extends React.PureComponent {
 }
 
 
-export default withStyles(styles)(UserNew);
+export default withStyles(styles)(UserForm);
