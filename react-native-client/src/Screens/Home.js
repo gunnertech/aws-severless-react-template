@@ -13,10 +13,11 @@ import { Auth } from 'aws-amplify';
 import { Card, Text } from 'react-native-elements'
 import { Dropdown } from 'react-native-material-dropdown';
 import { TextField } from 'react-native-material-textfield';
-import { compose } from 'react-apollo';
+import { compose, graphql } from 'react-apollo';
 
 import Toast from 'react-native-root-toast';
 
+import CreateSurvey from '../api/Mutations/CreateSurvey';
 
 import { withMuiTheme } from '../Styles/muiTheme';
 import withCurrentUser from '../Hocs/withCurrentUser';
@@ -86,6 +87,7 @@ class Home extends React.PureComponent {
 
   state = {
     selectedCampaignTemplateId: null,
+    selectedCampaignId: null,
     selectedSurveyTemplateId: null,
     recipientContact: null,
     recipientIdentifier: null,
@@ -93,7 +95,7 @@ class Home extends React.PureComponent {
     submitted: false
   }
 
-  _sendSms = (to) =>
+  _sendSms = survey =>
     Auth.currentCredentials()
       .then(credentials =>
         new SNS({
@@ -102,13 +104,13 @@ class Home extends React.PureComponent {
           region: "us-east-1"
         })
         .publish({
-          Message: `Please take this survey - http://localhost:3000/surveys/${this.state.selectedSurveyTemplateId}`,
-          PhoneNumber: '+18609404747'
+          Message: `Please take this survey - http://localhost:3000/surveys/${survey.id}`,
+          PhoneNumber: '+18609404747' //TODO
         })
         .promise()
       )
 
-  _sendEmail = (to) =>
+  _sendEmail = survey =>
     Auth.currentCredentials()
       .then(credentials =>
         new SES({
@@ -122,7 +124,7 @@ class Home extends React.PureComponent {
               'cody@gunnertech.com',
             ],
             ToAddresses: [
-              to
+              survey.recipientContact
             ]
           },
           Message: { /* required */
@@ -131,14 +133,14 @@ class Home extends React.PureComponent {
               Charset: "UTF-8",
               Data: `<html>
                         <body>
-                          <a href="http://localhost:3000/surveys/${this.state.selectedSurveyTemplateId}">Please take this survey</a>
+                          <a href="http://localhost:3000/surveys/${survey.id}">Please take this survey</a>
                         </body>
                       </html>`
               },
               Text: {
                 Charset: "UTF-8",
                 Data: `
-                  Please take this survey - http://localhost:3000/surveys/${this.state.selectedSurveyTemplateId}
+                  Please take this survey - http://localhost:3000/surveys/${survey.id}
                 `
               }
             },
@@ -147,9 +149,9 @@ class Home extends React.PureComponent {
               Data: 'SimpliSurvey Invitation'
             }
           },
-          Source: 'cody@gunnertech.com', /* required */
+          Source: 'cody@gunnertech.com', /* required */ //TODO
           ReplyToAddresses: [
-            'cody@gunnertech.com',
+            'cody@gunnertech.com', //TODO
           ],
         })
         .promise()
@@ -160,10 +162,37 @@ class Home extends React.PureComponent {
       this.setState({submitting: true}, resolve)
     )
     .then(() =>
+      Promise.resolve({
+        id: (new Date().getTime()).toString(),
+        userId: this.props.currentUser.id,
+        campaignId: this.state.selectedCampaignId,
+        surveyTemplateId: this.state.selectedSurveyTemplateId,
+        recipientContact: this.state.recipientContact,
+        recipientIdentifier: this.state.recipientIdentifier,
+        createdAt: (new Date()).toISOString()
+      })
+    )
+    .then(params =>
+      this.props.createSurvey({ 
+        variables: { 
+          ...params,
+          __typename: "Survey"
+        },
+        onError: console.log,
+        optimisticResponse: {
+          __typename: "Mutation",
+          createSurvey: { 
+            ...params,
+            __typename: "Survey"
+          }
+        }
+      })
+    )
+    .then(entry =>
       this.state.recipientContact.match(/@/) ? (
-        this._sendEmail(this.state.recipientContact)
+        this._sendEmail(entry.data.createSurvey)
       ) : (
-        this._sendSms(this.state.recipientContact)
+        this._sendSms(entry.data.createSurvey)
       )
     )
     .then(() =>
@@ -190,7 +219,10 @@ class Home extends React.PureComponent {
     }
 
     if(this.props.currentUser && this.props.currentUser.organization.campaigns.items.length === 1 && !this.state.selectedCampaignTemplateId) {
-      this.setState({selectedCampaignTemplateId: this.props.currentUser.organization.campaigns.items[0].campaignTemplate.id})
+      this.setState({
+        selectedCampaignTemplateId: this.props.currentUser.organization.campaigns.items[0].campaignTemplate.id,
+        selectedCampaignId: this.props.currentUser.organization.campaigns.items[0].id
+      })
     }
   }
 
@@ -206,8 +238,11 @@ class Home extends React.PureComponent {
           <Text>Fill out the form below to send a survey</Text>
           <Dropdown
             label='Select Campaign'
-            data={currentUser.organization.campaigns.items.map(campaign => ({value: campaign.campaignTemplate.name, id: campaign.campaignTemplate.id}))}
-            onChangeText={(value, index, data) => this.setState({selectedCampaignTemplateId: data[index].id})}
+            data={currentUser.organization.campaigns.items.map(campaign => ({value: campaign.campaignTemplate.name, id: campaign.campaignTemplate.id, campaign}))}
+            onChangeText={(value, index, data) => this.setState({
+              selectedCampaignTemplateId: data[index].id,
+              selectedCampaignId: data[index].campaign.id
+            })}
             value={
               !!this.state.selectedCampaignTemplateId ? (
                 currentUser.organization.campaigns.items
@@ -233,6 +268,8 @@ class Home extends React.PureComponent {
           {
             this.state.selectedSurveyTemplateId &&
             <TextField
+              autoCapitalize={"none"}
+              autoCorrect={false}
               label='Recipient Contact'
               title='Email address or mobile number to send survey to'
               value={this.state.recipientContact || ''}
@@ -242,6 +279,8 @@ class Home extends React.PureComponent {
           {
             this.state.recipientContact &&
             <TextField
+              autoCapitalize={"none"}
+              autoCorrect={false}
               label='Recipient Identifier'
               value={this.state.recipientIdentifier || ''}
               title='(Optional) Name or identifier to indentify the recipient'
@@ -273,6 +312,6 @@ class Home extends React.PureComponent {
 export default compose(
   withCurrentUser(),
   withMuiTheme(styles),
-  // graphql(CreateCampaign, { name: "createCampaign" }),
+  graphql(CreateSurvey, { name: "createSurvey" }),
   // graphql(UpdateCampaign, { name: "updateCampaign" }),
 )(Home);

@@ -69,11 +69,26 @@ custom:
         field: options
         request: "Prompt.options-request.vtl"
         response: "Prompt.options-response.vtl"
+      - dataSource: Responses
+        type: Survey
+        field: responses
+        request: "Survey.responses-request.vtl"
+        response: "Survey.responses-response.vtl"
       - dataSource: CampaignTemplates
         type: Campaign
         field: campaignTemplate
         request: "Campaign.campaignTemplate-request.vtl"
         response: "Campaign.campaignTemplate-response.vtl"
+      - dataSource: SurveyTemplates
+        type: Survey
+        field: surveyTemplate
+        request: "Survey.surveyTemplate-request.vtl"
+        response: "Survey.surveyTemplate-response.vtl"
+      - dataSource: Users
+        type: Survey
+        field: user
+        request: "Survey.user-request.vtl"
+        response: "Survey.user-response.vtl"
       - dataSource: Users
         type: Mutation
         field: createUser
@@ -104,6 +119,11 @@ custom:
         field: getUser
         request: "getUser-request.vtl"
         response: "getUser-response.vtl"
+      - dataSource: Surveys
+        type: Query
+        field: getSurvey
+        request: "getSurvey-request.vtl"
+        response: "getSurvey-response.vtl"
       - dataSource: CampaignTemplates
         type: Query
         field: listCampaignTemplates
@@ -124,6 +144,16 @@ custom:
         field: createCampaign
         request: "createCampaign-request.vtl"
         response: "createCampaign-response.vtl"
+      - dataSource: Responses
+        type: Mutation
+        field: createResponse
+        request: "createResponse-request.vtl"
+        response: "createResponse-response.vtl"
+      - dataSource: Surveys
+        type: Mutation
+        field: createSurvey
+        request: "createSurvey-request.vtl"
+        response: "createSurvey-response.vtl"
       - dataSource: Roles
         type: Mutation
         field: createRole
@@ -140,6 +170,11 @@ custom:
         description: 'Invitations table'
         config:
           tableName: { Ref: InvitationTable }
+      - type: AMAZON_DYNAMODB
+        name: Surveys
+        description: 'Surveys table'
+        config:
+          tableName: { Ref: SurveyTable }
       - type: AMAZON_DYNAMODB
         name: Users
         description: 'Users table'
@@ -185,6 +220,11 @@ custom:
         description: 'Options table'
         config:
           tableName: { Ref: OptionTable }
+      - type: AMAZON_DYNAMODB
+        name: Responses
+        description: 'Responses table'
+        config:
+          tableName: { Ref: ResponseTable }
 
 plugins:
   - serverless-webpack

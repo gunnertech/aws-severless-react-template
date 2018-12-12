@@ -210,7 +210,7 @@ class App extends Component {
         cognitoUser
       ]))
       .then(([{data: { getUser }, loading}, cognitoUser]) => !!getUser ? (
-          console.log("GOT USER!!!") || Promise.resolve(getUser)
+          console.log("GOT USER!!!", getUser) || Promise.resolve(getUser)
         ) : (
           console.log("DONT GOT USER!!!") || this._createNewUser(cognitoUser)
         )
@@ -276,7 +276,7 @@ class App extends Component {
                         <PrivateRoute path='/settings' exact component={OrganizationEditScreen} />
                         <Route path='/' exact component={SplashScreen} />
                         <Route path='/sign-out' exact component={SignOutScreen} />
-                        <Route path='/surveys/:surveyTemplateId' exact component={SurveyNewScreen} />
+                        <Route path='/surveys/:surveyId' exact component={SurveyNewScreen} />
                         <PrivateRoute path='/dashboard' exact component={HomeScreen} />
                       </Switch>
                     </LayoutProvider>

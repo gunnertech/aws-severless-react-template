@@ -1,5 +1,7 @@
 import gql from 'graphql-tag';
 
+import SurveyTemplate from './SurveyTemplate';
+
 const CampaignTemplate = {
   fragments: {
     global: gql`
@@ -9,25 +11,12 @@ const CampaignTemplate = {
         name
         surveyTemplates {
           items {
-            id
-            name
-            prompts {
-              items {
-                id
-                body
-                options {
-                  items {
-                    id
-                    name
-                    value
-                    position
-                  }
-                }
-              }
-            }
+            __typename
+            ...SurveyTemplateEntry
           }
         }        
       }
+      ${SurveyTemplate.fragments.global}
     `
   }
 }

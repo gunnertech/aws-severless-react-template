@@ -149,10 +149,8 @@ type Survey {
 	userId: ID!
 	campaignId: ID!
 	surveyTemplateId: ID!
-	phone: String
-	email: String
-	patientIdentifier: String
-	caregiverIdentifier: String
+	recipientContact: String
+	recipientIdentifier: String
 	user: User!
 	campaign: Campaign!
 	surveyTemplate: SurveyTemplate!
@@ -169,8 +167,10 @@ type Response {
 	id: ID!
 	optionId: ID!
 	surveyId: ID!
+	reason: String
 	option: Option!
 	survey: Survey
+	createdAt: String
 }
 
 type ResponseConnection {
@@ -204,6 +204,8 @@ input CreateResponseInput {
 	id: ID
 	optionId: ID!
 	surveyId: ID!
+	reason: String
+	createdAt: String
 }
 
 input CreateSurveyInput {
@@ -211,11 +213,8 @@ input CreateSurveyInput {
 	userId: ID!
 	campaignId: ID!
 	surveyTemplateId: ID!
-	position: Int!
-	phone: String
-	email: String
-	patientIdentifier: String
-	caregiverIdentifier: String
+	recipientContact: String!
+	recipientIdentifier: String
 	createdAt: String
 }
 
@@ -319,6 +318,7 @@ type Query {
 	queryRolesByNameIdIndex(name: String!, first: Int, after: String): RoleConnection
 	queryUsersByOrganizationIdCreatedAtIndex(organizationId: ID!, first: Int, after: String): UserConnection
 	getUser(id: ID!): User
+	getSurvey(id: ID!): Survey
 }
 
 type Subscription {
