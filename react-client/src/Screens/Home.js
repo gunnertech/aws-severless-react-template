@@ -176,7 +176,7 @@ class Home extends React.Component {
                             fetchPolicy="cache-and-network"
                             variables={{organizationId: currentUser.organization.id}}
                           >
-                            { ({loading, error, data}) => loading ? "Loading..." : error ? JSON.stringify(error) : (!data.queryUsersByOrganizationIdCreatedAtIndex || !data.queryUsersByOrganizationIdCreatedAtIndex.items) ? "Something went wrong" :
+                            { ({loading, error, data}) => loading ? "Loading..." : error ? JSON.stringify(error) : (!data.queryUsersByOrganizationIdCreatedAtIndex || !data.queryUsersByOrganizationIdCreatedAtIndex.items) ? "Something went wrong..." :
                               data.queryUsersByOrganizationIdCreatedAtIndex.items.map(user => 
                                 <UserSurveyDetail 
                                   expanded={expanded} 

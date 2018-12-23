@@ -109,6 +109,11 @@ custom:
         field: updateUser
         request: "updateUser-request.vtl"
         response: "updateUser-response.vtl"
+      - dataSource: Responses
+        type: Mutation
+        field: updateResponse
+        request: "updateResponse-request.vtl"
+        response: "updateResponse-response.vtl"
       - dataSource: Campaigns
         type: Mutation
         field: updateCampaign

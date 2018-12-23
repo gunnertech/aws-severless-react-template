@@ -11,33 +11,48 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
+import { compose, graphql } from 'react-apollo';
+
+import moment from 'moment';
+
+import withCurrentUser from '../Hocs/withCurrentUser';
+
+import UpdateResponse from "../api/Mutations/UpdateResponse"
+
 const styles = theme => ({
 
 });
 
 class ResponseList extends React.PureComponent {
-  state = {
-    checked: [0],
-  };
+  
 
-  _handleToggle = value => () => {
-    const { checked } = this.state;
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
-
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-
-    this.setState({
-      checked: newChecked,
-    });
-  }
+  _handleToggle = response => () =>
+    Promise.resolve({
+      reviewerId: this.props.currentUser.id,
+      reviewedAt: (new Date()).toISOString(),
+    })
+      .then(params =>
+        this.props.updateResponse({ 
+          variables: { 
+            ...response,
+            ...params,
+            __typename: "Response"
+          },
+          onError: console.log,
+          optimisticResponse: {
+            __typename: "Mutation",
+            updateResponse: { 
+              ...response,
+              ...params,
+              __typename: "Response"
+            }
+          }
+        })    
+      )
+    
 
   render() {
-    const { open, onClose, fullScreen } = this.props;
+    const { open, onClose, fullScreen, option, surveys } = this.props;
     return (
       <Dialog
         fullScreen={fullScreen}
@@ -45,80 +60,30 @@ class ResponseList extends React.PureComponent {
         onClose={onClose}
         aria-labelledby="responsive-dialog-title"
       >
-        <DialogTitle id="responsive-dialog-title">Unsatisified Responses</DialogTitle>
+        <DialogTitle id="responsive-dialog-title">{option.name}</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Review the responses below and tap them to note it has been handled. 
           </DialogContentText>
           <List style={{flex: 1}}>
-            <ListItem button onClick={this._handleToggle(1)}>
-              <ListItemText 
-                primary="cody@gunnertech.com (cody)" 
-                secondary="Jan 7, 2014: This is the worst experience I've ever head. I will never. Ever. Ever. Ever. Ever. Ever. Ever be using this nurse again. Just so bad!" 
-              />
-              <ListItemSecondaryAction>
-                <Checkbox
-                  checked={this.state.checked.indexOf(1) !== -1}
-                  tabIndex={-1}
-                  disableRipple
-                />
-              </ListItemSecondaryAction>
-            </ListItem>
-            <ListItem button onClick={this._handleToggle(2)}>
-              <ListItemText 
-                primary="+18609404747 (1243221)" 
-                secondary="Jan 7, 2014: Meh" 
-              />
-              <ListItemSecondaryAction>
-                <Checkbox
-                  checked={this.state.checked.indexOf(2) !== -1}
-                  tabIndex={-1}
-                  disableRipple
-                />
-              </ListItemSecondaryAction>
-            </ListItem>
-            
-            <ListItem button onClick={this._handleToggle(3)}>
-              <ListItemText 
-                primary="+18609404747 (1243221)" 
-                secondary="Jan 7, 2014: Meh" 
-              />
-              <ListItemSecondaryAction>
-                <Checkbox
-                  checked={this.state.checked.indexOf(3) !== -1}
-                  tabIndex={-1}
-                  disableRipple
-                />
-              </ListItemSecondaryAction>
-            </ListItem>
-
-            <ListItem button onClick={this._handleToggle(4)}>
-              <ListItemText 
-                primary="+18609404747 (1243221)" 
-                secondary="Jan 7, 2014: Meh" 
-              />
-              <ListItemSecondaryAction>
-                <Checkbox
-                  checked={this.state.checked.indexOf(4) !== -1}
-                  tabIndex={-1}
-                  disableRipple
-                />
-              </ListItemSecondaryAction>
-            </ListItem>
-
-            <ListItem button onClick={this._handleToggle(5)}>
-              <ListItemText 
-                primary="+18609404747 (1243221)" 
-                secondary="Jan 7, 2014: Meh" 
-              />
-              <ListItemSecondaryAction>
-                <Checkbox
-                  checked={this.state.checked.indexOf(5) !== -1}
-                  tabIndex={-1}
-                  disableRipple
-                />
-              </ListItemSecondaryAction>
-            </ListItem>
+            {
+              surveys.filter(survey => !!survey.responses.items[0].reason).map(survey => 
+                <ListItem key={survey.id} button onClick={this._handleToggle(survey.responses.items[0])}>
+                  <ListItemText 
+                    primary={`${survey.recipientContact} (${survey.recipientIdentifier})`} 
+                    secondary={`${moment(survey.responses.items[0].createdAt).format("M-D-YYYY")} - (${survey.responses.items[0].reason})`} 
+                  />
+                  <ListItemSecondaryAction>
+                    <Checkbox
+                      checked={survey.responses.items[0].reviewerId}
+                      tabIndex={-1}
+                      disableRipple
+                      onChange={this._handleToggle(survey.responses.items[0])}
+                    />
+                  </ListItemSecondaryAction>
+                </ListItem>
+              )
+            }
           </List>
         </DialogContent>
       </Dialog>
@@ -126,4 +91,8 @@ class ResponseList extends React.PureComponent {
   }
 }
 
-export default withStyles(styles)(ResponseList)
+export default compose(
+  withCurrentUser(),
+  withStyles(styles),
+  graphql(UpdateResponse, { name: "updateResponse" }),
+)(ResponseList);

@@ -167,10 +167,13 @@ type Response {
 	id: ID!
 	optionId: ID!
 	surveyId: ID!
+	reviewerId: ID
+	reviewer: User
 	reason: String
 	option: Option!
 	survey: Survey
 	createdAt: String
+	reviewedAt: String
 }
 
 type ResponseConnection {
@@ -275,6 +278,12 @@ input UpdateUserInput {
 	active: Boolean
 }
 
+input UpdateResponseInput {
+	id: ID!
+	reviewerId: ID
+	reviewedAt: String
+}
+
 input UpdateCampaignInput {
 	id: ID!
 	active: Boolean
@@ -309,6 +318,7 @@ type Mutation {
 	updateUser(input: UpdateUserInput!): User
 	updateCampaign(input: UpdateCampaignInput!): Campaign
 	updateOrganization(input: UpdateOrganizationInput!): Organization
+	updateResponse(input: UpdateResponseInput!): Response
 }
 
 type Query {

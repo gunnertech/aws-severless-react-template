@@ -76,13 +76,16 @@ class SurveyDetail extends React.PureComponent {
   }
 
   state = {
-    selectedPromptId: null,
+    selectedOption: null,
     netPromoterScoreDelta: 0
   }
 
-  responseCountForOption = (optionId, startDate, endDate, userId, surveys) =>
+  surveysForOption = (optionId, startDate, endDate, userId, surveys) =>
     this.validSurveys(startDate, endDate, userId, surveys)
       .filter(survey => survey.responses.items.find( response => response.optionId === optionId))
+
+  responseCountForOption = (optionId, startDate, endDate, userId, surveys) =>
+    this.surveysForOption(optionId, startDate, endDate, userId, surveys)
       .length
 
   validSurveys = (startDate, endDate, userId, surveys) =>
@@ -129,15 +132,20 @@ class SurveyDetail extends React.PureComponent {
 
   render() {
     const { surveyTemplate, classes, startDate, campaignId, userId, endDate } = this.props;
+    const { selectedOption } = this.state;
     return (
       <Query
         query={ QuerySurveysByCampaignIdCreatedAtIndex }
         fetchPolicy="cache-and-network"
         variables={{campaignId}}
       >
-        { ({loading, error, data}) => loading ? "Loading..." : error ? JSON.stringify(error) : (!data.querySurveysByCampaignIdCreatedAtIndex || !data.querySurveysByCampaignIdCreatedAtIndex.items) ? "Something went wrong" :
+        { ({loading, error, data}) => loading ? "Loading..." : error ? JSON.stringify(error) : (!data.querySurveysByCampaignIdCreatedAtIndex || !data.querySurveysByCampaignIdCreatedAtIndex.items) ? "Something went wrong..." :
           <div>
-            <ResponseList open={!!this.state.selectedPromptId} onClose={() => this.setState({selectedPromptId: null})} />
+            {
+              selectedOption &&
+              <ResponseList option={selectedOption} surveys={this.surveysForOption(selectedOption.id, startDate, endDate, userId, data.querySurveysByCampaignIdCreatedAtIndex.items)} open={!!selectedOption} onClose={() => this.setState({selectedOption: null})} />
+            }
+            
             {
               surveyTemplate.prompts.items.map(prompt =>
                 <div key={`prompt-${prompt.id}`}>
@@ -153,31 +161,31 @@ class SurveyDetail extends React.PureComponent {
                               <div style={{height: this.responseCountForOption(option.id, startDate, endDate, userId, data.querySurveysByCampaignIdCreatedAtIndex.items) * 10, backgroundColor: colors[option.position-1], width: '100%'}}></div>
                             </div>
                             <img
-                              onClick={() => option.position > 3 ? this.setState({selectedPromptId: prompt.id}) : null} 
+                              onClick={() => option.position > 3 ? this.setState({selectedOption: option}) : null} 
                               src={require(`../assets/images/survey/${option.position}.png`)} 
                               style={{width: '100%', height: 'auto', cursor: option.position > 3 ? 'pointer' : 'default'}} 
                               alt={option.name}
                             />
                             <Hidden smUp>
                               <Typography 
-                                onClick={() => option.position > 3 ? this.setState({selectedPromptId: prompt.id}) : null} 
+                                onClick={() => option.position > 3 ? this.setState({selectedOption: option}) : null} 
                                 color={option.position > 3 ? 'secondary' : 'default'} 
                                 style={{cursor: option.position > 3 ? 'pointer' : 'default', fontSize: 8}} 
                                 variant="caption" 
                                 align={`center`}
                               >
-                                {option.name} - {option.value}
+                                {option.name}
                               </Typography>
                             </Hidden>
                             <Hidden xsDown>
                               <Typography 
-                                onClick={() => option.position > 3 ? this.setState({selectedPromptId: prompt.id}) : null} 
+                                onClick={() => option.position > 3 ? this.setState({selectedOption: option}) : null} 
                                 color={option.position > 3 ? 'secondary' : 'default'} 
                                 style={{cursor: option.position > 3 ? 'pointer' : 'default'}} 
                                 variant="caption" 
                                 align={`center`}
                               >
-                                {option.name} - {option.value}
+                                {option.name}
                               </Typography>
                             </Hidden>
                           </div>

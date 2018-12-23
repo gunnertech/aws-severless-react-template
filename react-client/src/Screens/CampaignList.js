@@ -24,8 +24,6 @@ import UpdateCampaign from "../api/Mutations/UpdateCampaign"
 import GetUser from "../api/Queries/GetUser"
 import Campaign from '../api/Fragments/Campaign';
 
-import campaigns from '../Mocks/campaigns';
-
 
 const panelActions = active => props =>
   <Switch
@@ -75,8 +73,6 @@ class CampaignList extends React.Component {
     expanded: null,
     showFormModal: false,
     submittingForm: false,
-    dcampaigns: [],
-    campaigns: campaigns
   }
 
   _handleSubmit = ({selectedCampaignId}) =>

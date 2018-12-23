@@ -13,6 +13,8 @@ const Response = {
         optionId
         reason
         createdAt
+        reviewerId
+        reviewedAt
       }
     `
   }

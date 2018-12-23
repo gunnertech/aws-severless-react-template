@@ -73,7 +73,7 @@ const appSyncLink = createAppSyncLink({
 });
 
 const link = ApolloLink.from([stateLink, appSyncLink]);
-const client = new AWSAppSyncClient({disableOffline: false}, { link });
+const client = new AWSAppSyncClient({disableOffline: true}, { link });
 
 Sentry.init({
   dsn: "https://b9af8b89206f42c48c69bc4274a427ac@sentry.io/1323219" //TODO: SETUP AND CHANGE THIS
