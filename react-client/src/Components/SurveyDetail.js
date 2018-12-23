@@ -2,29 +2,29 @@ import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import Hidden from '@material-ui/core/Hidden';
 import { withStyles } from '@material-ui/core/styles';
+import { Query } from 'react-apollo';
 
-import { ResponsiveContainer, LineChart, Line, Tooltip } from 'recharts';
+import moment from 'moment';
+import { ResponsiveContainer, LineChart, Line, Tooltip, XAxis, YAxis } from 'recharts';
 
-
+import QuerySurveysByCampaignIdCreatedAtIndex from '../api/Queries/QuerySurveysByCampaignIdCreatedAtIndex'
 import ResponseList from '../Components/ResponseList'
 
-const data = [
-  {name: 'Page A', uv: 4000, pv: 2400, amt: 2400},
-  {name: 'Page B', uv: 3000, pv: 1398, amt: 2210},
-  {name: 'Page C', uv: 2000, pv: 9800, amt: 2290},
-  {name: 'Page D', uv: 2780, pv: 3908, amt: 2000},
-  {name: 'Page E', uv: 1890, pv: 4800, amt: 2181},
-  {name: 'Page F', uv: 2390, pv: 3800, amt: 2500},
-  {name: 'Page G', uv: 4490, pv: 4300, amt: 2100},
-];
+//NPS = (Number of Promoters — Number of Detractors) / (Number of Respondents) x 100
+//Promoters = 4-5
+//Passives = 3
+
+const promoters = [5];
+// const passives = [3, 4];
+const detractors = [1, 2];
 
 const SimpleLineChart = props =>
   <ResponsiveContainer>
-    <LineChart data={data}
-          margin={{top: 5, right: 30, left: 20, bottom: 5}}>
-
-      <Tooltip/>
-      <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{r: 8}} />
+    <LineChart data={props.data.map(point => ({name: moment(point.endDate).format("M-D-YYYY"), score: point.score}))} margin={{top: 5, right: 30, left: 20, bottom: 5}}>
+      <Tooltip />
+      <YAxis type="number" domain={['auto', 'auto']} />
+      <XAxis dataKey="name" />
+      <Line name="NPS" type="monotone" dataKey="score" stroke="#8884d8" activeDot={{r: 8}} />
 
     </LineChart>
   </ResponsiveContainer>
@@ -55,7 +55,8 @@ const styles = theme => ({
   },
   prompt: {
     display: 'flex', 
-    flexDirection: 'row'
+    flexDirection: 'row',
+    marginTop: theme.spacing.unit * 2
   },
   option: {
     flex: 1,
@@ -70,74 +71,143 @@ const styles = theme => ({
 });
 
 class SurveyDetail extends React.PureComponent {
-  state = {
-    selectedPromptId: null
+  static defaultProps = {
+    endDate: new Date()
   }
 
+  state = {
+    selectedPromptId: null,
+    netPromoterScoreDelta: 0
+  }
+
+  responseCountForOption = (optionId, startDate, endDate, userId, surveys) =>
+    this.validSurveys(startDate, endDate, userId, surveys)
+      .filter(survey => survey.responses.items.find( response => response.optionId === optionId))
+      .length
+
+  validSurveys = (startDate, endDate, userId, surveys) =>
+    surveys.filter(survey => 
+      survey.createdAt > startDate.toISOString() && 
+      survey.createdAt <= endDate.toISOString() && 
+      (!userId || userId === survey.userId))
+
+  responseCount = (options, startDate, endDate, userId, surveys, range) =>
+    options
+      .filter(option => !range || (option.value >= range[0] && option.value <= range[range.length-1]))
+      .map(option => 
+        this.responseCountForOption(option.id, startDate, endDate, userId, surveys)
+      )
+      .reduce((count, currentValue) => count + currentValue)
+
+  netPromoterScore = (options, startDate, endDate, userId, surveys) =>
+    !!this.responseCount(options, startDate, endDate, userId, surveys) ? (
+      Math.round((
+        (
+          this.responseCount(options, startDate, endDate, userId, surveys, promoters) - this.responseCount(options, startDate, endDate, userId, surveys, detractors)
+        )
+        / this.responseCount(options, startDate, endDate, userId, surveys)
+      ) 
+      * 100)
+    ) : (
+      0
+    )
+  
+  dayDiff = (startDate, endDate) =>
+    moment(endDate).diff(moment(startDate), 'days');
+      
+  netPromoterScoreDelta = (options, startDate, endDate, userId, surveys) => (
+    this.netPromoterScore(options, startDate, endDate, userId, surveys) - 
+    this.netPromoterScore(options, moment(startDate).subtract(this.dayDiff(startDate, endDate), 'days').toDate(), moment(endDate).subtract(this.dayDiff(startDate, endDate), 'days').toDate(), userId, surveys)
+  )
+
+  npsData = (options, startDate, endDate, userId, surveys, dayDiff, count) => 
+    [...Array(count).keys()]
+      .map(i => ({
+        endDate: moment(endDate).startOf('day').subtract(dayDiff * i, "days").toDate(), 
+        score: this.netPromoterScore(options, moment(startDate).startOf('day').subtract(dayDiff * i, "days").toDate(), moment(endDate).startOf('day').subtract(dayDiff * i, "days").toDate(), userId, surveys)
+      }))
+
   render() {
-    const { survey, classes } = this.props;
+    const { surveyTemplate, classes, startDate, campaignId, userId, endDate } = this.props;
     return (
-      <div>
-        <ResponseList open={!!this.state.selectedPromptId} onClose={() => this.setState({selectedPromptId: null})} />
-        {
-          survey.surveyTemplate.prompts.items.map(prompt =>
-            <div className={classes.promptWrapper} key={`prompt-${prompt.id}`}>
-              <Typography variant="subtitle1">{prompt.body}</Typography>
-              <div className={classes.prompt}>
-                {
-                  prompt.options.items.map(option => 
-                    <div className={classes.option} key={`option-${option.id}`}>
-                      <div style={{height: 60 * 10, display: "flex", alignItems: "flex-end"}}>
-                        <div style={{height: option.count * 10, backgroundColor: colors[option.position-1], width: '100%'}}></div>
-                      </div>
-                      <img
-                        onClick={() => option.position > 3 ? this.setState({selectedPromptId: prompt.id}) : null} 
-                        src={require(`../assets/images/survey/${option.position}.png`)} 
-                        style={{width: '100%', height: 'auto', cursor: option.position > 3 ? 'pointer' : 'default'}} 
-                        alt={option.name}
-                      />
-                      <Hidden smUp>
-                        <Typography 
-                          onClick={() => option.position > 3 ? this.setState({selectedPromptId: prompt.id}) : null} 
-                          color={option.position > 3 ? 'secondary' : 'default'} 
-                          style={{cursor: option.position > 3 ? 'pointer' : 'default', fontSize: 8}} 
-                          variant="caption" 
-                          align={`center`}
-                        >
-                          {option.name}
-                        </Typography>
-                      </Hidden>
-                      <Hidden xsDown>
-                        <Typography 
-                          onClick={() => option.position > 3 ? this.setState({selectedPromptId: prompt.id}) : null} 
-                          color={option.position > 3 ? 'secondary' : 'default'} 
-                          style={{cursor: option.position > 3 ? 'pointer' : 'default'}} 
-                          variant="caption" 
-                          align={`center`}
-                        >
-                          {option.name}
-                        </Typography>
-                      </Hidden>
+      <Query
+        query={ QuerySurveysByCampaignIdCreatedAtIndex }
+        fetchPolicy="cache-and-network"
+        variables={{campaignId}}
+      >
+        { ({loading, error, data}) => loading ? "Loading..." : error ? JSON.stringify(error) : (!data.querySurveysByCampaignIdCreatedAtIndex || !data.querySurveysByCampaignIdCreatedAtIndex.items) ? "Something went wrong" :
+          <div>
+            <ResponseList open={!!this.state.selectedPromptId} onClose={() => this.setState({selectedPromptId: null})} />
+            {
+              surveyTemplate.prompts.items.map(prompt =>
+                <div key={`prompt-${prompt.id}`}>
+                  <div className={classes.promptWrapper}>
+                    <Typography variant="subtitle1">
+                      {prompt.body} - {this.responseCount(prompt.options.items, startDate, endDate, userId, data.querySurveysByCampaignIdCreatedAtIndex.items)} responses
+                    </Typography>
+                    <div className={classes.prompt}>
+                      {
+                        prompt.options.items.map(option => 
+                          <div className={classes.option} key={`option-${option.id}`}>
+                            <div style={{height: (Math.max(prompt.options.items.map(option => this.responseCountForOption(option.id, startDate, endDate, userId, data.querySurveysByCampaignIdCreatedAtIndex.items))) || 0) * 10, display: "flex", alignItems: "flex-end"}}>
+                              <div style={{height: this.responseCountForOption(option.id, startDate, endDate, userId, data.querySurveysByCampaignIdCreatedAtIndex.items) * 10, backgroundColor: colors[option.position-1], width: '100%'}}></div>
+                            </div>
+                            <img
+                              onClick={() => option.position > 3 ? this.setState({selectedPromptId: prompt.id}) : null} 
+                              src={require(`../assets/images/survey/${option.position}.png`)} 
+                              style={{width: '100%', height: 'auto', cursor: option.position > 3 ? 'pointer' : 'default'}} 
+                              alt={option.name}
+                            />
+                            <Hidden smUp>
+                              <Typography 
+                                onClick={() => option.position > 3 ? this.setState({selectedPromptId: prompt.id}) : null} 
+                                color={option.position > 3 ? 'secondary' : 'default'} 
+                                style={{cursor: option.position > 3 ? 'pointer' : 'default', fontSize: 8}} 
+                                variant="caption" 
+                                align={`center`}
+                              >
+                                {option.name} - {option.value}
+                              </Typography>
+                            </Hidden>
+                            <Hidden xsDown>
+                              <Typography 
+                                onClick={() => option.position > 3 ? this.setState({selectedPromptId: prompt.id}) : null} 
+                                color={option.position > 3 ? 'secondary' : 'default'} 
+                                style={{cursor: option.position > 3 ? 'pointer' : 'default'}} 
+                                variant="caption" 
+                                align={`center`}
+                              >
+                                {option.name} - {option.value}
+                              </Typography>
+                            </Hidden>
+                          </div>
+                        )
+                      }
                     </div>
-                  )
-                }
-              </div>
-            </div>
-          )
+                  </div>
+                  <div style={{flex: 1, display: "flex", flexDirection: "row"}}>
+                    <div style={{flex: 1}}>
+                      <Typography variant="h5" align={`center`}>NPS: {this.netPromoterScore(prompt.options.items, startDate, endDate, userId, data.querySurveysByCampaignIdCreatedAtIndex.items)}</Typography>
+                      <NpsDelta delta={this.netPromoterScoreDelta(prompt.options.items, startDate, endDate, userId, data.querySurveysByCampaignIdCreatedAtIndex.items)} />
+                    </div>
+                    <div style={{flex: 1}}>
+                      <SimpleLineChart data={this.npsData(prompt.options.items, startDate, endDate, userId, data.querySurveysByCampaignIdCreatedAtIndex.items, this.dayDiff(startDate, endDate), 7).reverse()} />
+                    </div>
+                    
+                  </div>
+                </div>
+              )
+            }
+            
+          </div>
         }
-        <div style={{flex: 1, display: "flex", flexDirection: "row"}}>
-          <div style={{flex: 1}}>
-            <Typography variant="h5" align={`center`}>NPS: 9.5</Typography>
-            <Typography variant="h5" align={`center`} style={{color: "#44e200"}}>+0.5</Typography>
-          </div>
-          <div style={{flex: 1}}>
-            <SimpleLineChart />
-          </div>
-          
-        </div>
-      </div>
+      </Query>
     )
   }
 }
+
+const NpsDelta = ({delta}) => 
+<Typography variant="h5" align={`center`} style={{color: `${delta > 0 ? colors[0] : delta < 0 ? colors[colors.length-1] : 'black'}`}}>Change: {delta > 0 ? '+' : delta < 0 ? '' : ''}{delta}</Typography>
+
 
 export default withStyles(styles)(SurveyDetail)

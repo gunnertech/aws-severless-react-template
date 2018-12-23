@@ -44,6 +44,11 @@ custom:
         field: queryUsersByOrganizationIdCreatedAtIndex
         request: "queryUsersByOrganizationIdCreatedAtIndex-request.vtl"
         response: "queryUsersByOrganizationIdCreatedAtIndex-response.vtl"
+      - dataSource: Surveys
+        type: Query
+        field: querySurveysByCampaignIdCreatedAtIndex
+        request: "querySurveysByCampaignIdCreatedAtIndex-request.vtl"
+        response: "querySurveysByCampaignIdCreatedAtIndex-response.vtl"
       - dataSource: Organizations
         type: User
         field: organization

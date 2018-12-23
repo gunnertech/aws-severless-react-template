@@ -7,8 +7,10 @@ import Typography from '@material-ui/core/Typography';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import { Link } from "react-router-dom";
 import { withRouter } from 'react-router-dom';
+import { Query } from 'react-apollo';
+import moment from 'moment';
 
-
+import QueryUsersByOrganizationIdCreatedAtIndex from "../api/Queries/QueryUsersByOrganizationIdCreatedAtIndex"
 
 import {
   FormControl,
@@ -23,8 +25,6 @@ import UserSurveyDetail from '../Components/UserSurveyDetail';
 import withCurrentUser from '../Hocs/withCurrentUser';
 
 
-
-import campaigns from '../Mocks/campaigns'
 
 const Welcome = props =>
   <div>
@@ -58,31 +58,40 @@ const styles = theme => ({
 class Home extends React.Component {
   state = {
     value: 0,
-    campaigns: campaigns,
+    selectedSurveyTemplate: null,
+    startDate: moment().subtract(7, 'days').toDate(),
+    daysAgo: 7,
     expanded: null,
-    users: [
-      {
-        id: "codyswann",
-        email: 'cody@gunnertech.com',
-      },
-      {
-        id: "sam",
-        email: 'sam.petteway@qualismanagement.com',
-      }
-    ]
   };
 
   _handleTabChange = (event, value) =>
     this.setState({ value });
+
+  _handleSurveyTemplateChange = event =>
+    this.setState({ selectedSurveyTemplateId: event.target.value });
 
   _handleChange = (panel, event, expanded) =>
     this.setState({
       expanded: expanded ? panel : false,
     })
 
+  _handleStartDateChange = event =>
+    this.setState({
+      startDate: moment().subtract(parseInt(event.target.value), 'days').toDate(),
+      daysAgo: event.target.value
+    })
+
+  componentDidMount() {
+    if(!!this.props.currentUser.organization.campaigns.items.length) {
+      this.setState({
+        selectedSurveyTemplate: this.props.currentUser.organization.campaigns.items[0].campaignTemplate.surveyTemplates.items[0]
+      })
+    }
+  }
+
   render() {
     const { classes, currentUser } = this.props;
-    const { value, expanded } = this.state;
+    const { value, expanded, selectedSurveyTemplate, startDate } = this.state;
     return (
       <Container>
         { 
@@ -100,58 +109,88 @@ class Home extends React.Component {
                   scrollButtons="auto"
                 >
                   {
-                    this.state.campaigns.map(campaign =>
-                      <Tab key={campaign.id} label={campaign.campaignTemplate.name} />    
+                    currentUser.organization.campaigns.items.map(campaign =>
+                      <Tab key={campaign.id} label={campaign.campaignTemplate.name.replace(/ Campaign$/, "")} />    
                     )
                   }
                 </Tabs>
               </AppBar>
               {
-                this.state.campaigns.map((campaign, i) =>
+                currentUser.organization.campaigns.items.map((campaign, i) =>
                   value === i && 
                   <TabContainer key={i}>
                     <form className={classes.formRoot} autoComplete="off">
                       <FormControl fullWidth className={classes.formControl}>
                         <InputLabel htmlFor="survey">Select a Survey</InputLabel>
-                        <Select
-                          value={campaign.campaignTemplate.surveyTemplates.items[0].id}
-                          onChange={console.log}
-                          inputProps={{
-                            name: 'survey',
-                            id: 'survey',
-                          }}
-                        >
-                          {
-                            campaign.campaignTemplate.surveyTemplates.items.map(surveyTemplate => 
-                              <MenuItem key={surveyTemplate.id} value={surveyTemplate.id}>{surveyTemplate.name}</MenuItem>
-                            )
-                          }
-                        </Select>
+                        {
+                          selectedSurveyTemplate &&
+                          <Select
+                            value={selectedSurveyTemplate.id}
+                            onChange={this._handleSurveyTemplateChange.bind(this)}
+                            inputProps={{
+                              name: 'survey',
+                              id: 'survey',
+                            }}
+                          >
+                            {
+                              campaign.campaignTemplate.surveyTemplates.items.map(surveyTemplate => 
+                                <MenuItem key={surveyTemplate.id} value={surveyTemplate.id}>{surveyTemplate.name}</MenuItem>
+                              )
+                            }
+                          </Select>
+                        }
                       </FormControl>
                       <FormControl fullWidth className={classes.formControl}>
-                        <InputLabel htmlFor="dateSpan">30 Responses Over the Last:</InputLabel>
+                        <InputLabel htmlFor="dateSpan">Showing Responses From the Last:</InputLabel>
                         <Select
-                          value={7}
-                          onChange={console.log}
+                          value={this.state.daysAgo}
+                          onChange={this._handleStartDateChange.bind(this)}
                           inputProps={{
                             name: 'dateSpan',
                             id: 'dateSpan',
                           }}
                         >
-                          {
-                            [...Array(31).keys()].map(count => 
-                              <MenuItem key={count} value={count}>{count} Days</MenuItem>
-                            )
-                          }
+                          <MenuItem value={7}>7 Days</MenuItem>
+                          <MenuItem value={30}>30 Days</MenuItem>
+                          <MenuItem value={90}>90 Days</MenuItem>
+                          <MenuItem value={180}>180 Days</MenuItem>
+                          <MenuItem value={365}>12 Months</MenuItem>
+                          <MenuItem value={540}>18 Months</MenuItem>
+                          <MenuItem value={730}>24 Months</MenuItem>
                         </Select>
                       </FormControl>
-                      <SurveyDetail survey={{surveyTemplate: campaign.campaignTemplate.surveyTemplates.items[0]}} />
-
-                      <Typography variant="h5">By User</Typography>
+                      
                       {
-                        this.state.users.map(user => 
-                          <UserSurveyDetail expanded={expanded} key={user.id} onChange={this._handleChange.bind(this)} user={user} survey={{surveyTemplate: campaign.campaignTemplate.surveyTemplates.items[0]}} />
-                        )
+                        !!selectedSurveyTemplate && 
+                        <div>
+                          
+                          <SurveyDetail 
+                            surveyTemplate={selectedSurveyTemplate} 
+                            campaignId={campaign.id}
+                            startDate={startDate}
+                          />
+
+                          <Typography variant="h5">By User</Typography>
+                          <Query
+                            query={ QueryUsersByOrganizationIdCreatedAtIndex }
+                            fetchPolicy="cache-and-network"
+                            variables={{organizationId: currentUser.organization.id}}
+                          >
+                            { ({loading, error, data}) => loading ? "Loading..." : error ? JSON.stringify(error) : (!data.queryUsersByOrganizationIdCreatedAtIndex || !data.queryUsersByOrganizationIdCreatedAtIndex.items) ? "Something went wrong" :
+                              data.queryUsersByOrganizationIdCreatedAtIndex.items.map(user => 
+                                <UserSurveyDetail 
+                                  expanded={expanded} 
+                                  key={user.id} 
+                                  onChange={this._handleChange.bind(this)} 
+                                  user={user} 
+                                  surveyTemplate={selectedSurveyTemplate}
+                                  campaignId={campaign.id}
+                                  startDate={startDate}
+                                />
+                              )
+                            }
+                          </Query>
+                        </div>
                       }
                     </form>
                   </TabContainer>

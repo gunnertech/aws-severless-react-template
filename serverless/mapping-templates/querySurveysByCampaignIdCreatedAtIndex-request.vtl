@@ -1,0 +1,18 @@
+{
+  "version": "2017-02-28",
+  "operation": "Query",
+  "query": {
+    "expression": "#campaignId = :campaignId",
+    "expressionNames": {
+      "#campaignId": "campaignId",
+    },
+    "expressionValues": {
+      ":campaignId": $util.dynamodb.toDynamoDBJson($ctx.args.campaignId),
+    },
+  },
+  "index": "campaignId-createdAt-index",
+  "limit": $util.defaultIfNull($ctx.args.first, 20),
+  "nextToken": $util.toJson($util.defaultIfNullOrEmpty($ctx.args.after, null)),
+  "scanIndexForward": false,
+  "select": "ALL_ATTRIBUTES",
+}

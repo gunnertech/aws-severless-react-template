@@ -36,17 +36,22 @@ const styles = theme => ({
 
 class UserSurveyDetail extends React.PureComponent {
   render() {
-    const { expanded, onChange, classes, user, survey } = this.props;
+    const { expanded, onChange, classes, user, surveyTemplate, campaignId, startDate } = this.props;
     return (
       <ExpansionPanel 
         expanded={expanded === `panel${user.id}`} 
         onChange={onChange.bind(null, `panel${user.id}`)}>
       >
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography className={classes.heading}>{user.email}</Typography>
+          <Typography className={classes.heading}>{user.name || user.id}</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.panelDetails}>
-          <SurveyDetail survey={survey} />
+          <SurveyDetail 
+            surveyTemplate={surveyTemplate} 
+            campaignId={campaignId}
+            startDate={startDate}
+            userId={user.id}
+          />
         </ExpansionPanelDetails>
       </ExpansionPanel>
     )
