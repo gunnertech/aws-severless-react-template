@@ -10,7 +10,7 @@ frontend:
         - yarn install
         - yarn build
   artifacts:
-    baseDirectory: /react-client/public
+    baseDirectory: /react-client/build
     discardPaths: true
     files:
       - '**/*'
