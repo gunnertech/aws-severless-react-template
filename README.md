@@ -1,6 +1,3 @@
-1) Add Branch to react-native-client -> can't do this until after the app is approved in app stores
-
-
 # Setup
 ## AWS account
 

@@ -1,11 +1,11 @@
 import { Constants } from 'expo'
 
 //TODO: SET ALL THESE VARIABLES AFTER YOU DEPLOY BACKEND FOR THE FIRST TIME
-// $ aws appsync list-graphql-apis --profile <profile>
-// $ aws pinpoint get-apps --profile <profile>
-// $ aws cognito-idp list-user-pools --profile <profile>
-// $ aws cognito-idp list-user-pool-clients --max-results 2 --user-pool-id <ID> --profile <profile> 
-// $ aws cognito-identity list-identity-pools --max-results 2 --profile <profile>
+// $ aws appsync list-graphql-apis --profile <profile> # aws_appsync_graphqlEndpoint
+// $ aws pinpoint get-apps --profile <profile> # pinpoint_app_id
+// $ aws cognito-idp list-user-pools --max-results 2 --profile <profile> # userPoolId
+// $ aws cognito-idp list-user-pool-clients --max-results 2 --user-pool-id <ID> --profile <profile> # userPoolWebClientId
+// $ aws cognito-identity list-identity-pools --max-results 2 --profile <profile> # identityPoolId
 
 const ENV = {
   dev: {
