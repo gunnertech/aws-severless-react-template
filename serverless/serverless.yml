@@ -1,19 +1,19 @@
 service:
-  name: simplisurvey #TODO: REPLACE THIS
+  name: simplisurvey #TODO: REPLACE THIS <project name>
 
 custom:
   environment: ${file(env.yml):${self:custom.stage}, file(env.yml):dev}
   pinpointAppId: ${self:custom.environment.PINPOINT_APP_ID, 'NONE'}
   stage: ${opt:stage, self:provider.stage}
-  devAccountId: "658832833553" #TODO: REPLACE THIS
-  stagingAccountId: "658832833553" #TODO: REPLACE THIS
-  prodAccountId: "658832833553" #TODO: REPLACE THIS
+  devAccountId: "658832833553" #TODO: REPLACE THIS $ aws organizations list-accounts
+  stagingAccountId: "658832833553" #TODO: REPLACE THIS $ aws organizations list-accounts
+  prodAccountId: "658832833553" #TODO: REPLACE THIS $ aws organizations list-accounts
   accountId: ${self:custom.${self:custom.stage}AccountId}
   region: ${opt:region, self:provider.region}
   uploadBucketName: "com-gunnertech-${self:service.name}-${self:custom.stage}"
   appSync:
     name:  "${self:custom.stage}-api"
-    #TODO: RUN $sls deploy with authenticationType: API_KEY THEN RUN authenticationType: AMAZON_COGNITO_USER_POOLS and userPoolConfig commented in and API_KEY commented out
+    #TODO POST DEPLOY: RUN $sls deploy with authenticationType: API_KEY THEN RUN authenticationType: AMAZON_COGNITO_USER_POOLS and userPoolConfig commented in and API_KEY commented out
     authenticationType: API_KEY
     # authenticationType: AMAZON_COGNITO_USER_POOLS
     # userPoolConfig:
@@ -41,7 +41,7 @@ provider:
   runtime: nodejs8.10
   stage: ${opt:stage, 'dev'}
   region: 'us-east-1'  #TODO: REPLACE THIS (Optional)
-  profile: simplisurveydeveloper #TODO: REPLACE THIS
+  profile: simplisurveydeveloper #TODO: REPLACE THIS <project name>developer
   iamRoleStatements:
     - Effect: Allow
       Action:
