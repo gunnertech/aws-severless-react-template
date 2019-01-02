@@ -8,7 +8,8 @@
     "ios": "expo start --ios",
     "eject": "expo eject",
     "build_ios": "expo build:ios",
-    "build_android": "expo build:android"
+    "build_android": "expo build:android",
+    "updateApi": "rm -rf ./src/api && cp -R ../api/ src/api"
   },
   "dependencies": {
     "apollo-client": "latest",
