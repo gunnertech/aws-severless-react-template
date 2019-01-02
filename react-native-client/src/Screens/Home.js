@@ -6,7 +6,7 @@ import {
   Toolbar
 } from 'react-native-material-ui';
 
-
+import withCurrentUser from '../Hocs/withCurrentUser'
 import { withMuiTheme } from '../Styles/muiTheme';
 import Container from '../Components/Container'
 
@@ -34,11 +34,11 @@ class Home extends React.Component {
   })
 
   render() {
-    const { classes } = this.props;
+    const { classes, currentUser } = this.props;
     return (
       <Container>
         <Card style={{container: classes.cardContainer}}>
-          <View><Text>This requires sign in to see</Text></View>
+          <View><Text>Welcome {currentUser.username}</Text></View>
           <Button onPress={() => this.props.navigation.navigate("SignOut")} style={{container: classes.commentButtonContainer}} primary text="Sign Out" icon="exit-to-app" raised />
         </Card>
       </Container>
@@ -46,4 +46,4 @@ class Home extends React.Component {
   }
 }
 
-export default withMuiTheme(styles)(Home)
+export default withCurrentUser()(withMuiTheme(styles)(Home));
