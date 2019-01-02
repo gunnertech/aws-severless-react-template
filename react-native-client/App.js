@@ -1,7 +1,7 @@
 import React from 'react';
 import { Font } from 'expo';
 import { ThemeContext, getTheme } from 'react-native-material-ui';
-import Amplify, { Auth } from 'aws-amplify';
+import Amplify, { Auth, Hub } from 'aws-amplify';
 import { Rehydrated } from 'aws-appsync-react';
 import { ApolloProvider } from 'react-apollo';
 import AWSAppSyncClient, { createAppSyncLink, createLinkWithCache } from "aws-appsync";
@@ -13,8 +13,17 @@ import AppNavigator from './src/Navigators/App'
 import muiTheme from './src/Styles/muiTheme'
 import ENV from './src/environment'
 
+import { CurrentUserProvider } from './src/Contexts/CurrentUser'
 
 
+// import GetUser from "./src/api/Queries/GetUser"
+// import CreateUser from "./src/api/Mutations/CreateUser"
+// import UpdateUser from "./src/api/Mutations/UpdateUser"
+// import CreateOrganization from "./src/api/Mutations/CreateOrganization"
+// import CreateAssignedRole from "./src/api/Mutations/CreateAssignedRole"
+// import CreateRole from "./src/api/Mutations/CreateRole"
+// import QueryRolesByNameIdIndex from './src/api/Queries/QueryRolesByNameIdIndex'
+// import ListInvitations from './src/api/Queries/ListInvitations'
 
 
 
@@ -87,18 +96,165 @@ const appSyncLink = createAppSyncLink({
 });
 
 const link = ApolloLink.from([stateLink, appSyncLink]);
-const client = new AWSAppSyncClient({disableOffline: false}, { link });
+const client = new AWSAppSyncClient({disableOffline: true}, { link });
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    Hub.listen('auth', this, 'AppListener');
+  }
+
   state = {
     fontLoaded: false,
+    currentUser: undefined
   };
 
-  async componentDidMount() {
-    await Font.loadAsync({
-      'Roboto': require('./assets/fonts/Roboto-Regular.ttf'),
-    });
-    this.setState({ fontLoaded: true });
+  // _findInvitation = user =>
+  //   client.query({
+  //     query: ListInvitations,
+  //     variables: {}
+  //   })
+  //     .then(({data: {listInvitations: {items}}}) => items)
+  //     .then(invitations => invitations.find(invitation => invitation.email === user.email || invitation.phone === user.phone))
+
+  // _createOrganization = user =>
+  //   client.mutate({
+  //     mutation: CreateOrganization,
+  //     onError: e => console.log("_createOrganization", e),
+  //     variables: {
+  //       name: `${user.id}'s Org`,
+  //       ownerId: user.id
+  //     },
+  //   })
+
+  // _addUserToOrganization = (user, organizationId) =>
+  //   client.mutate({
+  //     mutation: UpdateUser,
+  //     onError: e => console.log("_addUserToOrganization", e),
+  //     variables: {
+  //       id: user.id,
+  //       organizationId: organizationId
+  //     },
+  //   })
+  //     .then(({data: {updateUser}}) => Promise.resolve(updateUser))
+
+  // _acceptInvitationForUser = (invitation, user) =>
+  //   this._addRoleToUser(invitation.roleName, user)
+
+  // _addRoleToUser = (roleName, user) =>
+  //   client.query({
+  //     query: QueryRolesByNameIdIndex,
+  //     variables: {name: roleName},
+  //   })
+  //   .then(({data: { queryRolesByNameIdIndex }}) =>
+  //     (
+  //       !queryRolesByNameIdIndex || !queryRolesByNameIdIndex.items.length ? (
+  //         client.mutate({
+  //           mutation: CreateRole,
+  //           onError: e => console.log("CreateRole", e),
+  //           variables: {
+  //             name: roleName,
+  //           },
+  //         })
+  //         .then(({data: {createRole}}) => Promise.resolve(createRole))
+  //       ) : (
+  //         Promise.resolve(queryRolesByNameIdIndex.items[0])
+  //       )
+  //     )
+  //     .then(role =>
+  //       client.mutate({
+  //         mutation: CreateAssignedRole,
+  //         onError: e => console.log("CreateAssignedRole", e),
+  //         variables: {
+  //           roleId: role.id,
+  //           userId: user.id
+  //         },
+  //       })
+  //       .then(() => Promise.resolve(user))
+  //     )
+  //   )
+
+  // _createNewUser = cognitoUser =>
+  //   client.mutate({
+  //     mutation: CreateUser,
+  //     onError: e => console.log("_createNewUser", e),
+  //     variables: {
+  //       id: cognitoUser.username,
+  //       phone: cognitoUser.attributes.phone_number || "",
+  //       email: cognitoUser.attributes.email || "",
+  //       active: true,
+  //     },
+  //   })
+  //   .then(({data: {createUser}}) => Promise.resolve(createUser))
+
+  _handleSignIn = () =>
+    new Promise(resolve => this.setState({currentUser: undefined}, resolve))
+      .then(() =>
+        Auth.currentAuthenticatedUser()
+      )
+      // .then(cognitoUser => Promise.all([
+      //   client.query({
+      //     query: GetUser,
+      //     variables: {id: cognitoUser.username},
+      //   }),
+      //   cognitoUser
+      // ]))
+      // .then(([{data: { getUser }, loading}, cognitoUser]) => !!getUser ? (
+      //     Promise.resolve(getUser)
+      //   ) : (
+      //     this._createNewUser(cognitoUser)
+      //   )
+      // )
+      // .then(user => Promise.all([
+      //   user, this._findInvitation(user)
+      // ]))
+      // .then(([user, invitation]) => ([user, invitation]))
+      // .then(([user, invitation]) => // && !user.organization
+      //   !!invitation ? (
+      //     this._addUserToOrganization(user, invitation.organizationId)
+      //       .then(() => this._acceptInvitationForUser(invitation, user))
+      //   ) : (
+      //     user.organization ? (
+      //       Promise.resolve(user)
+      //     ) : (
+      //       this._createOrganization(user)
+      //         .then(({data: { createOrganization }}) => this._addUserToOrganization(user, createOrganization.id))
+      //     )
+      //   )
+      //   .then(user =>
+      //     !user.assignedRoles.items.length ? (
+      //       this._addRoleToUser("admin", user)
+      //     ) : (
+      //       Promise.resolve(user)
+      //     )
+      //   )
+      // )
+      .then(currentUser => new Promise(resolve => this.setState({currentUser}, resolve.bind(null, currentUser))))
+      .catch(err => console.log("ERROR", err) || this.setState({currentUser: null}));
+
+  
+  onHubCapsule = capsule => {
+    switch (capsule.payload.event) {
+      case 'signOut':
+        this.setState({currentUser: null})
+        break;
+      case 'signIn':
+        this._handleSignIn()
+        break;
+      default:
+        break;
+    }
+  }
+  
+  componentDidMount() {
+    Promise.all([
+      Font.loadAsync({
+        'Roboto': require('./assets/fonts/Roboto-Regular.ttf'),
+      })
+        .then(() => this.setState({ fontLoaded: true }))
+      ,
+      this._handleSignIn()
+    ])
   }
 
   render() {
@@ -108,9 +264,17 @@ class App extends React.Component {
       ) : (
         <ApolloProvider client={client}>
           <Rehydrated>
-            <ThemeContext.Provider value={getTheme(muiTheme)}>
-              <AppNavigator />
-            </ThemeContext.Provider>
+            <CurrentUserProvider currentUser={this.state.currentUser}>
+              <ThemeContext.Provider value={getTheme(muiTheme)}>
+                {
+                  typeof(this.state.currentUser) === 'undefined' ? (
+                    null
+                  ) : (
+                    <AppNavigator />
+                  )
+                }
+              </ThemeContext.Provider>
+            </CurrentUserProvider>
           </Rehydrated>
         </ApolloProvider>
       )
