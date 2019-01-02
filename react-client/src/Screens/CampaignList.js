@@ -253,9 +253,6 @@ class CampaignList extends React.Component {
   }
 }
 
-// export default withCurrentUser()(withMobileDialog()(withStyles(styles)(withActionMenu()(CampaignList))));
-
-
 export default compose(
   withCurrentUser(),
   withMobileDialog(),

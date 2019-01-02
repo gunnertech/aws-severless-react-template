@@ -7,24 +7,43 @@ import Typography from '@material-ui/core/Typography';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import { Link } from "react-router-dom";
 import { withRouter } from 'react-router-dom';
-import { Query } from 'react-apollo';
+import { Query, withApollo } from 'react-apollo';
 import moment from 'moment';
 
+
 import QueryUsersByOrganizationIdCreatedAtIndex from "../api/Queries/QueryUsersByOrganizationIdCreatedAtIndex"
+import QuerySurveysByCampaignIdCreatedAtIndex from '../api/Queries/QuerySurveysByCampaignIdCreatedAtIndex';
 
 import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
+  IconButton
 } from '@material-ui/core';
 
+import ExportIcon from 'mdi-material-ui/Export';
+
 import Container from '../Components/Container'
+import AlertDialog from '../Components/AlertDialog'
 import SurveyDetail from '../Components/SurveyDetail';
 import UserSurveyDetail from '../Components/UserSurveyDetail';
+
+import withActionMenu from '../Hocs/withActionMenu'
 import withCurrentUser from '../Hocs/withCurrentUser';
 
+import campaignToCSV from '../Util/campaignToCSV'
+import emailCSV from '../Util/emailCSV'
 
+const ActionMenu = ({onClick}) => (
+  <IconButton
+    aria-haspopup="true"
+    onClick={onClick}
+    color="inherit"
+  >
+    <ExportIcon />
+  </IconButton>
+)
 
 const Welcome = props =>
   <div>
@@ -57,15 +76,35 @@ const styles = theme => ({
 
 class Home extends React.Component {
   state = {
-    value: 0,
     selectedSurveyTemplate: null,
     startDate: moment().subtract(7, 'days').toDate(),
     daysAgo: 7,
     expanded: null,
+    selectedCampaignId: null,
+    sendingEmail: false
   };
 
+  _handleMenuClick = () =>
+    new Promise(resolve => this.setState({sendingEmail: true}, resolve))
+      .then(() => 
+        this.props.client.query({
+          query: QuerySurveysByCampaignIdCreatedAtIndex,
+          variables: { campaignId: this.state.selectedCampaignId },
+        })
+      )
+      .then(({ data, loading, error }) => data.querySurveysByCampaignIdCreatedAtIndex.items)
+      .then(surveys => campaignToCSV(
+        this.props.currentUser.organization.campaigns.items.find(campaign => campaign.id === this.state.selectedCampaignId),
+        surveys
+      ))
+      .then(csv => emailCSV(this.props.currentUser.email, csv))
+      .then(() => new Promise(resolve => setTimeout(() => 
+        this.setState({sendingEmail: false}, resolve)
+      ,5000)))
+      .catch(console.log)
+
   _handleTabChange = (event, value) =>
-    this.setState({ value });
+    this.setState({ selectedCampaignId: value });
 
   _handleSurveyTemplateChange = event =>
     this.setState({ selectedSurveyTemplateId: event.target.value });
@@ -84,24 +123,27 @@ class Home extends React.Component {
   componentDidMount() {
     if(!!this.props.currentUser.organization.campaigns.items.length) {
       this.setState({
-        selectedSurveyTemplate: this.props.currentUser.organization.campaigns.items[0].campaignTemplate.surveyTemplates.items[0]
+        selectedSurveyTemplate: this.props.currentUser.organization.campaigns.items[0].campaignTemplate.surveyTemplates.items[0],
+        selectedCampaignId: this.props.currentUser.organization.campaigns.items[0].id
       })
     }
+
+    this.props.setActionMenu(<ActionMenu onClick={this._handleMenuClick.bind(this)} />)
   }
 
   render() {
     const { classes, currentUser } = this.props;
-    const { value, expanded, selectedSurveyTemplate, startDate } = this.state;
+    const { selectedCampaignId, expanded, selectedSurveyTemplate, startDate, sendingEmail } = this.state;
     return (
       <Container>
         { 
           !currentUser.organization.campaigns.items.length ? (
             <Welcome currentUser={currentUser} />
-          ) : (
+          ) : !selectedCampaignId ? null : (
             <div>
               <AppBar position="static" color="default">
                 <Tabs
-                  value={value}
+                  value={selectedCampaignId}
                   onChange={this._handleTabChange}
                   indicatorColor="primary"
                   textColor="primary"
@@ -110,14 +152,17 @@ class Home extends React.Component {
                 >
                   {
                     currentUser.organization.campaigns.items.map(campaign =>
-                      <Tab key={campaign.id} label={campaign.campaignTemplate.name.replace(/ Campaign$/, "")} />    
+                      <Tab value={campaign.id} key={campaign.id} label={campaign.campaignTemplate.name.replace(/ Campaign$/, "")} />    
                     )
                   }
                 </Tabs>
               </AppBar>
               {
+                sendingEmail && <AlertDialog open={true} title={`Campaign Exported`} text={`An email will be sent to your inbox when the export is complete`} />
+              }
+              {
                 currentUser.organization.campaigns.items.map((campaign, i) =>
-                  value === i && 
+                  selectedCampaignId === campaign.id && 
                   <TabContainer key={i}>
                     <form className={classes.formRoot} autoComplete="off">
                       <FormControl fullWidth className={classes.formControl}>
@@ -205,4 +250,14 @@ class Home extends React.Component {
 }
 
 
-export default withRouter(withCurrentUser()(withMobileDialog()(withStyles(styles)(Home))));
+export default withRouter(
+  withCurrentUser()(
+    withMobileDialog()(
+      withStyles(styles)(
+        withActionMenu()(
+          withApollo(Home)
+        )
+      )
+    )
+  )
+);

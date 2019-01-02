@@ -15,6 +15,7 @@
     "aws-appsync-react": "latest",
     "aws-sdk": "latest",
     "classnames": "^2.2.6",
+    "convert-array-to-csv": "^1.0.4",
     "dotenv": "^6.0.0",
     "graphql": "^14.0.2",
     "graphql-tag": "^2.10.0",
