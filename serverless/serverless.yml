@@ -200,6 +200,11 @@ resources:
 ####END STANDARD CONDITIONS
 
   Resources:
+    SMSTopic:
+      Type: AWS::SNS::Topic
+      Properties: 
+        DisplayName: "sms${self:custom.stage}"
+        TopicName: "sms${self:custom.stage}"
 ####BEGIN STANDARD RESOURCES
     LambdaExecutionRole:
       Condition: ShouldCreatePinpointApp
