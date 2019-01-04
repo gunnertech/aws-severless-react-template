@@ -316,6 +316,7 @@ resources:
                   Action:
                     - "ses:SendRawEmail"
                     - "ses:SendEmail"
+                    - "sns:Publish"
                     - "cloudformation:CreateStack"
                     - "cloudformation:UpdateStack"
                     - "cloudformation:DeleteStack"
