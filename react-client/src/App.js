@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route } from "react-router-dom";
-import Amplify, { Auth } from 'aws-amplify';
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import Amplify, { Auth, Hub } from 'aws-amplify';
 import { Rehydrated } from 'aws-appsync-react';
 import { ApolloProvider } from 'react-apollo';
 import AWSAppSyncClient, { createAppSyncLink, createLinkWithCache } from "aws-appsync";
@@ -13,10 +13,9 @@ import Home from "./Screens/Home";
 import Splash from "./Screens/Splash";
 import SignOut from "./Screens/SignOut";
 
-// import logo from './logo.svg';
-// import './App.css';
+import { LayoutProvider } from './Contexts/Layout'
 
-import Layout from './Components/Layout'
+import { CurrentUserProvider } from './Contexts/CurrentUser'
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={props => {
@@ -59,7 +58,7 @@ const link = ApolloLink.from([stateLink, appSyncLink]);
 const client = new AWSAppSyncClient({disableOffline: false}, { link });
 
 Sentry.init({
-  dsn: "https://b9af8b89206f42c48c69bc4274a427ac@sentry.io/1323219" //TODO: SETUP AND CHANGE THIS
+  dsn: "https://34bea9df112c4d00bcbfeff777c134f5@sentry.io/1363109" //TODO: SETUP AND CHANGE THIS
 });
 
 Amplify.configure({
@@ -96,17 +95,62 @@ Amplify.configure({
 
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    Hub.listen('auth', this, 'AppListener');
+  }
+
+  state = {
+    currentUser: undefined,
+    showNav: true
+  }
+
+  _handleSignIn = () =>
+    new Promise(resolve => this.setState({currentUser: undefined}, resolve))
+      .then(() =>
+        Auth.currentAuthenticatedUser()
+      )
+      .then(currentUser => new Promise(resolve => this.setState({currentUser}, resolve.bind(null, currentUser))))
+      .catch(err => console.log("ERROR", err) || this.setState({currentUser: null}));
+
+  onHubCapsule = capsule => {
+    switch (capsule.payload.event) {
+      case 'signOut':
+        this.setState({currentUser: null})
+        break;
+      case 'signIn':
+        this._handleSignIn()
+        break;
+      default:
+        break;
+    }
+}
+
+  componentDidMount() {
+    this._handleSignIn();
+  }
+
   render() {
     return (
       <ApolloProvider client={client}>
         <Rehydrated>
-          <Router>
-            <Layout>
-              <Route path='/splash' exact component={Splash} />
-              <Route path='/sign-out' exact component={SignOut} />
-              <PrivateRoute path='/' exact component={Home} />
-            </Layout>
-          </Router>
+          <CurrentUserProvider currentUser={this.state.currentUser}>
+            {
+              typeof(this.state.currentUser) === 'undefined' ? (
+                null
+              ) : (
+                <Router>
+                  <LayoutProvider showNav={true}>
+                    <Switch>
+                      <Route path='/' exact component={Splash} />
+                      <Route path='/sign-out' exact component={SignOut} />
+                      <PrivateRoute path='/home' exact component={Home} />
+                    </Switch>
+                  </LayoutProvider>
+                </Router>
+              )
+            }
+          </CurrentUserProvider>
         </Rehydrated>
       </ApolloProvider>
     );
