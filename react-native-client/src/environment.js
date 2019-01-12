@@ -8,7 +8,8 @@ const ENV = {
     userPoolWebClientId: '28a8ah5645hnqgf81pbh2gkdfb',
     aws_appsync_graphqlEndpoint: 'https://f5mmxafkdngq7k3sfel4bnc6de.appsync-api.us-east-1.amazonaws.com/graphql',
     bucket: 'com-gunnertech-simplisurvey-dev',
-    pinpoint_app_id: "ec37e44c842e4c0a93ce705d441053b2"
+    pinpoint_app_id: "ec37e44c842e4c0a93ce705d441053b2",
+    base_url:"https://simplisurvey.com"
   },
   staging: {
     userPoolId: 'us-east-1_4hXYouKxr',

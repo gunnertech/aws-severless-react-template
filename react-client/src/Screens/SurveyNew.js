@@ -109,7 +109,7 @@ class SurveyNew extends React.PureComponent {
           query={GetSurvey}
           variables={{id: surveyId}}
         >
-        {({loading, error, data}) => 
+        {({loading, error, data}) => console.log(data) ||
           error ? ( console.log(error) ||
             "Something went wrong..."
           ) : loading ? (

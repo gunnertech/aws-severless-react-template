@@ -212,7 +212,12 @@ class App extends React.Component {
       .then(([user, invitation]) => // && !user.organization
         !!invitation ? (
           this._addUserToOrganization(user, invitation.organizationId)
-            .then(() => this._acceptInvitationForUser(invitation, user))
+            .then(user => !user.assignedRoles.items.length ? (
+                this._acceptInvitationForUser(invitation, user)
+              ) : (
+                Promise.resolve(user)  
+              )
+            )
         ) : (
           user.organization ? (
             Promise.resolve(user)

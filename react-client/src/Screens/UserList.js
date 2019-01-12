@@ -84,7 +84,7 @@ class UserList extends React.Component {
     submittingForm: false,
   }
 
-  _sendSms = (to) =>
+  _sendSms = to =>
     Auth.currentCredentials()
       .then(credentials =>
         new SNS({
@@ -93,13 +93,13 @@ class UserList extends React.Component {
           region: "us-east-1"
         })
         .publish({
-          Message: 'Join us!',
-          PhoneNumber: '+18609404747'
+          Message: `You've been invited to join SimpliSurvey. To get started, follow this link to download the app ${process.env.REACT_APP_base_url}/`,
+          PhoneNumber: `+1${to}`
         })
         .promise()
       )
 
-  _sendEmail = (to) =>
+  _sendEmail = to =>
     Auth.currentCredentials()
       .then(credentials =>
         new SES({

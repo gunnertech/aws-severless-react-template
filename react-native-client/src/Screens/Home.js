@@ -15,6 +15,7 @@ import { Dropdown } from 'react-native-material-dropdown';
 import { TextField } from 'react-native-material-textfield';
 import { compose, graphql } from 'react-apollo';
 
+
 import Toast from 'react-native-root-toast';
 
 import CreateSurvey from '../api/Mutations/CreateSurvey';
@@ -22,6 +23,8 @@ import CreateSurvey from '../api/Mutations/CreateSurvey';
 import { withMuiTheme } from '../Styles/muiTheme';
 import withCurrentUser from '../Hocs/withCurrentUser';
 import Container from '../Components/Container'
+
+import ENV from '../environment'
 
 class SubmissionToast extends React.Component {
   constructor(props) {
@@ -104,8 +107,8 @@ class Home extends React.PureComponent {
           region: "us-east-1"
         })
         .publish({
-          Message: `Please take this survey - http://localhost:3000/surveys/${survey.id}`,
-          PhoneNumber: '+18609404747' //TODO
+          Message: `Please take this survey - ${ENV.base_url}/surveys/${survey.id}`,
+          PhoneNumber: `+1${survey.recipientContact}`
         })
         .promise()
       )
@@ -133,14 +136,14 @@ class Home extends React.PureComponent {
               Charset: "UTF-8",
               Data: `<html>
                         <body>
-                          <a href="http://localhost:3000/surveys/${survey.id}">Please take this survey</a>
+                          <a href="${ENV.base_url}/surveys/${survey.id}">Please take this survey</a>
                         </body>
                       </html>`
               },
               Text: {
                 Charset: "UTF-8",
                 Data: `
-                  Please take this survey - http://localhost:3000/surveys/${survey.id}
+                  Please take this survey - ${ENV.base_url}/surveys/${survey.id}
                 `
               }
             },
@@ -168,7 +171,7 @@ class Home extends React.PureComponent {
         campaignId: this.state.selectedCampaignId,
         surveyTemplateId: this.state.selectedSurveyTemplateId,
         recipientContact: this.state.recipientContact,
-        recipientIdentifier: this.state.recipientIdentifier,
+        recipientIdentifier: this.state.recipientIdentifier || undefined,
         createdAt: (new Date()).toISOString()
       })
     )

@@ -14,11 +14,11 @@ const theme = createMuiTheme({
     // }
   },
   palette: {
-    // primary: {
-    //   main: "#222222"
-    // },
+    primary: {
+      main: "#b78df9"
+    },
     secondary: {
-      main: "#44e200"
+      main: "#b78df9"
     }
   }
 });

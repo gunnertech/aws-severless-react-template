@@ -70,7 +70,7 @@ class ResponseList extends React.PureComponent {
               surveys.filter(survey => !!survey.responses.items[0].reason).map(survey => 
                 <ListItem key={survey.id} button onClick={this._handleToggle(survey.responses.items[0])}>
                   <ListItemText 
-                    primary={`${survey.recipientContact} (${survey.recipientIdentifier})`} 
+                    primary={`${survey.recipientContact} (${survey.recipientIdentifier||''})`} 
                     secondary={`${moment(survey.responses.items[0].createdAt).format("M-D-YYYY")} - (${survey.responses.items[0].reason})`} 
                   />
                   <ListItemSecondaryAction>

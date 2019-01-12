@@ -18,13 +18,13 @@ const promoters = [5];
 // const passives = [3, 4];
 const detractors = [1, 2];
 
-const SimpleLineChart = props =>
+const SimpleLineChart = props => console.log(props) ||
   <ResponsiveContainer>
     <LineChart data={props.data.map(point => ({name: moment(point.endDate).format("M-D-YYYY"), score: point.score}))} margin={{top: 5, right: 30, left: 20, bottom: 5}}>
       <Tooltip />
       <YAxis type="number" domain={['auto', 'auto']} />
       <XAxis dataKey="name" />
-      <Line name="NPS" type="monotone" dataKey="score" stroke="#8884d8" activeDot={{r: 8}} />
+      <Line name="NPS" type="monotone" dataKey="score" stroke="#b78df9" activeDot={{r: 8}} />
 
     </LineChart>
   </ResponsiveContainer>
@@ -123,7 +123,7 @@ class SurveyDetail extends React.PureComponent {
     this.netPromoterScore(options, moment(startDate).subtract(this.dayDiff(startDate, endDate), 'days').toDate(), moment(endDate).subtract(this.dayDiff(startDate, endDate), 'days').toDate(), userId, surveys)
   )
 
-  npsData = (options, startDate, endDate, userId, surveys, dayDiff, count) => 
+  npsData = (options, startDate, endDate, userId, surveys, dayDiff, count) => console.log("options", options) ||
     [...Array(count).keys()]
       .map(i => ({
         endDate: moment(endDate).startOf('day').subtract(dayDiff * i, "days").toDate(), 
@@ -155,9 +155,9 @@ class SurveyDetail extends React.PureComponent {
                     </Typography>
                     <div className={classes.prompt}>
                       {
-                        prompt.options.items.map(option => 
+                        prompt.options.items.map(option =>
                           <div className={classes.option} key={`option-${option.id}`}>
-                            <div style={{height: (Math.max(prompt.options.items.map(option => this.responseCountForOption(option.id, startDate, endDate, userId, data.querySurveysByCampaignIdCreatedAtIndex.items))) || 0) * 10, display: "flex", alignItems: "flex-end"}}>
+                            <div style={{height: (Math.max(...prompt.options.items.map(option => this.responseCountForOption(option.id, startDate, endDate, userId, data.querySurveysByCampaignIdCreatedAtIndex.items))) || 0) * 10, display: "flex", alignItems: "flex-end"}}>
                               <div style={{height: this.responseCountForOption(option.id, startDate, endDate, userId, data.querySurveysByCampaignIdCreatedAtIndex.items) * 10, backgroundColor: colors[option.position-1], width: '100%'}}></div>
                             </div>
                             <img

@@ -66,7 +66,10 @@ const appSyncLink = createAppSyncLink({
         const session = await Auth.currentSession();
         return session.getIdToken().getJwtToken();
       } catch(e) {
-        return null;
+        await Auth.signIn('simplisurveyguest', 'Sim2010!!'); //TODO: For new environments, you'll have to create this account
+        const session = await Auth.currentSession();
+        return session.getIdToken().getJwtToken();
+
       }
     },
   },
@@ -190,12 +193,12 @@ class App extends Component {
       onError: e => console.log("_createNewUser", e),
       variables: {
         id: cognitoUser.username,
-        phone: cognitoUser.attributes.phone_number || "",
-        email: cognitoUser.attributes.email || "",
+        phone: cognitoUser.attributes.phone_number || undefined,
+        email: cognitoUser.attributes.email || undefined,
         active: true,
       },
     })
-    .then(({data: {createUser}}) => console.log("got user", createUser) || Promise.resolve(createUser))
+    .then(({data: {createUser}}) => Promise.resolve(createUser))
 
   _handleSignIn = () =>
     new Promise(resolve => this.setState({currentUser: undefined}, resolve))
@@ -220,8 +223,13 @@ class App extends Component {
       ]))
       .then(([user, invitation]) => 
         !!invitation ? (
-          this._addUserToOrganization(user, invitation.organization)
-            .then(() => this._acceptInvitationForUser(invitation, user))
+          this._addUserToOrganization(user, invitation.organizationId)
+            .then(user => !user.assignedRoles.items.length ? (
+                this._acceptInvitationForUser(invitation, user)
+              ) : (
+                Promise.resolve(user)  
+              )
+            )
         ) : (
           user.organization ? (
             Promise.resolve(user)

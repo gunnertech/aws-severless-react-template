@@ -104,10 +104,26 @@ class Home extends React.Component {
       .catch(console.log)
 
   _handleTabChange = (event, value) =>
-    this.setState({ selectedCampaignId: value });
+    new Promise(resolve => this.setState({ selectedCampaignId: value, selectedSurveyTemplateId: null, selectedSurveyTemplate: null }, () => resolve(value)))
+      .then(selectedCampaignId =>
+        Promise.resolve(this.props.currentUser.organization.campaigns.items.find(campaign => campaign.id === selectedCampaignId).campaignTemplate.surveyTemplates.items[0])
+      )
+      .then(selectedSurveyTemplate =>
+        new Promise(resolve => this.setState({ 
+          selectedSurveyTemplate,
+          selectedSurveyTemplateId: selectedSurveyTemplate.id
+        }, resolve))
+      )
+      .then(() => console.log("done"))
 
-  _handleSurveyTemplateChange = event =>
-    this.setState({ selectedSurveyTemplateId: event.target.value });
+  _handleSurveyTemplateChange = event => 
+    new Promise(resolve => this.setState({ selectedSurveyTemplateId: event.target.value }, () => resolve(event.target.value)))
+      .then(selectedSurveyTemplateId => console.log(selectedSurveyTemplateId) ||
+        new Promise(resolve => this.setState({ 
+          selectedSurveyTemplate: this.props.currentUser.organization.campaigns.items.find(campaign => campaign.id === this.state.selectedCampaignId).campaignTemplate.surveyTemplates.items.find(surveyTemplate => surveyTemplate.id === selectedSurveyTemplateId)
+        }, resolve))
+      )
+      .then(() => console.log("done"))
 
   _handleChange = (panel, event, expanded) =>
     this.setState({
@@ -178,7 +194,7 @@ class Home extends React.Component {
                             }}
                           >
                             {
-                              campaign.campaignTemplate.surveyTemplates.items.map(surveyTemplate => 
+                              campaign.campaignTemplate.surveyTemplates.items.map(surveyTemplate =>
                                 <MenuItem key={surveyTemplate.id} value={surveyTemplate.id}>{surveyTemplate.name}</MenuItem>
                               )
                             }

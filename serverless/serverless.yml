@@ -413,6 +413,7 @@ resources:
     OrganizationTable:
       Type: 'AWS::DynamoDB::Table'
       Properties:
+        BillingMode: PAY_PER_REQUEST
         KeySchema:
           -
             AttributeName: id
@@ -421,9 +422,9 @@ resources:
           -
             AttributeName: id
             AttributeType: S
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        # ProvisionedThroughput:
+        #   ReadCapacityUnits: 1
+        #   WriteCapacityUnits: 1
         TableName: "${self:custom.stage}-Organizations"
     
 
@@ -431,6 +432,7 @@ resources:
       DependsOn: UserTable
       Type: 'AWS::DynamoDB::Table'
       Properties:
+        BillingMode: PAY_PER_REQUEST
         KeySchema:
           -
             AttributeName: id
@@ -442,9 +444,9 @@ resources:
           -
             AttributeName: id
             AttributeType: S
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        # ProvisionedThroughput:
+        #   ReadCapacityUnits: 1
+        #   WriteCapacityUnits: 1
         TableName: "${self:custom.stage}-Invitations"
         GlobalSecondaryIndexes: 
           - 
@@ -458,13 +460,14 @@ resources:
                 KeyType: "RANGE"
             Projection: 
               ProjectionType: "ALL"
-            ProvisionedThroughput: 
-              ReadCapacityUnits: "1"
-              WriteCapacityUnits: "1"
+            # ProvisionedThroughput: 
+            #   ReadCapacityUnits: "1"
+            #   WriteCapacityUnits: "1"
     UserTable:
       DependsOn: OrganizationTable
       Type: 'AWS::DynamoDB::Table'
       Properties:
+        BillingMode: PAY_PER_REQUEST
         KeySchema:
           -
             AttributeName: id
@@ -479,9 +482,9 @@ resources:
           -
             AttributeName: organizationId
             AttributeType: S
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        # ProvisionedThroughput:
+        #   ReadCapacityUnits: 1
+        #   WriteCapacityUnits: 1
         TableName: "${self:custom.stage}-Users"
         GlobalSecondaryIndexes: 
           - 
@@ -495,13 +498,14 @@ resources:
                 KeyType: "RANGE"
             Projection: 
               ProjectionType: "ALL"
-            ProvisionedThroughput: 
-              ReadCapacityUnits: "1"
-              WriteCapacityUnits: "1"
+            # ProvisionedThroughput: 
+            #   ReadCapacityUnits: "1"
+            #   WriteCapacityUnits: "1"
     AssignedRoleTable:
       DependsOn: UserTable
       Type: 'AWS::DynamoDB::Table'
       Properties:
+        BillingMode: PAY_PER_REQUEST
         KeySchema:
           -
             AttributeName: id
@@ -516,9 +520,9 @@ resources:
           -
             AttributeName: userId
             AttributeType: S
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        # ProvisionedThroughput:
+        #   ReadCapacityUnits: 1
+        #   WriteCapacityUnits: 1
         TableName: "${self:custom.stage}-AssignedRoles"
         GlobalSecondaryIndexes: 
           - 
@@ -532,9 +536,9 @@ resources:
                 KeyType: "RANGE"
             Projection: 
               ProjectionType: "ALL"
-            ProvisionedThroughput: 
-              ReadCapacityUnits: "1"
-              WriteCapacityUnits: "1"
+            # ProvisionedThroughput: 
+            #   ReadCapacityUnits: "1"
+            #   WriteCapacityUnits: "1"
           - 
             IndexName: "userId-roleId-index"
             KeySchema: 
@@ -546,13 +550,14 @@ resources:
                 KeyType: "RANGE"
             Projection: 
               ProjectionType: "ALL"
-            ProvisionedThroughput: 
-              ReadCapacityUnits: "1"
-              WriteCapacityUnits: "1"
+            # ProvisionedThroughput: 
+            #   ReadCapacityUnits: "1"
+            #   WriteCapacityUnits: "1"
     RoleTable:
       DependsOn: AssignedRoleTable
       Type: 'AWS::DynamoDB::Table'
       Properties:
+        BillingMode: PAY_PER_REQUEST
         KeySchema:
           -
             AttributeName: id
@@ -564,9 +569,9 @@ resources:
           -
             AttributeName: name
             AttributeType: S
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        # ProvisionedThroughput:
+        #   ReadCapacityUnits: 1
+        #   WriteCapacityUnits: 1
         TableName: "${self:custom.stage}-Roles"
         GlobalSecondaryIndexes: 
           - 
@@ -580,13 +585,14 @@ resources:
                 KeyType: "RANGE"
             Projection: 
               ProjectionType: "ALL"
-            ProvisionedThroughput: 
-              ReadCapacityUnits: "1"
-              WriteCapacityUnits: "1"
+            # ProvisionedThroughput: 
+            #   ReadCapacityUnits: "1"
+            #   WriteCapacityUnits: "1"
     CampaignTable:
       DependsOn: RoleTable
       Type: 'AWS::DynamoDB::Table'
       Properties:
+        BillingMode: PAY_PER_REQUEST
         KeySchema:
           -
             AttributeName: id
@@ -604,9 +610,9 @@ resources:
           -
             AttributeName: createdAt
             AttributeType: S
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        # ProvisionedThroughput:
+        #   ReadCapacityUnits: 1
+        #   WriteCapacityUnits: 1
         TableName: "${self:custom.stage}-Campaigns"
         GlobalSecondaryIndexes: 
           - 
@@ -620,9 +626,9 @@ resources:
                 KeyType: "RANGE"
             Projection: 
               ProjectionType: "ALL"
-            ProvisionedThroughput: 
-              ReadCapacityUnits: "1"
-              WriteCapacityUnits: "1"
+            # ProvisionedThroughput: 
+            #   ReadCapacityUnits: "1"
+            #   WriteCapacityUnits: "1"
           - 
             IndexName: "templateId-createdAt-index"
             KeySchema: 
@@ -634,13 +640,14 @@ resources:
                 KeyType: "RANGE"
             Projection: 
               ProjectionType: "ALL"
-            ProvisionedThroughput: 
-              ReadCapacityUnits: "1"
-              WriteCapacityUnits: "1"
+            # ProvisionedThroughput: 
+            #   ReadCapacityUnits: "1"
+            #   WriteCapacityUnits: "1"
     CampaignTemplateTable:
       DependsOn: CampaignTable
       Type: 'AWS::DynamoDB::Table'
       Properties:
+        BillingMode: PAY_PER_REQUEST
         KeySchema:
           -
             AttributeName: id
@@ -649,14 +656,15 @@ resources:
           -
             AttributeName: id
             AttributeType: S
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        # ProvisionedThroughput:
+        #   ReadCapacityUnits: 1
+        #   WriteCapacityUnits: 1
         TableName: "${self:custom.stage}-CampaignTemplates"
     PromptTable:
       DependsOn: CampaignTemplateTable
       Type: 'AWS::DynamoDB::Table'
       Properties:
+        BillingMode: PAY_PER_REQUEST
         KeySchema:
           -
             AttributeName: id
@@ -671,9 +679,9 @@ resources:
           -
             AttributeName: position
             AttributeType: N
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        # ProvisionedThroughput:
+        #   ReadCapacityUnits: 1
+        #   WriteCapacityUnits: 1
         TableName: "${self:custom.stage}-Prompts"
         GlobalSecondaryIndexes: 
           - 
@@ -687,13 +695,14 @@ resources:
                 KeyType: "RANGE"
             Projection: 
               ProjectionType: "ALL"
-            ProvisionedThroughput: 
-              ReadCapacityUnits: "1"
-              WriteCapacityUnits: "1"
+            # ProvisionedThroughput: 
+            #   ReadCapacityUnits: "1"
+            #   WriteCapacityUnits: "1"
     OptionTable:
       DependsOn: PromptTable
       Type: 'AWS::DynamoDB::Table'
       Properties:
+        BillingMode: PAY_PER_REQUEST
         KeySchema:
           -
             AttributeName: id
@@ -708,9 +717,9 @@ resources:
           -
             AttributeName: position
             AttributeType: N
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        # ProvisionedThroughput:
+        #   ReadCapacityUnits: 1
+        #   WriteCapacityUnits: 1
         TableName: "${self:custom.stage}-Options"
         GlobalSecondaryIndexes: 
           - 
@@ -724,13 +733,14 @@ resources:
                 KeyType: "RANGE"
             Projection: 
               ProjectionType: "ALL"
-            ProvisionedThroughput: 
-              ReadCapacityUnits: "1"
-              WriteCapacityUnits: "1"      
+            # ProvisionedThroughput: 
+            #   ReadCapacityUnits: "1"
+            #   WriteCapacityUnits: "1"      
     SurveyTemplateTable:
       DependsOn: OptionTable
       Type: 'AWS::DynamoDB::Table'
       Properties:
+        BillingMode: PAY_PER_REQUEST
         KeySchema:
           -
             AttributeName: id
@@ -745,9 +755,9 @@ resources:
           -
             AttributeName: position
             AttributeType: N
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        # ProvisionedThroughput:
+        #   ReadCapacityUnits: 1
+        #   WriteCapacityUnits: 1
         TableName: "${self:custom.stage}-SurveyTemplates"
         GlobalSecondaryIndexes: 
           - 
@@ -761,13 +771,14 @@ resources:
                 KeyType: "RANGE"
             Projection: 
               ProjectionType: "ALL"
-            ProvisionedThroughput: 
-              ReadCapacityUnits: "1"
-              WriteCapacityUnits: "1"  
+            # ProvisionedThroughput: 
+            #   ReadCapacityUnits: "5"
+            #   WriteCapacityUnits: "1"  
     SurveyTable:
       DependsOn: SurveyTemplateTable
       Type: 'AWS::DynamoDB::Table'
       Properties:
+        BillingMode: PAY_PER_REQUEST
         KeySchema:
           -
             AttributeName: id
@@ -788,9 +799,9 @@ resources:
           -
             AttributeName: createdAt
             AttributeType: S
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        # ProvisionedThroughput:
+        #   ReadCapacityUnits: 1
+        #   WriteCapacityUnits: 1
         TableName: "${self:custom.stage}-Surveys"
         GlobalSecondaryIndexes: 
           - 
@@ -804,9 +815,9 @@ resources:
                 KeyType: "RANGE"
             Projection: 
               ProjectionType: "ALL"
-            ProvisionedThroughput: 
-              ReadCapacityUnits: "1"
-              WriteCapacityUnits: "1" 
+            # ProvisionedThroughput: 
+            #   ReadCapacityUnits: "1"
+            #   WriteCapacityUnits: "1" 
           - 
             IndexName: "campaignId-createdAt-index"
             KeySchema: 
@@ -818,9 +829,9 @@ resources:
                 KeyType: "RANGE"
             Projection: 
               ProjectionType: "ALL"
-            ProvisionedThroughput: 
-              ReadCapacityUnits: "1"
-              WriteCapacityUnits: "1" 
+            # ProvisionedThroughput: 
+            #   ReadCapacityUnits: "5"
+            #   WriteCapacityUnits: "1" 
           - 
             IndexName: "userId-createdAt-index"
             KeySchema: 
@@ -832,13 +843,14 @@ resources:
                 KeyType: "RANGE"
             Projection: 
               ProjectionType: "ALL"
-            ProvisionedThroughput: 
-              ReadCapacityUnits: "1"
-              WriteCapacityUnits: "1"  
+            # ProvisionedThroughput: 
+            #   ReadCapacityUnits: "1"
+            #   WriteCapacityUnits: "1"  
     ResponseTable:
       DependsOn: SurveyTable
       Type: 'AWS::DynamoDB::Table'
       Properties:
+        BillingMode: PAY_PER_REQUEST
         KeySchema:
           -
             AttributeName: id
@@ -853,9 +865,9 @@ resources:
           -
             AttributeName: surveyId
             AttributeType: S
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        # ProvisionedThroughput:
+        #   ReadCapacityUnits: 1
+        #   WriteCapacityUnits: 1
         TableName: "${self:custom.stage}-Responses"
         GlobalSecondaryIndexes: 
           - 
@@ -869,9 +881,9 @@ resources:
                 KeyType: "RANGE"
             Projection: 
               ProjectionType: "ALL"
-            ProvisionedThroughput: 
-              ReadCapacityUnits: "1"
-              WriteCapacityUnits: "1" 
+            # ProvisionedThroughput: 
+            #   ReadCapacityUnits: "1"
+            #   WriteCapacityUnits: "1" 
           - 
             IndexName: "surveyId-id-index"
             KeySchema: 
@@ -883,9 +895,9 @@ resources:
                 KeyType: "RANGE"
             Projection: 
               ProjectionType: "ALL"
-            ProvisionedThroughput: 
-              ReadCapacityUnits: "1"
-              WriteCapacityUnits: "1"                                
+            # ProvisionedThroughput: 
+            #   ReadCapacityUnits: "1"
+            #   WriteCapacityUnits: "1"                                
 
 ####BEGIN STANDARD RESOURCES
     LambdaExecutionRole:

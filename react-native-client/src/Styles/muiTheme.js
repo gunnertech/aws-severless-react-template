@@ -8,7 +8,7 @@ import { spacing, fonts } from './amplifyTheme';
 
 const uiTheme = {
   palette: {
-    primaryColor: COLOR.blue700,
+    primaryColor: "#b78df9", //COLOR.blue700,
     accentColor: COLOR.lightBlue300,
     canvasColor: COLOR.grey100
   },
