@@ -18,7 +18,7 @@ const promoters = [5];
 // const passives = [3, 4];
 const detractors = [1, 2];
 
-const SimpleLineChart = props => console.log(props) ||
+const SimpleLineChart = props =>
   <ResponsiveContainer>
     <LineChart data={props.data.map(point => ({name: moment(point.endDate).format("M-D-YYYY"), score: point.score}))} margin={{top: 5, right: 30, left: 20, bottom: 5}}>
       <Tooltip />
@@ -89,7 +89,7 @@ class SurveyDetail extends React.PureComponent {
       .length
 
   validSurveys = (startDate, endDate, userId, surveys) =>
-    surveys.filter(survey => 
+    surveys.filter(survey =>
       survey.createdAt > startDate.toISOString() && 
       survey.createdAt <= endDate.toISOString() && 
       (!userId || userId === survey.userId))
@@ -123,11 +123,11 @@ class SurveyDetail extends React.PureComponent {
     this.netPromoterScore(options, moment(startDate).subtract(this.dayDiff(startDate, endDate), 'days').toDate(), moment(endDate).subtract(this.dayDiff(startDate, endDate), 'days').toDate(), userId, surveys)
   )
 
-  npsData = (options, startDate, endDate, userId, surveys, dayDiff, count) => console.log("options", options) ||
+  npsData = (options, startDate, endDate, userId, surveys, dayDiff, count) =>
     [...Array(count).keys()]
       .map(i => ({
-        endDate: moment(endDate).startOf('day').subtract(dayDiff * i, "days").toDate(), 
-        score: this.netPromoterScore(options, moment(startDate).startOf('day').subtract(dayDiff * i, "days").toDate(), moment(endDate).startOf('day').subtract(dayDiff * i, "days").toDate(), userId, surveys)
+        endDate: moment(endDate).endOf('day').subtract(dayDiff * i, "days").toDate(), 
+        score: this.netPromoterScore(options, moment(startDate).startOf('day').subtract(dayDiff * i, "days").toDate(), moment(endDate).endOf('day').subtract(dayDiff * i, "days").toDate(), userId, surveys)
       }))
 
   render() {

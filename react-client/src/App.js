@@ -20,6 +20,7 @@ import QueryRolesByNameIdIndex from './api/Queries/QueryRolesByNameIdIndex'
 
 import HomeScreen from "./Screens/Home";
 import SplashScreen from "./Screens/Splash";
+import PrivacyPolicyScreen from "./Screens/PrivacyPolicy";
 import SignOutScreen from "./Screens/SignOut";
 import UserListScreen from "./Screens/UserList";
 import CampaignListScreen from "./Screens/CampaignList";
@@ -285,6 +286,7 @@ class App extends Component {
                         <Route path='/' exact component={SplashScreen} />
                         <Route path='/sign-out' exact component={SignOutScreen} />
                         <Route path='/surveys/:surveyId' exact component={SurveyNewScreen} />
+                        <Route path='/privacy-policy' exact component={PrivacyPolicyScreen} />
                         <PrivateRoute path='/dashboard' exact component={HomeScreen} />
                       </Switch>
                     </LayoutProvider>
