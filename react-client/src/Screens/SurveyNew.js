@@ -118,7 +118,7 @@ class SurveyNew extends React.Component {
             !!data.getSurvey.responses.items.length ? (
               "Thank you for your participation!"
             ) : !data.getSurvey.surveyTemplate ? (
-              window.location.reload() //TODO: Fix this. Weird bug with AppSync/Resolver where surveyTemplate is sometimes null
+              window.location.reload() || "Loading..." //TODO: Fix this. Weird bug with AppSync/Resolver where surveyTemplate is sometimes null
             ) : (
               <Paper elevation={2} className={classes.root}>
                 <div>
