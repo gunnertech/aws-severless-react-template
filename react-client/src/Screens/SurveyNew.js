@@ -39,7 +39,7 @@ const styles = theme => ({
   }
 });
 
-class SurveyNew extends React.PureComponent {
+class SurveyNew extends React.Component {
   state = {
     optionId: null,
     submitting: false,
@@ -117,6 +117,8 @@ class SurveyNew extends React.PureComponent {
           ) : data && data.getSurvey ? (
             !!data.getSurvey.responses.items.length ? (
               "Thank you for your participation!"
+            ) : !data.getSurvey.surveyTemplate ? (
+              window.location.reload() //TODO: Fix this. Weird bug with AppSync/Resolver where surveyTemplate is sometimes null
             ) : (
               <Paper elevation={2} className={classes.root}>
                 <div>
@@ -126,7 +128,7 @@ class SurveyNew extends React.PureComponent {
                 <div className={classes.surveyTemplate}>
                   <div className={classes.surveyTemplateBody}>
                     {
-                      (data.getSurvey.surveyTemplate.prompts||{}).items.map(prompt =>
+                      (((data.getSurvey.surveyTemplate||{}).prompts||{}).items||[]).map(prompt =>
                         <div className={classes.promptWrapper} key={`prompt-${prompt.id}`}>
                           <Typography variant="subtitle1">{prompt.body}</Typography>
                           <div className={classes.prompt}>

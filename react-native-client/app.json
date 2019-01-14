@@ -7,13 +7,13 @@
     "privacy": "public",
     "sdkVersion": "31.0.0",
     "platforms": ["ios", "android"],
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#b78df9"
     },
     "hooks": {
       "postPublish": [
@@ -35,6 +35,8 @@
     ],
     "android": {
       "package": "com.gunnertech.simplisurvey",
+      "playStoreUrl": "https://play.google.com/store/apps/details?id=com.gunnertech.simplisurvey",
+      "versionCode": 2,
       "config": {
         "branch": {
           "apiKey": "key_live_djIahXDtsxh0VrlEgrm9qniouxpWclLZ"
@@ -45,6 +47,7 @@
       "bundleIdentifier": "com.gunnertech.simplisurvey",
       "supportsTablet": true,
       "config": {
+        "usesNonExemptEncryption": false,
         "branch": {
           "apiKey": "key_live_djIahXDtsxh0VrlEgrm9qniouxpWclLZ"
         }
