@@ -137,7 +137,7 @@ class SurveyDetail extends React.PureComponent {
       <Query
         query={ QuerySurveysByCampaignIdCreatedAtIndex }
         fetchPolicy="cache-and-network"
-        variables={{campaignId}}
+        variables={{campaignId, first: 1000}}
       >
         { ({loading, error, data}) => loading ? "Loading..." : error ? JSON.stringify(error) : (!data.querySurveysByCampaignIdCreatedAtIndex || !data.querySurveysByCampaignIdCreatedAtIndex.items) ? "Something went wrong..." :
           <div>
