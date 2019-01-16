@@ -93,7 +93,7 @@ class UserList extends React.Component {
           region: "us-east-1"
         })
         .publish({
-          Message: `You've been invited to join SimpliSurvey. To get started, follow this link to download the app ${process.env.REACT_APP_base_url}/`,
+          Message: `You've been invited to join SimpliSurvey. To get started, Android users click this link https://play.google.com/store/apps/details?id=com.gunnertech.simplisurvey. iOS users, click this link https://testflight.apple.com/join/TjLjqY9z`,
           PhoneNumber: `+1${to}`
         })
         .promise()
