@@ -186,7 +186,7 @@ class CampaignNew extends React.PureComponent {
                   Cancel
                 </Button>
                 <Button variant="contained" disabled={!this.state.selectedCampaignId} onClick={this._handleSubmit.bind(this, {...this.state}, onSubmit)} color="primary" autoFocus>
-                  Add Campaign
+                  Select Campaign
                 </Button>
               </DialogActions>
             )
