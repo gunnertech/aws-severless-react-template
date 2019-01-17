@@ -100,7 +100,7 @@ Amplify.configure({
     region: process.env.REACT_APP_awsRegion
   },
   Analytics: {
-    disabled: true,
+    disabled: false,
     autoSessionRecord: true,
 
     AWSPinpoint: {
