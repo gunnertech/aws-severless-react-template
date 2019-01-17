@@ -43,7 +43,7 @@ const styles = theme => ({
   }
 });
 
-class CampaignNew extends React.PureComponent {
+class CampaignNew extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -186,7 +186,7 @@ class CampaignNew extends React.PureComponent {
                   Cancel
                 </Button>
                 <Button variant="contained" disabled={!this.state.selectedCampaignId} onClick={this._handleSubmit.bind(this, {...this.state}, onSubmit)} color="primary" autoFocus>
-                  Select Campaign
+                  Add to My Campaigns
                 </Button>
               </DialogActions>
             )

@@ -48,7 +48,7 @@ const styles = theme => ({
   },
 });
 
-class OrganizationEdit extends React.PureComponent {
+class OrganizationEdit extends React.Component {
   state = {
     newName: "",
     saved: false

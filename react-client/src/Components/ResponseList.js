@@ -23,7 +23,7 @@ const styles = theme => ({
 
 });
 
-class ResponseList extends React.PureComponent {
+class ResponseList extends React.Component {
   
 
   _handleToggle = response => () =>

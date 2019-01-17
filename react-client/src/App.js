@@ -100,7 +100,7 @@ Amplify.configure({
     region: process.env.REACT_APP_awsRegion
   },
   Analytics: {
-    disabled: false,
+    disabled: true,
     autoSessionRecord: true,
 
     AWSPinpoint: {
@@ -251,6 +251,7 @@ class App extends Component {
       .catch(err => console.log("ERROR", err) || this.setState({currentUser: null}));
 
   onHubCapsule = capsule => {
+    console.log(capsule)
     switch (capsule.payload.event) {
       case 'signOut':
         this.setState({currentUser: null})

@@ -35,7 +35,7 @@ const styles = theme => ({
   }
 });
 
-class CampaignTemplate extends React.PureComponent {
+class CampaignTemplate extends React.Component {
   render() {
     const { campaignTemplate, expanded, onChange, onSelect, classes, PanelActions, campaign } = this.props;
     return (

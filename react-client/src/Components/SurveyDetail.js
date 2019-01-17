@@ -70,7 +70,7 @@ const styles = theme => ({
   }
 });
 
-class SurveyDetail extends React.PureComponent {
+class SurveyDetail extends React.Component {
   static defaultProps = {
     endDate: new Date()
   }

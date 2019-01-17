@@ -34,7 +34,7 @@ const styles = theme => ({
   }
 });
 
-class UserSurveyDetail extends React.PureComponent {
+class UserSurveyDetail extends React.Component {
   render() {
     const { expanded, onChange, classes, user, surveyTemplate, campaignId, startDate } = this.props;
     return (
