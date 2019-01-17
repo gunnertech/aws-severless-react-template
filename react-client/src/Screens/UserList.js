@@ -320,7 +320,7 @@ class UserList extends React.Component {
                   <ListItem key={user.id} divider={i !== entry.data.queryInvitationsByOrganizationIdIdIndex.items.length-1}>
                     <ListItemText
                       primary={`${user.name || user.id} ${user.title ? `(${user.title})` : ''}`} 
-                      secondary={`${user.roleName} - Pending`}
+                      secondary={`${user.roleName} - Invite Pending`}
                     />
                   </ListItem>      
                 )
