@@ -28,17 +28,48 @@ import OrganizationEditScreen from "./Screens/OrganizationEdit";
 import SurveyNewScreen from "./Screens/SurveyNew";
 
 import { CurrentUserProvider } from './Contexts/CurrentUser'
+import { NotificationsProvider } from './Contexts/Notifications'
 import { ActionMenuProvider } from './Contexts/ActionMenu';
 
-
-// import logo from './logo.svg';
-// import './App.css';
 
 import { LayoutProvider } from './Contexts/Layout'
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={props => {
-    const ComponentWithAuth = withAuthenticator(Component, false);
+    const ComponentWithAuth = withAuthenticator(Component, false, [], null, null, {
+      signUpFields: [
+        {
+          label: 'Username',
+          key: 'username',
+          required: true,
+          placeholder: 'Username',
+          displayOrder: 1,
+        },
+        {
+            label: 'Password',
+            key: 'password',
+            required: true,
+            placeholder: 'Password',
+            type: 'password',
+            displayOrder: 2,
+        },
+        {
+            label: 'Email',
+            key: 'email',
+            required: true,
+            placeholder: 'Email',
+            type: 'email',
+            displayOrder: 3
+        },
+        {
+            label: 'Phone Number',
+            key: 'phone_number',
+            placeholder: 'Phone Number',
+            required: false,
+            displayOrder: 4
+        }
+      ]
+    });
     return (
       <ComponentWithAuth {...props} />
     )
@@ -124,7 +155,8 @@ class App extends Component {
 
   state = {
     currentUser: undefined,
-    showNav: true
+    showNav: true,
+    notifications: []
   }
 
   _findInvitation = user =>
@@ -188,6 +220,17 @@ class App extends Component {
       )
     )
 
+  _refreshCurrentUser = () =>
+    client.query({
+      query: GetUser,
+      variables: {id: this.state.currentUser.id},
+    })
+    .then(({data}) => 
+      console.log("data", data) ||
+      new Promise(resolve => this.setState({currentUser: data.getUser}, resolve))
+    )
+
+
   _createNewUser = cognitoUser =>
     client.mutate({
       mutation: CreateUser,
@@ -206,7 +249,7 @@ class App extends Component {
       .then(() =>
         Auth.currentAuthenticatedUser()
       )
-      .then(cognitoUser => console.log(cognitoUser.username) || Promise.all([
+      .then(cognitoUser => Promise.all([
         client.query({
           query: GetUser,
           variables: {id: cognitoUser.username},
@@ -251,10 +294,13 @@ class App extends Component {
       .catch(err => console.log("ERROR", err) || this.setState({currentUser: null}));
 
   onHubCapsule = capsule => {
-    console.log(capsule)
     switch (capsule.payload.event) {
       case 'signOut':
         this.setState({currentUser: null})
+        break;
+      case 'signIn_failure':
+      case 'signUp_failure':
+        this.setState({notifications: [capsule.payload.data]})
         break;
       case 'signIn':
         this._handleSignIn()
@@ -272,30 +318,32 @@ class App extends Component {
     return (
       <ApolloProvider client={client}>
         <Rehydrated>
-          <CurrentUserProvider currentUser={this.state.currentUser}>
-            {
-              typeof(this.state.currentUser) === 'undefined' ? (
-                null
-              ) : (
-                <ActionMenuProvider>
-                  <Router>
-                    <LayoutProvider showNav={true}>
-                      <Switch>
-                        <PrivateRoute path='/users' exact component={UserListScreen} />
-                        <PrivateRoute path='/campaigns' exact component={CampaignListScreen} />
-                        <PrivateRoute path='/settings' exact component={OrganizationEditScreen} />
-                        <Route path='/' exact component={SplashScreen} />
-                        <Route path='/sign-out' exact component={SignOutScreen} />
-                        <Route path='/surveys/:surveyId' exact component={SurveyNewScreen} />
-                        <Route path='/privacy-policy' exact component={PrivacyPolicyScreen} />
-                        <PrivateRoute path='/dashboard' exact component={HomeScreen} />
-                      </Switch>
-                    </LayoutProvider>
-                  </Router>
-                </ActionMenuProvider>
-              )
-            }
-          </CurrentUserProvider>
+          <NotificationsProvider notifications={this.state.notifications}>
+            <CurrentUserProvider currentUser={this.state.currentUser} refreshCurrentUser={this._refreshCurrentUser.bind(this)}>
+              {
+                typeof(this.state.currentUser) === 'undefined' ? (
+                  null
+                ) : (
+                  <ActionMenuProvider>
+                    <Router>
+                      <LayoutProvider showNav={true}>
+                        <Switch>
+                          <PrivateRoute path='/users' exact component={UserListScreen} />
+                          <PrivateRoute path='/campaigns' exact component={CampaignListScreen} />
+                          <PrivateRoute path='/settings' exact component={OrganizationEditScreen} />
+                          <Route path='/' exact component={SplashScreen} />
+                          <Route path='/sign-out' exact component={SignOutScreen} />
+                          <Route path='/surveys/:surveyId' exact component={SurveyNewScreen} />
+                          <Route path='/privacy-policy' exact component={PrivacyPolicyScreen} />
+                          <PrivateRoute path='/dashboard' exact component={HomeScreen} />
+                        </Switch>
+                      </LayoutProvider>
+                    </Router>
+                  </ActionMenuProvider>
+                )
+              }
+            </CurrentUserProvider>
+          </NotificationsProvider>
         </Rehydrated>
       </ApolloProvider>
     );

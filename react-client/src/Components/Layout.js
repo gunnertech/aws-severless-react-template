@@ -6,6 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import MainNavigation from '../Containers/MainNavigation';
 import Container from './Container';
 import withRoot from '../Hocs/withRoot';
+import withNotifications from '../Hocs/withNotifications';
 
 
 
@@ -13,6 +14,12 @@ const styles = theme => ({
   '@global': {
     '.embed-youtube iframe': {
       'max-width': '100%'
+    },
+    'div[class*="Toast__toast"]': {
+      zIndex: "2000"
+    },
+    '.Toast__toast___2YWKB': {
+      zIndex: "2000"
     },
     'a': {
       'color': theme.palette.secondary.main,
@@ -42,6 +49,12 @@ const styles = theme => ({
   },
   [theme.breakpoints.up('md')]: {
     '@global': {
+      '[class*="Toast__toast"]': {
+        zIndex: "2000"
+      },
+      '.Toast__toast___2YWKB': {
+        zIndex: "2000"
+      },
       'body': {
         // 'overflowY': 'hidden'
       }
@@ -54,7 +67,7 @@ const styles = theme => ({
   
 
 
-const Template = ({ navigate, location, data, children, showNav }) => 
+const Template = ({ navigate, location, data, children, showNav, notifications }) => console.log(notifications) ||
   <Container>
     <Helmet
       encodeSpecialCharacters={true}
@@ -72,7 +85,7 @@ const Template = ({ navigate, location, data, children, showNav }) =>
       !showNav ? (
         children  
       ) : (
-        <MainNavigation data={ data }>
+        <MainNavigation notifications={notifications} data={ data }>
           {children}
         </MainNavigation>
       )
@@ -82,7 +95,9 @@ const Template = ({ navigate, location, data, children, showNav }) =>
 
 const TemplateWithStyles = withRoot(
   withRouter(
-    withStyles(styles)(Template)
+    withNotifications()(
+      withStyles(styles)(Template)
+    )
   )
 );
 

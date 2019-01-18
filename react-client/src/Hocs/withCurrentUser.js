@@ -9,7 +9,7 @@ const withCurrentUser = () => {
       render() {
         return (
           <CurrentUserConsumer>
-            {({currentUser, setCurrentUser}) => <WrappedComponent {...this.props} currentUser={currentUser} setCurrentUser={setCurrentUser} />}
+            {({currentUser, refreshCurrentUser}) => <WrappedComponent {...this.props} currentUser={currentUser} refreshCurrentUser={refreshCurrentUser} />}
           </CurrentUserConsumer>
         );
       }

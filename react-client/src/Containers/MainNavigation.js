@@ -25,7 +25,7 @@ import SettingsIcon from 'mdi-material-ui/Settings';
 
 import withCurrentUser from '../Hocs/withCurrentUser';
 import { ActionMenuConsumer } from '../Contexts/ActionMenu';
-
+import NotificationToast from '../Components/NotificationToast'
 
 
 
@@ -285,6 +285,9 @@ class MainNavigation extends React.Component {
         <div className={classes.content}>
           <div className={classes.toolbar} />
           <div className={classes.flex}>
+            {(this.props.notifications||[]).map((notification, i) =>
+              <NotificationToast message={notification.message} key={i} />
+            )}
             {this.props.children}
           </div>
           <footer className={classes.footer}>

@@ -15,7 +15,6 @@ import { Query } from 'react-apollo';
 
 import CampaignTemplate from './CampaignTemplate';
 
-import options from '../Mocks/options'
 import ListCampaignTemplates from '../api/Queries/ListCampaignTemplates';
 
 const PanelActions = props =>
@@ -50,76 +49,6 @@ class CampaignNew extends React.Component {
       selectedCampaignId: null,
       submitting: false,
       expanded: null,
-      campaignTemplates: [
-        {
-          id: "1",
-          name: "Campaign #1",
-          surveyTemplates: {
-            items: [
-              {
-                id: "1",
-                name: "Survey #1",
-                prompts: {
-                  items: [{
-                    id: "1",
-                    body: "Rate your experience",
-                    position: 1,
-                    options: {
-                      items: options
-                    }
-                  }]
-                }
-              }
-            ]
-          }
-        },
-        {
-          id: "2",
-          name: "Campaign #2",
-          surveyTemplates: {
-            items: [
-              {
-                id: "1",
-                name: "Survey #1",
-                prompts: {
-                  items: [{
-                    id: "1",
-                    body: "Rate your experience",
-                    position: 1,
-                    options: {
-                      items: options
-                    }
-                  }]
-                }
-              },
-              {
-                id: "2",
-                name: "Survey #2",
-                prompts: {
-                  items: [
-                    {
-                      id: "1",
-                      body: "How Happy are you?",
-                      position: 1,
-                      options: {
-                        items: options
-                      }
-                    },
-                    {
-                      id: "2",
-                      body: "How Sad are you?",
-                      position: 2,
-                      options: {
-                        items: options
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        }
-      ]
     }
 
     this._initialState = {...this.state}
@@ -164,6 +93,7 @@ class CampaignNew extends React.Component {
               ) : listCampaignTemplates && listCampaignTemplates.items ? (
                 listCampaignTemplates.items.map(campaignTemplate => 
                   <CampaignTemplate 
+                    hideText={true}
                     expanded={expanded} 
                     key={campaignTemplate.id} 
                     campaignTemplate={campaignTemplate}
@@ -186,7 +116,7 @@ class CampaignNew extends React.Component {
                   Cancel
                 </Button>
                 <Button variant="contained" disabled={!this.state.selectedCampaignId} onClick={this._handleSubmit.bind(this, {...this.state}, onSubmit)} color="primary" autoFocus>
-                  Add to My Campaigns
+                  Add
                 </Button>
               </DialogActions>
             )

@@ -118,7 +118,7 @@ class Home extends React.Component {
 
   _handleSurveyTemplateChange = event => 
     new Promise(resolve => this.setState({ selectedSurveyTemplateId: event.target.value }, () => resolve(event.target.value)))
-      .then(selectedSurveyTemplateId => console.log(selectedSurveyTemplateId) ||
+      .then(selectedSurveyTemplateId =>
         new Promise(resolve => this.setState({ 
           selectedSurveyTemplate: this.props.currentUser.organization.campaigns.items.find(campaign => campaign.id === this.state.selectedCampaignId).campaignTemplate.surveyTemplates.items.find(surveyTemplate => surveyTemplate.id === selectedSurveyTemplateId)
         }, resolve))
@@ -137,10 +137,10 @@ class Home extends React.Component {
     })
 
   componentDidMount() {
-    if(!!this.props.currentUser.organization.campaigns.items.length) {
+    if(!!this.props.currentUser.organization.campaigns.items.filter(campaign => campaign.active).length) {
       this.setState({
-        selectedSurveyTemplate: this.props.currentUser.organization.campaigns.items[0].campaignTemplate.surveyTemplates.items[0],
-        selectedCampaignId: this.props.currentUser.organization.campaigns.items[0].id
+        selectedSurveyTemplate: this.props.currentUser.organization.campaigns.items.filter(campaign => campaign.active)[0].campaignTemplate.surveyTemplates.items[0],
+        selectedCampaignId: this.props.currentUser.organization.campaigns.items.filter(campaign => campaign.active)[0].id
       })
     }
 
@@ -150,6 +150,7 @@ class Home extends React.Component {
   render() {
     const { classes, currentUser } = this.props;
     const { selectedCampaignId, expanded, selectedSurveyTemplate, startDate, sendingEmail } = this.state;
+    console.log(currentUser)
     return (
       <Container>
         { 
@@ -163,11 +164,11 @@ class Home extends React.Component {
                   onChange={this._handleTabChange}
                   indicatorColor="primary"
                   textColor="primary"
-                  scrollable
+                  variant="scrollable"
                   scrollButtons="auto"
                 >
                   {
-                    currentUser.organization.campaigns.items.map(campaign =>
+                    currentUser.organization.campaigns.items.filter(campaign => campaign.active).map(campaign =>
                       <Tab value={campaign.id} key={campaign.id} label={campaign.campaignTemplate.name.replace(/ Campaign$/, "")} />    
                     )
                   }
@@ -177,7 +178,7 @@ class Home extends React.Component {
                 sendingEmail && <AlertDialog open={true} title={`Campaign Exported`} text={`An email will be sent to your inbox when the export is complete`} />
               }
               {
-                currentUser.organization.campaigns.items.map((campaign, i) =>
+                currentUser.organization.campaigns.items.filter(campaign => campaign.active).map((campaign, i) =>
                   selectedCampaignId === campaign.id && 
                   <TabContainer key={i}>
                     <form className={classes.formRoot} autoComplete="off">
@@ -202,7 +203,7 @@ class Home extends React.Component {
                         }
                       </FormControl>
                       <FormControl fullWidth className={classes.formControl}>
-                        <InputLabel htmlFor="dateSpan">Showing Responses From the Last:</InputLabel>
+                        <InputLabel htmlFor="dateSpan">Responses From the Last:</InputLabel>
                         <Select
                           value={this.state.daysAgo}
                           onChange={this._handleStartDateChange.bind(this)}

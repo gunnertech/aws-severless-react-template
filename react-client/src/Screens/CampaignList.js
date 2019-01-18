@@ -94,6 +94,7 @@ class CampaignList extends React.Component {
             __typename: "Campaign"
           },
           update: (proxy, { data: { createCampaign } }) =>
+            console.log("HERE", createCampaign) ||
             Promise.resolve(
               proxy.writeQuery({ 
                 query: GetUser, 
@@ -131,6 +132,7 @@ class CampaignList extends React.Component {
           this.setState({submittingForm: false, showFormModal: false}, resolve)
         )
       )
+      .then(() => this.props.refreshCurrentUser())
 
   _handleMenuClick = () =>
     this.setState({showFormModal: true})
@@ -180,6 +182,7 @@ class CampaignList extends React.Component {
           }
         })
       )
+      .then(() => this.props.refreshCurrentUser())
     
 
 
@@ -222,17 +225,30 @@ class CampaignList extends React.Component {
               <Typography variant="h6">Manage Campaigns</Typography>
               {
                 !!entry.data.getUser.organization.campaigns.items.length ? (
-                  entry.data.getUser.organization.campaigns.items.map((campaign, i) =>
-                    <CampaignTemplate 
-                      expanded={expanded} 
-                      key={`${campaign.id}-${i}`} 
-                      campaignTemplate={campaign.campaignTemplate}
-                      campaign={campaign}
-                      onSelect={this._handleSwitch.bind(this)}  
-                      onChange={this._handleChange.bind(this)}
-                      PanelActions={panelActions(campaign.active)}
-                    />      
-                  )
+                  <div>
+                    {
+                      entry.data.getUser.organization.campaigns.items.map((campaign, i) =>
+                        <CampaignTemplate 
+                          expanded={expanded} 
+                          key={`${campaign.id}-${i}`} 
+                          campaignTemplate={campaign.campaignTemplate}
+                          campaign={campaign}
+                          onSelect={this._handleSwitch.bind(this)}  
+                          onChange={this._handleChange.bind(this)}
+                          PanelActions={panelActions(campaign.active)}
+                        />      
+                      )
+                    }
+                    <Button 
+                      variant="contained" 
+                      color="primary" 
+                      className={classes.button}
+                      onClick={this._handleMenuClick.bind(this)}  
+                    >
+                      Add Another Campaign
+                      <FilePlusIcon className={classes.rightIcon} />
+                    </Button>
+                  </div>
                 ) : (
                   <Button 
                     variant="contained" 
