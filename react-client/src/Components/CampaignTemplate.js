@@ -37,7 +37,7 @@ const styles = theme => ({
 
 class CampaignTemplate extends React.Component {
   render() {
-    const { campaignTemplate, expanded, onChange, onSelect, classes, PanelActions, campaign } = this.props;
+    const { campaignTemplate, expanded, onChange, onSelect, classes, PanelActions, campaign, hideText } = this.props;
     return (
       <ExpansionPanel 
         expanded={expanded === `panel${campaignTemplate.id}`} 
@@ -66,7 +66,7 @@ class CampaignTemplate extends React.Component {
                                   alt={option.name}
                                 />
                                 <Hidden smUp>
-                                  <Typography style={{fontSize: 1}} variant="caption" align={`center`}>{option.name}</Typography>
+                                  {!hideText && <Typography style={{fontSize: 8}} variant="caption" align={`center`}>{option.name}</Typography>}
                                 </Hidden>
                                 <Hidden xsDown>
                                   <Typography variant="caption" align={`center`}>{option.name}</Typography>

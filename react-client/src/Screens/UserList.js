@@ -122,14 +122,14 @@ class UserList extends React.Component {
               Charset: "UTF-8",
               Data: `<html>
                         <body>
-                          You've been invited! Go join
+                          You've been invited! Go join ${process.env.REACT_APP_base_url}
                         </body>
                       </html>`
               },
               Text: {
                 Charset: "UTF-8",
                 Data: `
-                  You've been invited! Go join
+                  You've been invited! Go join ${process.env.REACT_APP_base_url}
                 `
               }
             },
