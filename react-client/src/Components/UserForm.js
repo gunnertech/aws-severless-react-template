@@ -97,7 +97,7 @@ class UserForm extends React.Component {
         onClose={onClose}
         aria-labelledby="responsive-dialog-title"
       >
-        <DialogTitle id="responsive-dialog-title">{!!user ? `Edit User: ${user.name || user.id}` : "Add a User"}</DialogTitle>
+        <DialogTitle id="responsive-dialog-title">{!!user ? `Edit User: ${user.name || user.id}` : "Send Invite"}</DialogTitle>
         <DialogContent>
           {
             !user && <DialogContentText>
@@ -182,7 +182,7 @@ class UserForm extends React.Component {
                   </Button>
                   <Button variant="contained" onClick={this._handleSubmit.bind(this, {...this.state}, onSubmit)} color="primary" autoFocus>
                     {
-                      !!this.props.user ? "Update User" : "Add User"
+                      !!this.props.user ? "Save" : "Send"
                     }
                   </Button>
                 </DialogActions>

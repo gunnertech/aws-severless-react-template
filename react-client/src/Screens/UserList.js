@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { withRouter } from 'react-router-dom';
+
 import List from '@material-ui/core/List';
 import { 
   ListItem, 
@@ -157,6 +159,23 @@ class UserList extends React.Component {
       phone: data.user.phone || null,
       email: data.user.email || null
     })
+      .then(params => 
+        params.email ? (
+          this._sendEmail(params.email)
+            .then(() => params)
+            .catch(() => params)
+         ) : (
+           Promise.resolve(params)
+         )
+      )
+      .then(params => 
+        params.phone ? (
+          this._sendSms(params.phone)
+            .then(() => params)
+         ) : (
+           Promise.resolve(params)
+         )
+      )
       .then(params =>
         this.props.createInvitation({ 
           variables: { 
@@ -178,23 +197,7 @@ class UserList extends React.Component {
         })
           .then(() => params)
       )
-      .then(params => 
-        params.email ? (
-          this._sendEmail(params.email)
-            .then(() => params)
-            .catch(() => params)
-         ) : (
-           Promise.resolve(params)
-         )
-      )
-      .then(params => 
-        params.phone ? (
-          this._sendSms(params.phone)
-            .then(() => params)
-         ) : (
-           Promise.resolve(params)
-         )
-      )
+      .catch(() => this.props.history.push("/sign-out"))
 
   _handleSubmit = (user, data) =>
     new Promise(resolve => 
@@ -340,4 +343,4 @@ export default compose(
   withActionMenu(),
   graphql(UpdateUser, { name: "updateUser" }),
   graphql(CreateInvitation, { name: "createInvitation" }),
-)(UserList);
+)(withRouter(UserList));
