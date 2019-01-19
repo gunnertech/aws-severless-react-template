@@ -112,7 +112,8 @@ class App extends React.Component {
   _findInvitation = user =>
     client.query({
       query: ListInvitations,
-      variables: {}
+      variables: {first: 10000},
+      fetchPolicy: "network-only"
     })
       .then(({data: {listInvitations: {items}}}) => items)
       .then(invitations => invitations.find(invitation => invitation.email === user.email || invitation.phone === user.phone))
@@ -145,6 +146,7 @@ class App extends React.Component {
     client.query({
       query: QueryRolesByNameIdIndex,
       variables: {name: roleName},
+      fetchPolicy: "network-only"
     })
     .then(({data: { queryRolesByNameIdIndex }}) =>
       (
@@ -196,6 +198,7 @@ class App extends React.Component {
         client.query({
           query: GetUser,
           variables: {id: cognitoUser.username},
+          fetchPolicy: "network-only"
         }),
         cognitoUser
       ]))

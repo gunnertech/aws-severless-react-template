@@ -221,10 +221,10 @@ class Home extends React.PureComponent {
       this.props.navigation.setParams({valid: isValid})
     }
 
-    if(this.props.currentUser && this.props.currentUser.organization.campaigns.items.length === 1 && !this.state.selectedCampaignTemplateId) {
+    if(this.props.currentUser && this.props.currentUser.organization.campaigns.items.filter(campaign => !!campaign.active).length === 1 && !this.state.selectedCampaignTemplateId) {
       this.setState({
-        selectedCampaignTemplateId: this.props.currentUser.organization.campaigns.items[0].campaignTemplate.id,
-        selectedCampaignId: this.props.currentUser.organization.campaigns.items[0].id
+        selectedCampaignTemplateId: this.props.currentUser.organization.campaigns.items.filter(campaign => !!campaign.active)[0].campaignTemplate.id,
+        selectedCampaignId: this.props.currentUser.organization.campaigns.items.filter(campaign => !!campaign.active)[0].id
       })
     }
   }
@@ -241,7 +241,7 @@ class Home extends React.PureComponent {
           <Text>Fill out the form below to send a survey</Text>
           <Dropdown
             label='Select Campaign'
-            data={currentUser.organization.campaigns.items.map(campaign => ({value: campaign.campaignTemplate.name, id: campaign.campaignTemplate.id, campaign}))}
+            data={currentUser.organization.campaigns.items.filter(campaign => !!campaign.active).map(campaign => ({value: campaign.campaignTemplate.name, id: campaign.campaignTemplate.id, campaign}))}
             onChangeText={(value, index, data) => this.setState({
               selectedCampaignTemplateId: data[index].id,
               selectedCampaignId: data[index].campaign.id
@@ -249,6 +249,7 @@ class Home extends React.PureComponent {
             value={
               !!this.state.selectedCampaignTemplateId ? (
                 currentUser.organization.campaigns.items
+                  .filter(campaign => !!campaign.active)
                   .find(campaign => campaign.campaignTemplate.id === this.state.selectedCampaignTemplateId)
                   .campaignTemplate.name
               ) : (
@@ -262,6 +263,7 @@ class Home extends React.PureComponent {
               label='Select Survey'
               data={
                 currentUser.organization.campaigns.items
+                  .filter(campaign => !!campaign.active)
                   .find(campaign => campaign.campaignTemplate.id === this.state.selectedCampaignTemplateId)
                   .campaignTemplate.surveyTemplates.items.map(surveyTemplate => ({value: surveyTemplate.name, id: surveyTemplate.id}))
               }

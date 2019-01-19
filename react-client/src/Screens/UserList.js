@@ -156,8 +156,8 @@ class UserList extends React.Component {
       roleName: data.user.role || null,
       name: data.user.name || null,
       title: data.user.title || null,
-      phone: data.user.phone || null,
-      email: data.user.email || null
+      phone: data.user.phone || undefined,
+      email: data.user.email || undefined
     })
       .then(params => 
         params.email ? (
@@ -197,7 +197,7 @@ class UserList extends React.Component {
         })
           .then(() => params)
       )
-      .catch(() => this.props.history.push("/sign-out"))
+      .catch(() => this.props.history.push("/sign-out")) //THIS MEANS THE SESSION EXPIRED
 
   _handleSubmit = (user, data) =>
     new Promise(resolve => 

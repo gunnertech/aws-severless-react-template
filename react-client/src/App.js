@@ -191,6 +191,7 @@ class App extends Component {
     client.query({
       query: QueryRolesByNameIdIndex,
       variables: {name: roleName},
+      fetchPolicy: "network-only"
     })
     .then(({data: { queryRolesByNameIdIndex }}) =>
       (
@@ -224,6 +225,7 @@ class App extends Component {
     client.query({
       query: GetUser,
       variables: {id: this.state.currentUser.id},
+      fetchPolicy: "network-only"
     })
     .then(({data}) => 
       console.log("data", data) ||
@@ -253,6 +255,7 @@ class App extends Component {
         client.query({
           query: GetUser,
           variables: {id: cognitoUser.username},
+          fetchPolicy: "network-only"
         }),
         cognitoUser
       ]))
