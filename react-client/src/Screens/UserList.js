@@ -163,7 +163,7 @@ class UserList extends React.Component {
         params.email ? (
           this._sendEmail(params.email)
             .then(() => params)
-            .catch(() => params)
+            .catch(args => console.log(args) || params)
          ) : (
            Promise.resolve(params)
          )
@@ -172,6 +172,7 @@ class UserList extends React.Component {
         params.phone ? (
           this._sendSms(params.phone)
             .then(() => params)
+            .catch(args => console.log(args) || params)
          ) : (
            Promise.resolve(params)
          )
@@ -197,7 +198,7 @@ class UserList extends React.Component {
         })
           .then(() => params)
       )
-      .catch(() => this.props.history.push("/sign-out")) //THIS MEANS THE SESSION EXPIRED
+      .catch(err => console.log(err) || this.props.history.push("/sign-out")) //THIS MEANS THE SESSION EXPIRED
 
   _handleSubmit = (user, data) =>
     new Promise(resolve => 
