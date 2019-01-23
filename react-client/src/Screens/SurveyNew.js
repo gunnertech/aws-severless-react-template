@@ -45,47 +45,59 @@ const styles = theme => ({
 class SurveyNew extends React.Component {
   state = {
     optionId: null,
+    prompts: {
+
+    },
     submitting: false,
     submitted: false
   }
 
-  _handleOptionSelect = (selectedOption, options) =>
+  _handleOptionSelect = (promptId, selectedOption, options) =>
     new Promise(resolve => 
       this.setState({
-        optionId: selectedOption.id,
-        reason: (selectedOption.position >= options.length-1 ? (
-          window.prompt("(Optional) Please explain your response")
-        ) : (
-          ""
-        ))
+        prompts: {
+          ...this.state.prompts,
+          [promptId]: {
+            optionId: selectedOption.id,
+            reason: (selectedOption.position >= options.length-1 ? (
+              window.prompt("(Optional) Please explain your response")
+            ) : (
+              ""
+            ))
+          }
+        }
       }, resolve)
     )
 
   _handleSubmit = () =>
-    (new Promise(resolve => this.setState({submitting: true}, resolve({
-      id: (new Date().getTime()).toString(),
-      optionId: this.state.optionId,
-      reason: !!this.state.reason ? this.state.reason : undefined,
-      surveyId: this.props.match.params.surveyId,
-      createdAt: (new Date()).toISOString()
-    }))))
-      .then(params =>
-        this.props.createResponse({ 
-          variables: { 
-            ...params,
-            __typename: "Response"
-          },
-          onError: console.log,
-          optimisticResponse: {
-            __typename: "Mutation",
-            createResponse: { 
-              ...params,
-              reason: params.reason || null,
-              __typename: "Response"
-            }
-          }
-        })
+    Promise.all(
+      Object.keys(this.state.prompts).map( promptId => 
+        (new Promise(resolve => this.setState({submitting: true}, resolve({
+          id: (new Date().getTime()).toString(),
+          optionId: this.state.prompts[promptId].optionId,
+          reason: !!this.state.prompts[promptId].reason ? this.state.prompts[promptId].reason : undefined,
+          surveyId: this.props.match.params.surveyId,
+          createdAt: (new Date()).toISOString()
+        }))))
+          .then(params =>
+            this.props.createResponse({ 
+              variables: { 
+                ...params,
+                __typename: "Response"
+              },
+              onError: console.log,
+              optimisticResponse: {
+                __typename: "Mutation",
+                createResponse: { 
+                  ...params,
+                  reason: params.reason || null,
+                  __typename: "Response"
+                }
+              }
+            })
+          )    
       )
+    )
       .then(() =>
         new Promise(resolve => this.setState({submitting: false, submitted: true}, resolve))
       )
@@ -101,7 +113,7 @@ class SurveyNew extends React.Component {
 
   render() {
     const { classes, match: { params: { surveyId }} } = this.props;
-    const { submitted, submitting } = this.state;
+    const { submitted, submitting, prompts } = this.state;
     return (
       submitted ? (
         "Thank you for your participation!"
@@ -137,16 +149,16 @@ class SurveyNew extends React.Component {
                           <div className={classes.prompt}>
                             {
                               prompt.options.items.map(option => 
-                                <div className={this.state.optionId === option.id ? `${classes.selectedOption} ${classes.option}` : classes.option} key={`option-${option.id}`}>
+                                <div className={prompts[prompt.id] && prompts[prompt.id].optionId === option.id ? `${classes.selectedOption} ${classes.option}` : classes.option} key={`option-${option.id}`}>
                                   <img
-                                    onClick={this._handleOptionSelect.bind(this, option, prompt.options.items)} 
+                                    onClick={this._handleOptionSelect.bind(this, prompt.id, option, prompt.options.items)} 
                                     src={require(`../assets/images/survey/${option.position}.png`)} 
                                     style={{width: '100%', height: 'auto', cursor: 'pointer'}} 
                                     alt={option.name}
                                   />
                                   <Hidden smUp>
                                     <Typography 
-                                      onClick={this._handleOptionSelect.bind(this, option, prompt.options.items)} 
+                                      onClick={this._handleOptionSelect.bind(this, prompt.id, option, prompt.options.items)} 
                                       color={'secondary'} 
                                       style={{cursor: 'pointer', fontSize: 8}} 
                                       variant="caption" 
@@ -157,7 +169,7 @@ class SurveyNew extends React.Component {
                                   </Hidden>
                                   <Hidden xsDown>
                                     <Typography 
-                                      onClick={this._handleOptionSelect.bind(this, option, prompt.options.items)} 
+                                      onClick={this._handleOptionSelect.bind(this, prompt.id, option, prompt.options.items)} 
                                       color={'secondary'} 
                                       style={{cursor: 'pointer'}} 
                                       variant="caption" 
@@ -177,7 +189,7 @@ class SurveyNew extends React.Component {
                 </div>
                 <p>{data.getSurvey.user.name || data.getSurvey.user.id} sent you this survey.</p>
                 <Divider />
-                <Button disabled={!this.state.optionId} variant="contained" onClick={this._handleSubmit.bind(this)} className={classes.button} color="primary">Submit</Button>
+                <Button disabled={!Object.keys(this.state.prompts).length || Object.keys(this.state.prompts).length !== data.getSurvey.surveyTemplate.prompts.items.length} variant="contained" onClick={this._handleSubmit.bind(this)} className={classes.button} color="primary">Submit</Button>
               </Paper>
             )
           ) : (
