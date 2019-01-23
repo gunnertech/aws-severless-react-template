@@ -27,6 +27,9 @@ const styles = theme => ({
     flex: 1,
     margin: theme.spacing.unit
   },
+  selectedOption: {
+    backgroundColor: theme.palette.secondary.main,
+  },
   surveyTemplateBody: {
     flex: 1
   },
@@ -58,7 +61,7 @@ class SurveyNew extends React.Component {
       }, resolve)
     )
 
-  _handleSubmit = () => console.log("STATE", this.state) ||
+  _handleSubmit = () =>
     (new Promise(resolve => this.setState({submitting: true}, resolve({
       id: (new Date().getTime()).toString(),
       optionId: this.state.optionId,
@@ -66,7 +69,7 @@ class SurveyNew extends React.Component {
       surveyId: this.props.match.params.surveyId,
       createdAt: (new Date()).toISOString()
     }))))
-      .then(params => console.log("PARAMS", params) ||
+      .then(params =>
         this.props.createResponse({ 
           variables: { 
             ...params,
@@ -109,8 +112,8 @@ class SurveyNew extends React.Component {
           query={GetSurvey}
           variables={{id: surveyId}}
         >
-        {({loading, error, data}) => console.log(data) ||
-          error ? ( console.log(error) ||
+        {({loading, error, data, refetch}) =>
+          error ? (
             "Something went wrong..."
           ) : loading ? (
             "Loading..."
@@ -118,7 +121,7 @@ class SurveyNew extends React.Component {
             !!data.getSurvey.responses.items.length ? (
               "Thank you for your participation!"
             ) : !data.getSurvey.surveyTemplate ? (
-              window.location.reload() || "Loading..." //TODO: Fix this. Weird bug with AppSync/Resolver where surveyTemplate is sometimes null
+              refetch().then(() => this.setState({reload: true})) && (console.log("GOT IT") || "Loading...") //TODO: Fix this. Weird bug with AppSync/Resolver where data.getSurvey.surveyTemplate is sometimes null
             ) : (
               <Paper elevation={2} className={classes.root}>
                 <div>
@@ -134,7 +137,7 @@ class SurveyNew extends React.Component {
                           <div className={classes.prompt}>
                             {
                               prompt.options.items.map(option => 
-                                <div className={classes.option} key={`option-${option.id}`}>
+                                <div className={this.state.optionId === option.id ? `${classes.selectedOption} ${classes.option}` : classes.option} key={`option-${option.id}`}>
                                   <img
                                     onClick={this._handleOptionSelect.bind(this, option, prompt.options.items)} 
                                     src={require(`../assets/images/survey/${option.position}.png`)} 
