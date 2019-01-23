@@ -112,7 +112,7 @@ class UserList extends React.Component {
         .sendEmail({
           Destination: { /* required */
             BccAddresses: [
-              'cody@gunnertech.com',
+              'simplisurvey@gunnertech.com',
             ],
             ToAddresses: [
               to
@@ -140,9 +140,9 @@ class UserList extends React.Component {
               Data: 'SimpliSurvey Invitation'
             }
           },
-          Source: 'cody@gunnertech.com', /* required */
+          Source: 'simplisurvey@gunnertech.com', /* required */
           ReplyToAddresses: [
-            'cody@gunnertech.com',
+            'simplisurvey@gunnertech.com',
           ],
         })
         .promise()
