@@ -168,7 +168,7 @@ class App extends Component {
       fetchPolicy: "network-only"
     })
       .then(({data: {listInvitations: {items}}}) => items)
-      .then(invitations => (!!invitation.phone && invitation.phone === user.phone)))
+      .then(invitations => (!!invitation.phone && invitation.phone === user.phone))
 
   _createOrganization = user =>
     client.mutate({
