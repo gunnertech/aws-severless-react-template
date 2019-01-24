@@ -192,10 +192,10 @@ class App extends Component {
       .then(({data: {updateUser}}) => Promise.resolve(updateUser))
 
   _acceptInvitationForUser = (invitation, user) =>
-    this._addRoleToUser(invitation.role, user)
+    this._addRoleToUser(invitation.roleName, user)
       .then(() => Promise.resolve(null))
 
-  _addRoleToUser = (roleName, user) =>
+  _addRoleToUser = (roleName, user) => console.log("ROLENAME", roleName) ||
     client.query({
       query: QueryRolesByNameIdIndex,
       variables: {name: roleName},
