@@ -137,7 +137,7 @@ class Home extends React.Component {
     })
 
   componentDidMount() {
-    if(!!this.props.currentUser.organization.campaigns.items.filter(campaign => campaign.active).length) {
+    if(!!this.props.currentUser && !!this.props.currentUser.organization.campaigns.items.filter(campaign => campaign.active).length) {
       this.setState({
         selectedSurveyTemplate: this.props.currentUser.organization.campaigns.items.filter(campaign => campaign.active)[0].campaignTemplate.surveyTemplates.items[0],
         selectedCampaignId: this.props.currentUser.organization.campaigns.items.filter(campaign => campaign.active)[0].id
@@ -150,8 +150,8 @@ class Home extends React.Component {
   render() {
     const { classes, currentUser } = this.props;
     const { selectedCampaignId, expanded, selectedSurveyTemplate, startDate, sendingEmail } = this.state;
-    console.log(currentUser)
-    return (
+    console.log(currentUser);
+    return !currentUser ? null : (
       <Container>
         { 
           !currentUser.organization.campaigns.items.length ? (

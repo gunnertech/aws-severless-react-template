@@ -17,6 +17,8 @@ import CreateOrganization from "./api/Mutations/CreateOrganization"
 import CreateAssignedRole from "./api/Mutations/CreateAssignedRole"
 import CreateRole from "./api/Mutations/CreateRole"
 import QueryRolesByNameIdIndex from './api/Queries/QueryRolesByNameIdIndex'
+import ListInvitations from './api/Queries/ListInvitations'
+
 
 import HomeScreen from "./Screens/Home";
 import SplashScreen from "./Screens/Splash";
@@ -160,7 +162,13 @@ class App extends Component {
   }
 
   _findInvitation = user =>
-    Promise.resolve(null)
+    client.query({
+      query: ListInvitations,
+      variables: {first: 10000},
+      fetchPolicy: "network-only"
+    })
+      .then(({data: {listInvitations: {items}}}) => items)
+      .then(invitations => (!!invitation.phone && invitation.phone === user.phone)))
 
   _createOrganization = user =>
     client.mutate({
@@ -172,13 +180,13 @@ class App extends Component {
       },
     })
 
-  _addUserToOrganization = (user, organization) =>
+  _addUserToOrganization = (user, organizationId) =>
     client.mutate({
       mutation: UpdateUser,
       onError: e => console.log("_addUserToOrganization", e),
       variables: {
         id: user.id,
-        organizationId: organization.id
+        organizationId: organizationId
       },
     })
       .then(({data: {updateUser}}) => Promise.resolve(updateUser))
@@ -228,7 +236,6 @@ class App extends Component {
       fetchPolicy: "network-only"
     })
     .then(({data}) => 
-      console.log("data", data) ||
       new Promise(resolve => this.setState({currentUser: data.getUser}, resolve))
     )
 
@@ -260,16 +267,17 @@ class App extends Component {
         cognitoUser
       ]))
       .then(([{data: { getUser }, loading}, cognitoUser]) => !!getUser ? (
-          console.log("GOT USER!!!", getUser) || Promise.resolve(getUser)
+          Promise.resolve(getUser)
         ) : (
-          console.log("DONT GOT USER!!!") || this._createNewUser(cognitoUser)
+          this._createNewUser(cognitoUser)
         )
       )
       .then(user => Promise.all([
         user, this._findInvitation(user)
       ]))
-      .then(([user, invitation]) => 
-        !!invitation ? (
+      .then(([user, invitation]) => ([user, invitation]))
+      .then(([user, invitation]) =>
+        !!invitation ? ( 
           this._addUserToOrganization(user, invitation.organizationId)
             .then(user => !user.assignedRoles.items.length ? (
                 this._acceptInvitationForUser(invitation, user)
@@ -282,7 +290,7 @@ class App extends Component {
             Promise.resolve(user)
           ) : (
             this._createOrganization(user)
-              .then(({data: { createOrganization }}) => this._addUserToOrganization(user, createOrganization))
+              .then(({data: { createOrganization }}) => this._addUserToOrganization(user, createOrganization.id))
           )
         )
         .then(user =>
