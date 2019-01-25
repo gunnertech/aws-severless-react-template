@@ -67,19 +67,19 @@ class SurveyNew extends React.Component {
           }
         }
       }, resolve)
-    )
+    ).then(console.log(this.state))
 
   _handleSubmit = () =>
     Promise.all(
-      Object.keys(this.state.prompts).map( promptId => 
+      Object.keys(this.state.prompts).map( (promptId, i) => 
         (new Promise(resolve => this.setState({submitting: true}, resolve({
-          id: (new Date().getTime()).toString(),
+          id: `${(new Date().getTime()).toString()}-${i}`,
           optionId: this.state.prompts[promptId].optionId,
           reason: !!this.state.prompts[promptId].reason ? this.state.prompts[promptId].reason : undefined,
           surveyId: this.props.match.params.surveyId,
           createdAt: (new Date()).toISOString()
         }))))
-          .then(params =>
+          .then(params => console.log("params", params) ||
             this.props.createResponse({ 
               variables: { 
                 ...params,
