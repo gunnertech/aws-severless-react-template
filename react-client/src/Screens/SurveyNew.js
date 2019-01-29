@@ -67,7 +67,7 @@ class SurveyNew extends React.Component {
           }
         }
       }, resolve)
-    ).then(console.log(this.state))
+    )
 
   _handleSubmit = () =>
     Promise.all(

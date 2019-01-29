@@ -98,7 +98,7 @@ class Home extends React.PureComponent {
     submitted: false
   }
 
-  _sendSms = survey =>
+  _sendSms = survey => console.log(`+1${survey.recipientContact}`) ||
     Auth.currentCredentials()
       .then(credentials =>
         new SNS({
@@ -111,6 +111,8 @@ class Home extends React.PureComponent {
           PhoneNumber: `+1${survey.recipientContact}`
         })
         .promise()
+        .then(console.log)
+        .catch(console.log)
       )
 
   _sendEmail = survey =>

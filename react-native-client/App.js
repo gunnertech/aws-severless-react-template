@@ -25,6 +25,8 @@ import CreateRole from "./src/api/Mutations/CreateRole"
 import QueryRolesByNameIdIndex from './src/api/Queries/QueryRolesByNameIdIndex'
 import ListInvitations from './src/api/Queries/ListInvitations'
 
+import normalizePhoneNumber from './src/Util/normalizePhoneNumber'
+
 
 
 // Remove this once Sentry is correctly setup.
@@ -116,7 +118,11 @@ class App extends React.Component {
       fetchPolicy: "network-only"
     })
       .then(({data: {listInvitations: {items}}}) => items)
-      .then(invitations => console.log("invitations", invitations) || invitations.find(invitation => (!!invitation.email && (invitation.email||"").toLowerCase() === (user.email||"").toLowerCase()) || (!!invitation.phone && invitation.phone === user.phone)))
+      .then(invitations => invitations.find(
+        invitation => 
+          (!!invitation.email && (invitation.email||"").toLowerCase() === (user.email||"").toLowerCase()) || 
+          (!!invitation.phone && normalizePhoneNumber(invitation.phone||"") === normalizePhoneNumber(user.phone||"")))
+      )
 
   _createOrganization = user =>
     client.mutate({

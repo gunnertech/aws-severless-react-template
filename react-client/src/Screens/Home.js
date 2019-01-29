@@ -114,7 +114,6 @@ class Home extends React.Component {
           selectedSurveyTemplateId: selectedSurveyTemplate.id
         }, resolve))
       )
-      .then(() => console.log("done"))
 
   _handleSurveyTemplateChange = event => 
     new Promise(resolve => this.setState({ selectedSurveyTemplateId: event.target.value }, () => resolve(event.target.value)))
@@ -150,7 +149,6 @@ class Home extends React.Component {
   render() {
     const { classes, currentUser } = this.props;
     const { selectedCampaignId, expanded, selectedSurveyTemplate, startDate, sendingEmail } = this.state;
-    console.log(currentUser);
     return !currentUser ? null : (
       <Container>
         { 

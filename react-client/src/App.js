@@ -32,9 +32,9 @@ import SurveyNewScreen from "./Screens/SurveyNew";
 import { CurrentUserProvider } from './Contexts/CurrentUser'
 import { NotificationsProvider } from './Contexts/Notifications'
 import { ActionMenuProvider } from './Contexts/ActionMenu';
-
-
 import { LayoutProvider } from './Contexts/Layout'
+
+import normalizePhoneNumber from './Util/normalizePhoneNumber'
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={props => {
@@ -168,7 +168,11 @@ class App extends Component {
       fetchPolicy: "network-only"
     })
       .then(({data: {listInvitations: {items}}}) => items)
-      .then(invitations => console.log("invitations", invitations) || invitations.find(invitation => (!!invitation.email && (invitation.email||"").toLowerCase() === (user.email||"").toLowerCase()) || (!!invitation.phone && invitation.phone === user.phone)))
+      .then(invitations => invitations.find(
+        invitation => 
+          (!!invitation.email && (invitation.email||"").toLowerCase() === (user.email||"").toLowerCase()) || 
+          (!!invitation.phone && normalizePhoneNumber(invitation.phone||"") === normalizePhoneNumber(user.phone||"")))
+      )
 
   _createOrganization = user =>
     client.mutate({
@@ -193,9 +197,8 @@ class App extends Component {
 
   _acceptInvitationForUser = (invitation, user) =>
     this._addRoleToUser(invitation.roleName, user)
-      .then(() => Promise.resolve(null))
 
-  _addRoleToUser = (roleName, user) => console.log("ROLENAME", roleName) ||
+  _addRoleToUser = (roleName, user) =>
     client.query({
       query: QueryRolesByNameIdIndex,
       variables: {name: roleName},
