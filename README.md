@@ -21,9 +21,13 @@ $ git clone --single-branch -b template https://git-codecommit.us-east-1.amazona
 $ code <project-name>/serverless
 1) Global search for TODO and do the pre-deploy ones
 $ yarn
-$ sls deploy
+$ sls deploy -s development
+$ sls deploy -s staging
+$ sls deploy -s production
 2) Global search for TODO and do the post-deploy ones
-$ sls deploy
+$ sls deploy -s development
+$ sls deploy -s staging
+$ sls deploy -s production
 
 
 ## React Native Client:https://github.com/react-community/create-react-native-app

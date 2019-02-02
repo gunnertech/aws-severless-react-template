@@ -1,19 +1,19 @@
 service:
-  name: simplisurvey #TODO: REPLACE THIS <project name>
+  name: "<project name>" #PRE DEPLOY TODO: REPLACE THIS
 
 custom:
   environment: ${file(env.yml):${self:custom.stage}, file(env.yml):dev}
   pinpointAppId: ${self:custom.environment.PINPOINT_APP_ID, 'NONE'}
   stage: ${opt:stage, self:provider.stage}
-  devAccountId: "658832833553" #TODO: REPLACE THIS $ aws organizations list-accounts
-  stagingAccountId: "658832833553" #TODO: REPLACE THIS $ aws organizations list-accounts
-  prodAccountId: "658832833553" #TODO: REPLACE THIS $ aws organizations list-accounts
+  developmentAccountId: "658832833553" #PRE DEPLOY TODO: REPLACE THIS $ aws organizations list-accounts
+  stagingAccountId: "658832833553" #PRE DEPLOY TODO: REPLACE THIS $ aws organizations list-accounts
+  productionAccountId: "658832833553" #PRE DEPLOY TODO: REPLACE THIS $ aws organizations list-accounts
   accountId: ${self:custom.${self:custom.stage}AccountId}
   region: ${opt:region, self:provider.region}
   uploadBucketName: "com-gunnertech-${self:service.name}-${self:custom.stage}"
   appSync:
     name:  "${self:custom.stage}-api"
-    #TODO POST DEPLOY: RUN $sls deploy with authenticationType: API_KEY THEN RUN authenticationType: AMAZON_COGNITO_USER_POOLS and userPoolConfig commented in and API_KEY commented out
+    #POST DEPLOY TODO: RUN $sls deploy with authenticationType: API_KEY THEN RUN authenticationType: AMAZON_COGNITO_USER_POOLS and userPoolConfig commented in and API_KEY commented out
     authenticationType: API_KEY
     # authenticationType: AMAZON_COGNITO_USER_POOLS
     # userPoolConfig:
@@ -39,9 +39,9 @@ plugins:
 provider:
   name: aws
   runtime: nodejs8.10
-  stage: ${opt:stage, 'dev'}
-  region: 'us-east-1'  #TODO: REPLACE THIS (Optional)
-  profile: simplisurveydeveloper #TODO: REPLACE THIS <project name>developer
+  stage: ${opt:stage, 'development'}
+  region: 'us-east-1'  #PRE DEPLOY TODO: REPLACE THIS (Optional)
+  profile: "<project name>-${opt:stage, 'development'}developer" #PRE DEPLOY TODO: REPLACE THIS
   iamRoleStatements:
     - Effect: Allow
       Action:
