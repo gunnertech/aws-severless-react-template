@@ -14,8 +14,9 @@ import Splash from "./Screens/Splash";
 import SignOut from "./Screens/SignOut";
 
 import { LayoutProvider } from './Contexts/Layout'
-
 import { CurrentUserProvider } from './Contexts/CurrentUser'
+import { ActionMenuProvider } from './Contexts/ActionMenu';
+import { NotificationsProvider } from './Contexts/Notifications'
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={props => {
@@ -134,23 +135,27 @@ class App extends Component {
     return (
       <ApolloProvider client={client}>
         <Rehydrated>
-          <CurrentUserProvider currentUser={this.state.currentUser}>
-            {
-              typeof(this.state.currentUser) === 'undefined' ? (
-                null
-              ) : (
-                <Router>
-                  <LayoutProvider showNav={true}>
-                    <Switch>
-                      <Route path='/' exact component={Splash} />
-                      <Route path='/sign-out' exact component={SignOut} />
-                      <PrivateRoute path='/home' exact component={Home} />
-                    </Switch>
-                  </LayoutProvider>
-                </Router>
-              )
-            }
-          </CurrentUserProvider>
+          <ActionMenuProvider>
+            <NotificationsProvider notifications={this.state.notifications}>
+              <CurrentUserProvider currentUser={this.state.currentUser}>
+                {
+                  typeof(this.state.currentUser) === 'undefined' ? (
+                    null
+                  ) : (
+                    <Router>
+                      <LayoutProvider showNav={true}>
+                        <Switch>
+                          <Route path='/' exact component={Splash} />
+                          <Route path='/sign-out' exact component={SignOut} />
+                          <PrivateRoute path='/home' exact component={Home} />
+                        </Switch>
+                      </LayoutProvider>
+                    </Router>
+                  )
+                }
+              </CurrentUserProvider>
+            </NotificationsProvider>
+          </ActionMenuProvider>
         </Rehydrated>
       </ApolloProvider>
     );
