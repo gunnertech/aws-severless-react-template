@@ -2,9 +2,9 @@
 ## AWS account
 
 $ cd ~/workspace/aws
-$ ./organization add -n <project-name>-development -e <project-name>-development@gunnertech.com -u <your root username> -g OrganizationAdministrators
-$ ./organization add -n <project-name>-staging -e <project-name>-staging@gunnertech.com -u <your root username> -g OrganizationAdministrators
-$ ./organization add -n <project-name>-production -e <project-name>-production@gunnertech.com -u <your root username> -g OrganizationAdministrators
+$ ./organization add -n <project-name>-development -e <project-name>-development@gunnertech.com -u <your root username> -g <groupname>
+$ ./organization add -n <project-name>-staging -e <project-name>-staging@gunnertech.com -u <your root username> -g <groupname>
+$ ./organization add -n <project-name>-production -e <project-name>-production@gunnertech.com -u <your root username> -g <groupname>
 
 # add helper to ~/.gitconfig (if you haven't before - you'll also need access to the simplisurveydeveloper profile)
 [credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/simplisurvey/"]
