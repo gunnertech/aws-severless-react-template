@@ -6,13 +6,19 @@ import { withStyles } from '@material-ui/core/styles';
 import MainNavigation from '../Containers/MainNavigation';
 import Container from './Container';
 import withRoot from '../Hocs/withRoot';
-
+import withNotifications from '../Hocs/withNotifications';
 
 
 const styles = theme => ({
   '@global': {
     '.embed-youtube iframe': {
       'max-width': '100%'
+    },
+    'div[class*="Toast__toast"]': {
+      zIndex: "2000"
+    },
+    '.Toast__toast___2YWKB': {
+      zIndex: "2000"
     },
     'a': {
       'color': theme.palette.secondary.main,
@@ -42,6 +48,12 @@ const styles = theme => ({
   },
   [theme.breakpoints.up('md')]: {
     '@global': {
+      '[class*="Toast__toast"]': {
+        zIndex: "2000"
+      },
+      '.Toast__toast___2YWKB': {
+        zIndex: "2000"
+      },
       'body': {
         // 'overflowY': 'hidden'
       }
@@ -58,7 +70,7 @@ const Template = ({ navigate, location, data, children }) =>
   <Container>
     <Helmet
       encodeSpecialCharacters={true}
-      title="Gunner Technology"
+      title="Fresh"
       meta={[
         { name: `description`, content: `TODO` },
         { name: `keywords`, content: `TODO` },
@@ -74,10 +86,12 @@ const Template = ({ navigate, location, data, children }) =>
   </Container>
   
 
-const TemplateWithStyles = withRoot(
-  withRouter(
-    withStyles(styles)(Template)
-  )
-);
+  const TemplateWithStyles = withRoot(
+    withRouter(
+      withNotifications()(
+        withStyles(styles)(Template)
+      )
+    )
+  );
 
 export default TemplateWithStyles;

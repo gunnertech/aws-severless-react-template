@@ -2,8 +2,11 @@
 ## AWS account
 
 $ cd ~/workspace/aws
-$ ./organization add -n <project-name> -e <project-name>@gunnertech.com -u <your root username> -g OrganizationAdministrators
-# add helper to ~/.gitconfig
+$ ./organization add -n <project-name>-development -e <project-name>-development@gunnertech.com -u <your root username> -g OrganizationAdministrators
+$ ./organization add -n <project-name>-staging -e <project-name>-staging@gunnertech.com -u <your root username> -g OrganizationAdministrators
+$ ./organization add -n <project-name>-production -e <project-name>-production@gunnertech.com -u <your root username> -g OrganizationAdministrators
+
+# add helper to ~/.gitconfig (if you haven't before - you'll also need access to the simplisurveydeveloper profile)
 [credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/simplisurvey/"]
 UseHttpPath = true
 helper = !aws --profile simplisurveydeveloper codecommit credential-helper $@
