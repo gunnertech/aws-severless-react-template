@@ -54,11 +54,11 @@ The best way to do this is to grab the .git/config from another project and repl
 
 $ cd <project-name>
 $ git checkout -b <dev name>
-$ git add .; git commit -am "initial commit"; git push origin <dev name>
+$ git add .; git commit -am "initial commit"; git push -u origin <dev name>
 $ git checkout -b staging
-$ git merge <dev name>; git push staging staging
+$ git merge <dev name>; git push -u staging staging
 $ git checkout -b master
-$ git merge <dev name>; git push production master
+$ git merge <dev name>; git push -u production master
 $ get branch -D template
 
 ## Amplify
