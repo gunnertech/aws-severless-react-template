@@ -19,12 +19,12 @@ $ git clone --single-branch -b template https://git-codecommit.us-east-1.amazona
 
 ## Serverless
 $ code <project-name>/serverless
-1) Global search for TODO and do the pre-deploy ones
+1) Global search for PRE DEPLOY TODO
 $ yarn
 $ sls deploy -s development
 $ sls deploy -s staging
 $ sls deploy -s production
-2) Global search for TODO and do the post-deploy ones
+2) Global search for POST DEPLOY TODO
 $ sls deploy -s development
 $ sls deploy -s staging
 $ sls deploy -s production
@@ -34,15 +34,14 @@ $ sls deploy -s production
 $ yarn global add expo-cli
 $ cd <project-name>/react-native-client
 
-1) Modify app.json and environment.js to fit your project
-2) Global search for TODO (and do them)
+1) Modify app.json (replace <project name>) and environment.js (set up variables) to fit your project
 
 $ yarn install
 
 ## React Client: https://github.com/facebook/create-react-app
 $ cd <project-name>/react-client
 
-1) Global search for TODO (and do them)
+1) Global search for REACT TODO (and do them)
 
 
 $ yarn install

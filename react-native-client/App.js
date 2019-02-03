@@ -16,23 +16,11 @@ import ENV from './src/environment'
 import { CurrentUserProvider } from './src/Contexts/CurrentUser'
 
 
-import GetUser from "./src/api/Queries/GetUser"
-import CreateUser from "./src/api/Mutations/CreateUser"
-import UpdateUser from "./src/api/Mutations/UpdateUser"
-import CreateOrganization from "./src/api/Mutations/CreateOrganization"
-import CreateAssignedRole from "./src/api/Mutations/CreateAssignedRole"
-import CreateRole from "./src/api/Mutations/CreateRole"
-import QueryRolesByNameIdIndex from './src/api/Queries/QueryRolesByNameIdIndex'
-import ListInvitations from './src/api/Queries/ListInvitations'
-
-import normalizePhoneNumber from './src/Util/normalizePhoneNumber'
-
-
 
 // Remove this once Sentry is correctly setup.
 Sentry.enableInExpoDevelopment = true;
 
-Sentry.config('https://b9af8b89206f42c48c69bc4274a427ac@sentry.io/1323219').install(); //TODO: Set up project and copy info here
+Sentry.config(ENV.sentry_url).install();
 
 
 console.disableYellowBox = true;
