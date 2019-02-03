@@ -41,8 +41,7 @@ $ yarn install
 ## React Client: https://github.com/facebook/create-react-app
 $ cd <project-name>/react-client
 
-1) Global search for REACT TODO (and do them)
-
+1) Modify .env.<stage> for each stage and Layout.js for meta data
 
 $ yarn install
 
