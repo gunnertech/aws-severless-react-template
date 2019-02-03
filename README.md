@@ -48,9 +48,9 @@ $ yarn install
 $ yarn start (to make sure everything worked)
 
 ## Git
-modify .git/config to match project
+modify <project-name>/.git/config with this: https://gist.githubusercontent.com/CodySwannGT/ea1dcb937426d8121576b59334000d58/raw/e2c22870a4c72807837fabd1f705c337bdda1358/config.txt
 
-The best way to do this is to grab the .git/config from another project and replace <example project name> with <project name>
+and replace <project name>
 
 $ cd <project-name>
 $ git checkout -b <dev name>
