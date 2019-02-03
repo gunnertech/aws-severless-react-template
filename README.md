@@ -37,7 +37,7 @@ $ cd <project-name>/react-native-client
 1) Modify app.json (replace <project name>) and environment.js (set up variables) to fit your project
 
 $ yarn install
-$ yarn ios # to make sure it worked
+$ yarn ios (to make sure everything worked)
 
 ## React Client: https://github.com/facebook/create-react-app
 $ cd <project-name>/react-client
@@ -45,7 +45,7 @@ $ cd <project-name>/react-client
 1) Modify .env.<stage> for each stage and Layout.js for meta data
 
 $ yarn install
-$ yarn start # to make sure it worked
+$ yarn start (to make sure everything worked)
 
 ## Git
 modify .git/config to match project
@@ -53,8 +53,12 @@ modify .git/config to match project
 The best way to do this is to grab the .git/config from another project and replace <example project name> with <project name>
 
 $ cd <project-name>
+$ git checkout -b <dev name>
+$ git add .; git commit -am "initial commit"; git push <dev name>
+$ git checkout -b staging
+$ git merge <dev name>; git push origin staging
 $ git checkout -b master
-$ git add .; git commit -am "initial commit"; git push
+$ git merge <dev name>; git push
 
 ## Amplify
 

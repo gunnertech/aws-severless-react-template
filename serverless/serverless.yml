@@ -730,7 +730,7 @@ resources:
       Type: "AWS::CodeCommit::Repository"
       DependsOn: RepoSNSTopic
       Properties:
-        RepositoryName: ${self:service.name}
+        RepositoryName: ${self:service.name}-${self:custom.stage}
         RepositoryDescription: CodeCommit Repository
         Triggers:
         - Name: MasterTrigger
