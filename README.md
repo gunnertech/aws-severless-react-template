@@ -61,6 +61,65 @@ $ git checkout -b master
 $ git merge <dev name>; git push -u production master
 $ get branch -D template
 
+### Workflow
+
+$ ## Start of iteration
+$ git checkout master; git pull production master
+$ git checkout staging; git pull staging staging
+$ git checkout %dev-name i.e. ‘cody’%
+$ git merge master
+$ git merge staging
+$ ### start repetition process
+$ git checkout -b %issue-number%
+$ #work work work
+$ git add .; git commit -am “closes #%issue-number%”
+$ git checkout %dev name%
+$ git merge %issue-number%
+$ git branch -D %issue-number%
+$ git push origin %dev name%
+$ ## repeat on more issues throughout the iteration
+$ git checkout -b %iteration-date (format: YYYYMMDD) %
+$ git push origin %iteration-date%
+$ git tag released/%iteration-date%
+$ git push origin released/%iteration-date%
+
+
 ## Amplify
 
 Log into the console and setup the deploy as seen in this video: https://youtu.be/iql6pRyof20
+
+
+## Deploying (Staging)
+
+$ git checkout staging
+$ git merge released/<iteration-date>
+$ git merge master # (make sure you have the latest hotfixes)
+$ git push
+
+### Backend
+$ cd serverless
+$ sls deploy -s staging
+
+### React Native Front End
+$ cd react-native-client
+$ expo publish --release-channel staging
+
+### React Front End (automatically from the git push)
+
+## Deploying (Production)
+
+### Client approves iteration
+$ git checkout master
+$ git merge released/<iteration-date>
+$ git push
+$ git branch -D <iteration-date>
+
+### Backend
+$ cd serverless
+$ sls deploy -s production
+
+### React Native Front End
+$ cd react-native-client
+$ expo publish --release-channel production
+
+### React Front End (automatically from the git push)
