@@ -36,6 +36,7 @@ $ cd <project-name>/react-native-client
 
 1) Modify app.json (replace <project name>) and environment.js (set up variables) to fit your project
 
+$ yarn upgrade
 $ yarn install
 $ yarn ios (to make sure everything worked)
 
@@ -44,6 +45,7 @@ $ cd <project-name>/react-client
 
 1) Modify .env.<stage> for each stage and Layout.js for meta data
 
+$ yarn upgrade
 $ yarn install
 $ yarn start (to make sure everything worked)
 
