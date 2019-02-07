@@ -75,8 +75,8 @@ $ #work work work
 $ git add .; git commit -am “closes #%issue-number%”
 $ git checkout %dev name%
 $ git merge %issue-number%
-$ git branch -D %issue-number%
 $ git push origin %dev name%
+$ git branch -D %issue-number%
 $ ## repeat on more issues throughout the iteration
 $ git checkout -b %iteration-date (format: YYYYMMDD) %
 $ git push origin %iteration-date%
@@ -102,6 +102,10 @@ $ sls deploy -s staging
 
 ### React Native Front End
 $ cd react-native-client
+$ ###if you need to build a new standalone (i.e. expo or react version changes, icon, splash changes)
+$ expo build:ios --release-channel staging
+$ expo build:android --release-channel staging
+$ ###end if
 $ expo publish --release-channel staging
 
 ### React Front End (automatically from the git push)
