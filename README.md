@@ -1,6 +1,8 @@
 # Setup
 ## AWS account
 
+git clone --single-branch -b template https://git-codecommit.us-east-1.amazonaws.com/v1/repos/simplisurvey aztech-video
+
 $ cd ~/workspace/aws
 $ ./organization add -n <project-name>-development -e <project-name>-development@gunnertech.com -u <your root username> -g <groupname>
 $ ./organization add -n <project-name>-staging -e <project-name>-staging@gunnertech.com -u <your root username> -g <groupname>
@@ -20,7 +22,8 @@ $ git clone --single-branch -b template https://git-codecommit.us-east-1.amazona
 ## Serverless
 $ code <project-name>/serverless
 1) Global search for PRE DEPLOY TODO
-$ yarn
+$ yarn upgrade
+$ yarn install
 $ sls deploy -s development
 $ sls deploy -s staging
 $ sls deploy -s production
