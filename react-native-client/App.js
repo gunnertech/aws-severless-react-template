@@ -38,8 +38,10 @@ Amplify.configure({
     userPoolWebClientId: ENV.userPoolWebClientId, 
   },
   Storage: {
-    bucket: ENV.bucket,
-    region: ENV.awsRegion
+    AWSS3: {
+      bucket: ENV.bucket,
+      region: ENV.awsRegion
+    }
   },
   Analytics: {
     disabled: false,

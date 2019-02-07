@@ -6,6 +6,7 @@ import { Constants } from 'expo'
 // $ aws cognito-idp list-user-pools --max-results 2 --profile <profile> # userPoolId
 // $ aws cognito-idp list-user-pool-clients --max-results 2 --user-pool-id <ID> --profile <profile> # userPoolWebClientId
 // $ aws cognito-identity list-identity-pools --max-results 2 --profile <profile> # identityPoolId
+// $ aws cloudfront list-distributions --profile <profile> # cdn
 // sentry_url will be the same for every env. You have to add the project to the gunner tech account to get the sentry_url (https://sentry.io/organizations/gunner-technology/projects/new/)
 
 const sentry_url = 'https://9d5eb4ad17f847bfb974e22a1b797b6e@sentry.io/1385931'
@@ -19,6 +20,7 @@ const ENV = {
     aws_appsync_graphqlEndpoint: 'https://f5mmxafkdngq7k3sfel4bnc6de.appsync-api.us-east-1.amazonaws.com/graphql',
     bucket: 'com-gunnertech-<project name>-development',
     pinpoint_app_id: "ec37e44c842e4c0a93ce705d441053b2",
+    cdn: 'd3bu4gv79xjhue.cloudfront.net',
     sentry_url
   },
   staging: {
@@ -29,6 +31,7 @@ const ENV = {
     aws_appsync_graphqlEndpoint: 'https://f5mmxafkdngq7k3sfel4bnc6de.appsync-api.us-east-1.amazonaws.com/graphql',
     bucket: 'com-gunnertech-<project name>-staging',
     pinpoint_app_id: "ec37e44c842e4c0a93ce705d441053b2",
+    cdn: 'd3bu4gv79xjhue.cloudfront.net',
     sentry_url
   },
   prodution: {
@@ -39,6 +42,7 @@ const ENV = {
     aws_appsync_graphqlEndpoint: 'https://f5mmxafkdngq7k3sfel4bnc6de.appsync-api.us-east-1.amazonaws.com/graphql',
     bucket: 'com-gunnertech-<project name>-production',
     pinpoint_app_id: "ec37e44c842e4c0a93ce705d441053b2",
+    cdn: 'd3bu4gv79xjhue.cloudfront.net',
     sentry_url
   }
 }
