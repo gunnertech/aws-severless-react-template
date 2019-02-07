@@ -81,10 +81,12 @@ $ git push origin %dev name%
 $ git branch -D %issue-number%
 $ ## repeat on more issues throughout the iteration
 $ git checkout -b %iteration-date (format: YYYYMMDD) %
+$ git merge %dev name%
 $ git push origin %iteration-date%
 $ git tag released/%iteration-date%
 $ git push origin released/%iteration-date%
-
+$ git push staging %iteration-date%
+$ ## Submit pull request
 
 ## Amplify
 
