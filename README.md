@@ -1,6 +1,7 @@
 # Setup
 ## AWS account
 
+
 $ cd ~/workspace/aws
 $ ./organization add -n <project-name>-development -e <project-name>-development@gunnertech.com -u <your root username> -g <groupname>
 $ ./organization add -n <project-name>-staging -e <project-name>-staging@gunnertech.com -u <your root username> -g <groupname>

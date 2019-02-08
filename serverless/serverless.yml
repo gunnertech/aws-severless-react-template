@@ -5,9 +5,9 @@ custom:
   environment: ${file(env.yml):${self:custom.stage}, file(env.yml):development}
   pinpointAppId: ${self:custom.environment.PINPOINT_APP_ID, 'NONE'}
   stage: ${opt:stage, self:provider.stage}
-  developmentAccountId: "658832833553" #PRE DEPLOY TODO: REPLACE THIS $ aws organizations list-accounts
-  stagingAccountId: "658832833553" #PRE DEPLOY TODO: REPLACE THIS $ aws organizations list-accounts
-  productionAccountId: "658832833553" #PRE DEPLOY TODO: REPLACE THIS $ aws organizations list-accounts
+  developmentAccountId: "602149969834"
+  stagingAccountId: "822408163170"
+  productionAccountId: "491596233450"
   accountId: ${self:custom.${self:custom.stage}AccountId}
   region: ${opt:region, self:provider.region}
   uploadBucketName: "com-gunnertech-${self:service.name}-${self:custom.stage}"
@@ -243,8 +243,8 @@ provider:
   name: aws
   runtime: nodejs8.10
   stage: ${opt:stage, 'development'}
-  region: 'us-east-1'  #PRE DEPLOY TODO: REPLACE THIS (Optional)
-  profile: "simplisurvey-${opt:stage, 'development'}developer" #PRE DEPLOY TODO: REPLACE THIS
+  region: 'us-east-1'
+  profile: "simplisurvey-${opt:stage, 'development'}developer"
   iamRoleStatements:
     - Effect: Allow
       Action:
