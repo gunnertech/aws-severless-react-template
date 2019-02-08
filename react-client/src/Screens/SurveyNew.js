@@ -116,7 +116,7 @@ class SurveyNew extends React.Component {
     const { submitted, submitting, prompts } = this.state;
     return (
       submitted ? (
-        "Thank you for your participation!"
+        <Typography style={{textAlign: "center", marginTop: 20}} variant="h4">Thank you for your participation!</Typography>
       ) : submitting ? (
         "Submitting..."
       ) : (
@@ -131,9 +131,9 @@ class SurveyNew extends React.Component {
             "Loading..."
           ) : data && data.getSurvey ? (
             !!data.getSurvey.responses.items.length ? (
-              "Thank you for your participation!"
+              <Typography style={{textAlign: "center", marginTop: 20}} variant="h4">Thank you for your participation!</Typography>
             ) : !data.getSurvey.surveyTemplate ? (
-              refetch().then(() => this.setState({reload: true})) && (console.log("GOT IT") || "Loading...") //TODO: Fix this. Weird bug with AppSync/Resolver where data.getSurvey.surveyTemplate is sometimes null
+              refetch().then(() => this.setState({reload: true})) && (console.log("GOT IT") || "Loading...") //BUG: Fix this. Weird bug with AppSync/Resolver where data.getSurvey.surveyTemplate is sometimes null
             ) : (
               <Paper elevation={2} className={classes.root}>
                 <div>

@@ -13,7 +13,8 @@ const Splash = props => {
   const { classes } = props;
   return (
     <div className={classes.root}>
-      I'm the public landing page that everyone can see
+      <p>I'm the public landing page that everyone can see</p>
+      <p>Why don't you go ahead and <Link to={`/dashboard`}>Sign In</Link></p>
     </div>
   );
 }

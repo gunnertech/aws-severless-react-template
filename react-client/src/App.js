@@ -7,8 +7,7 @@ import AWSAppSyncClient, { createAppSyncLink, createLinkWithCache } from "aws-ap
 import { ApolloLink } from 'apollo-link';
 import { withClientState } from 'apollo-link-state';
 import * as Sentry from '@sentry/browser';
-import { withAuthenticator } from 'aws-amplify-react';
-
+import { ConfirmSignIn, ConfirmSignUp, ForgotPassword, RequireNewPassword, VerifyContact, withAuthenticator } from 'aws-amplify-react';
 
 import GetUser from "./api/Queries/GetUser"
 import CreateUser from "./api/Mutations/CreateUser"
@@ -19,7 +18,8 @@ import CreateRole from "./api/Mutations/CreateRole"
 import QueryRolesByNameIdIndex from './api/Queries/QueryRolesByNameIdIndex'
 import ListInvitations from './api/Queries/ListInvitations'
 
-
+import SignUp from "./Screens/SignUp";
+import SignIn from "./Screens/SignIn";
 import HomeScreen from "./Screens/Home";
 import SplashScreen from "./Screens/Splash";
 import PrivacyPolicyScreen from "./Screens/PrivacyPolicy";
@@ -36,42 +36,71 @@ import { LayoutProvider } from './Contexts/Layout'
 
 import normalizePhoneNumber from './Util/normalizePhoneNumber'
 
+import { I18n } from 'aws-amplify';
+
+const authScreenLabels = {
+    en: {
+        "Username": "Email",
+        "Enter your username": "Enter your email",
+        'Sign Up': 'Create new account',
+        'Sign Up Account': 'Create a new account'
+    }
+};
+
+I18n.setLanguage('en');
+I18n.putVocabularies(authScreenLabels);
+
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={props => {
-    const ComponentWithAuth = withAuthenticator(Component, false, [], null, null, {
-      signUpFields: [
-        {
-          label: 'Username',
-          key: 'username',
-          required: true,
-          placeholder: 'Username',
-          displayOrder: 1,
-        },
-        {
-            label: 'Password',
-            key: 'password',
-            required: true,
-            placeholder: 'Password',
-            type: 'password',
-            displayOrder: 2,
-        },
-        {
-            label: 'Email',
-            key: 'email',
-            required: true,
-            placeholder: 'Email',
-            type: 'email',
-            displayOrder: 3
-        },
-        {
-            label: 'Phone Number',
-            key: 'phone_number',
-            placeholder: 'Phone Number',
-            required: false,
-            displayOrder: 4
-        }
-      ]
-    });
+    const ComponentWithAuth = withAuthenticator(Component, false, [
+      <SignIn/>,
+      <ConfirmSignIn/>,
+      <VerifyContact/>,
+      <SignUp
+
+        signUpConfig={{
+          hideAllDefaults: true,
+          signUpFields: [
+            {
+              key: 'email',
+              type: 'email',
+              required: true,
+              label: 'Email',
+              displayOrder: 2,
+              placeholder: "Enter your email (used to sign in)"
+            },
+            {
+              key: 'name',
+              type: 'text',
+              required: true,
+              label: 'Name',
+              displayOrder: 1,
+              placeholder: "Enter the name you want others to see"
+            },
+            {
+              key: 'phone_number',
+              type: 'tel',
+              required: false,
+              label: 'Mobile',
+              displayOrder: 4,
+              placeholder: "Enter your mobile number"
+            },
+            {
+              key: 'password',
+              type: 'password',
+              required: true,
+              label: 'Password',
+              displayOrder: 4,
+              placeholder: "Enter your password"
+            }
+          ]
+      }}
+    />,
+    <ConfirmSignUp/>,
+    <ForgotPassword/>,
+    <RequireNewPassword />
+  ], false);
+
     return (
       <ComponentWithAuth {...props} />
     )
@@ -100,7 +129,7 @@ const appSyncLink = createAppSyncLink({
         const session = await Auth.currentSession();
         return session.getIdToken().getJwtToken();
       } catch(e) {
-        await Auth.signIn('simplisurveyguest', 'Sim2010!!'); //TODO: For new environments, you'll have to create this account
+        await Auth.signIn('simplisurveyguest@gunnertech.com', 'Sim2010!!'); //TODO: For new environments, you'll have to create this account
         const session = await Auth.currentSession();
         return session.getIdToken().getJwtToken();
 
@@ -181,7 +210,7 @@ class App extends Component {
       mutation: CreateOrganization,
       onError: e => console.log("_createOrganization", e),
       variables: {
-        name: `${user.id}'s Org`,
+        name: `${user.name}'s Org`,
         ownerId: user.id
       },
     })
@@ -253,6 +282,7 @@ class App extends Component {
         id: cognitoUser.username,
         phone: cognitoUser.attributes.phone_number || undefined,
         email: cognitoUser.attributes.email || undefined,
+        name: cognitoUser.attributes.name || undefined,
         active: true,
       },
     })
@@ -316,7 +346,10 @@ class App extends Component {
         break;
       case 'signIn_failure':
       case 'signUp_failure':
-        this.setState({notifications: [capsule.payload.data]})
+        this.setState(
+          {notifications: [capsule.payload.data]}, 
+          () => setTimeout(() => this.setState({notifications: []}), 4000)
+        )
         break;
       case 'signIn':
         this._handleSignIn()

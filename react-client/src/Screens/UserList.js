@@ -86,7 +86,7 @@ class UserList extends React.Component {
     submittingForm: false,
   }
 
-  _sendSms = to =>
+  _sendSms = ({phone, roleName}) =>
     Auth.currentCredentials()
       .then(credentials =>
         new SNS({
@@ -95,13 +95,17 @@ class UserList extends React.Component {
           region: "us-east-1"
         })
         .publish({
-          Message: `You've been invited to join SimpliSurvey. To get started, Android users click this link https://play.google.com/store/apps/details?id=com.gunnertech.simplisurvey. iOS users, click this link https://testflight.apple.com/join/TjLjqY9z`,
-          PhoneNumber: `+1${to}`
+          Message: `${roleName.toLowerCase() === 'admin' ? (
+            `${this.props.currentUser.name} invited you to join SimpliSurvey. Please follow the link to set up your account ${process.env.REACT_APP_base_url}/dashboard`
+          ) : (
+            `${this.props.currentUser.name} invited you to join SimpliSurvey. To get started, Android users click this link https://play.google.com/store/apps/details?id=com.gunnertech.simplisurvey. iOS users, click this link https://testflight.apple.com/join/TjLjqY9z`
+          )}`,
+          PhoneNumber: `+1${phone}`
         })
         .promise()
       )
 
-  _sendEmail = to =>
+  _sendEmail = ({email, roleName}) =>
     Auth.currentCredentials()
       .then(credentials =>
         new SES({
@@ -115,7 +119,7 @@ class UserList extends React.Component {
               'simplisurvey@gunnertech.com',
             ],
             ToAddresses: [
-              to
+              email
             ]
           },
           Message: { /* required */
@@ -124,14 +128,22 @@ class UserList extends React.Component {
               Charset: "UTF-8",
               Data: `<html>
                         <body>
-                          You've been invited! Go join ${process.env.REACT_APP_base_url}/dashboard
+                          ${roleName.toLowerCase() === 'admin' ? (
+                            `${this.props.currentUser.name} invited you to join SimpliSurvey. Please follow the link to set up your account ${process.env.REACT_APP_base_url}/dashboard`
+                          ) : (
+                            `${this.props.currentUser.name} invited you to join SimpliSurvey. To get started, Android users click this link https://play.google.com/store/apps/details?id=com.gunnertech.simplisurvey. iOS users, click this link https://testflight.apple.com/join/TjLjqY9z`
+                          )}
                         </body>
                       </html>`
               },
               Text: {
                 Charset: "UTF-8",
                 Data: `
-                  You've been invited! Go join ${process.env.REACT_APP_base_url}/dashboard
+                  ${roleName.toLowerCase() === 'admin' ? (
+                    `${this.props.currentUser.name} invited you to join SimpliSurvey. Please follow the link to set up your account ${process.env.REACT_APP_base_url}/dashboard`
+                  ) : (
+                    `${this.props.currentUser.name} invited you to join SimpliSurvey. To get started, Android users click this link https://play.google.com/store/apps/details?id=com.gunnertech.simplisurvey. iOS users, click this link https://testflight.apple.com/join/TjLjqY9z`
+                  )}
                 `
               }
             },
@@ -160,8 +172,8 @@ class UserList extends React.Component {
       email: data.user.email || undefined
     })
       .then(params => 
-        params.email ? (
-          this._sendEmail(params.email)
+        params.email && !params.phone ? (
+          this._sendEmail(params)
             .then(() => params)
             .catch(args => console.log(args) || params)
          ) : (
@@ -170,7 +182,7 @@ class UserList extends React.Component {
       )
       .then(params => 
         params.phone ? (
-          this._sendSms(params.phone)
+          this._sendSms(params)
             .then(() => params)
             .catch(args => console.log(args) || params)
          ) : (

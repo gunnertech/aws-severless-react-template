@@ -15,10 +15,12 @@ const styles = theme => ({
       'max-width': '100%'
     },
     'div[class*="Toast__toast"]': {
-      zIndex: "2000"
+      zIndex: "2000",
+      position: "fixed"
     },
     '.Toast__toast___2YWKB': {
-      zIndex: "2000"
+      zIndex: "2000",
+      position: "fixed"
     },
     'a': {
       'color': theme.palette.secondary.main,

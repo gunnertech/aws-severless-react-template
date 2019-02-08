@@ -13,12 +13,12 @@ custom:
   uploadBucketName: "com-gunnertech-${self:service.name}-${self:custom.stage}"
   appSync:
     name:  "${self:custom.stage}-api"
-    authenticationType: API_KEY
-    # authenticationType: AMAZON_COGNITO_USER_POOLS
-    # userPoolConfig:
-    #   awsRegion: ${self:custom.region}
-    #   defaultAction: ALLOW
-    #   userPoolId: { Ref: UserPool }
+    # authenticationType: API_KEY
+    authenticationType: AMAZON_COGNITO_USER_POOLS
+    userPoolConfig:
+      awsRegion: ${self:custom.region}
+      defaultAction: ALLOW
+      userPoolId: { Ref: UserPool }
     mappingTemplates:
       - dataSource: Campaigns
         type: Organization

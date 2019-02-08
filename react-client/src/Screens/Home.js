@@ -47,7 +47,7 @@ const ActionMenu = ({onClick}) => (
 
 const Welcome = props =>
   <div>
-    <p>Welcome, {props.currentUser.id}!</p>
+    <p>Welcome, {props.currentUser.name}!</p>
     <p>It looks like you haven't created any campaigns yet.</p>
     <p><Link to={`/campaigns`}>Click here</Link> to set one up and get started!</p>
   </div>

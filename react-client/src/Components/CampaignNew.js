@@ -78,7 +78,7 @@ class CampaignNew extends React.Component {
         onClose={onClose}
         aria-labelledby="responsive-dialog-title"
       >
-        <DialogTitle id="responsive-dialog-title">{"Create a Campaign"}</DialogTitle>
+        <DialogTitle id="responsive-dialog-title">{`Select a Campaign Template`}</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Select a campaign from the following templates. 
