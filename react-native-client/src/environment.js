@@ -21,6 +21,7 @@ const ENV = {
     bucket: 'com-gunnertech-<project name>-development',
     pinpoint_app_id: "ec37e44c842e4c0a93ce705d441053b2",
     cdn: 'd3bu4gv79xjhue.cloudfront.net',
+    base_url: '',
     sentry_url
   },
   staging: {
@@ -32,6 +33,7 @@ const ENV = {
     bucket: 'com-gunnertech-<project name>-staging',
     pinpoint_app_id: "ec37e44c842e4c0a93ce705d441053b2",
     cdn: 'd3bu4gv79xjhue.cloudfront.net',
+    base_url: '',
     sentry_url
   },
   prodution: {
@@ -43,6 +45,7 @@ const ENV = {
     bucket: 'com-gunnertech-<project name>-production',
     pinpoint_app_id: "ec37e44c842e4c0a93ce705d441053b2",
     cdn: 'd3bu4gv79xjhue.cloudfront.net',
+    base_url: '',
     sentry_url
   }
 }
