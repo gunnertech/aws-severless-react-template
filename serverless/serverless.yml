@@ -2,12 +2,12 @@ service:
   name: simplisurvey
 
 custom:
-  environment: ${file(env.yml):${self:custom.stage}, file(env.yml):dev}
+  environment: ${file(env.yml):${self:custom.stage}, file(env.yml):development}
   pinpointAppId: ${self:custom.environment.PINPOINT_APP_ID, 'NONE'}
   stage: ${opt:stage, self:provider.stage}
-  devAccountId: "658832833553"
-  stagingAccountId: "658832833553"
-  prodAccountId: "658832833553"
+  developmentAccountId: "658832833553" #PRE DEPLOY TODO: REPLACE THIS $ aws organizations list-accounts
+  stagingAccountId: "658832833553" #PRE DEPLOY TODO: REPLACE THIS $ aws organizations list-accounts
+  productionAccountId: "658832833553" #PRE DEPLOY TODO: REPLACE THIS $ aws organizations list-accounts
   accountId: ${self:custom.${self:custom.stage}AccountId}
   region: ${opt:region, self:provider.region}
   uploadBucketName: "com-gunnertech-${self:service.name}-${self:custom.stage}"
@@ -242,9 +242,9 @@ plugins:
 provider:
   name: aws
   runtime: nodejs8.10
-  stage: ${opt:stage, 'dev'}
-  region: 'us-east-1'
-  profile: simplisurveydeveloper
+  stage: ${opt:stage, 'development'}
+  region: 'us-east-1'  #PRE DEPLOY TODO: REPLACE THIS (Optional)
+  profile: "simplisurvey-${opt:stage, 'development'}developer" #PRE DEPLOY TODO: REPLACE THIS
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -1340,11 +1340,11 @@ resources:
               Ref: authRoleArn
       DependsOn: IdentityPool    
     UploadBucketPolicy: 
-      DependsOn: UploadBucket
+      DependsOn: S3BucketUploads
       Type: AWS::S3::BucketPolicy
       Properties: 
         Bucket: 
-          Ref: UploadBucket
+          Ref: S3BucketUploads
         PolicyDocument: 
           Statement: 
             - 
@@ -1377,13 +1377,13 @@ resources:
       Properties:
          CloudFrontOriginAccessIdentityConfig:
           Comment: "AccessFor"
-    UploadBucket:
+    S3BucketUploads:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: 
           Ref: s3BucketName
     CDN:
-      DependsOn: UploadBucket
+      DependsOn: S3BucketUploads
       Type: "AWS::CloudFront::Distribution"
       Properties:
         DistributionConfig:
@@ -1416,7 +1416,7 @@ resources:
       Type: "AWS::CodeCommit::Repository"
       DependsOn: RepoSNSTopic
       Properties:
-        RepositoryName: ${self:service.name}
+        RepositoryName: ${self:service.name}-${self:custom.stage}
         RepositoryDescription: CodeCommit Repository
         Triggers:
         - Name: MasterTrigger

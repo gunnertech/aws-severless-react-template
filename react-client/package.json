@@ -28,7 +28,7 @@
     "react": "^16.6.3",
     "react-apollo": "latest",
     "react-countup": "latest",
-    "react-dom": "^16.6.3",
+    "react-dom": "latest",
     "react-helmet": "^5.2.0",
     "react-images": "^0.5.19",
     "react-jss": "latest",

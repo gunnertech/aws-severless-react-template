@@ -113,7 +113,7 @@ const link = ApolloLink.from([stateLink, appSyncLink]);
 const client = new AWSAppSyncClient({disableOffline: true}, { link });
 
 Sentry.init({
-  dsn: "https://b9af8b89206f42c48c69bc4274a427ac@sentry.io/1323219" //TODO: SETUP AND CHANGE THIS
+  dsn: process.env.REACT_APP_sentry_url
 });
 
 Amplify.configure({
@@ -129,8 +129,10 @@ Amplify.configure({
     userPoolWebClientId: process.env.REACT_APP_userPoolWebClientId, 
   },
   Storage: {
-    bucket: process.env.REACT_APP_bucket,
-    region: process.env.REACT_APP_awsRegion
+    AWSS3: {
+      bucket: process.env.REACT_APP_bucket,
+      region: process.env.REACT_APP_awsRegion
+    }
   },
   Analytics: {
     disabled: false,

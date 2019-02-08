@@ -9,7 +9,6 @@ import withRoot from '../Hocs/withRoot';
 import withNotifications from '../Hocs/withNotifications';
 
 
-
 const styles = theme => ({
   '@global': {
     '.embed-youtube iframe': {
@@ -93,12 +92,13 @@ const Template = ({ navigate, location, data, children, showNav, notifications }
   </Container>
   
 
-const TemplateWithStyles = withRoot(
-  withRouter(
-    withNotifications()(
-      withStyles(styles)(Template)
+
+  const TemplateWithStyles = withRoot(
+    withRouter(
+      withNotifications()(
+        withStyles(styles)(Template)
+      )
     )
-  )
-);
+  );
 
 export default TemplateWithStyles;

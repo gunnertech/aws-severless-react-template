@@ -1,7 +1,6 @@
 import React from 'react';
 
 const CurrentUser = React.createContext({
-  setCurrentUser: currentUser => currentUser
 });
 
 export class CurrentUserProvider extends React.PureComponent {
@@ -13,16 +12,11 @@ export class CurrentUserProvider extends React.PureComponent {
     };
   }
 
-  setCurrentUser = currentUser =>
-    this.setState({
-      currentUser
-    });
 
   render() {
     return (
       <CurrentUser.Provider
         value={{
-          setCurrentUser: this.setCurrentUser,
           currentUser: this.props.currentUser
         }}
       >      
