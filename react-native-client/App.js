@@ -139,21 +139,25 @@ class App extends React.Component {
       !this.state.fontLoaded ? (
         null
       ) : (
-        <ApolloProvider client={client}>
-          <Rehydrated>
-            <CurrentUserProvider currentUser={this.state.currentUser}>
-              <ThemeContext.Provider value={getTheme(muiTheme)}>
-                {
-                  typeof(this.state.currentUser) === 'undefined' ? (
-                    null
-                  ) : (
-                    <AppNavigator />
-                  )
-                }
-              </ThemeContext.Provider>
-            </CurrentUserProvider>
-          </Rehydrated>
-        </ApolloProvider>
+        <ActionSheetProvider>
+          <ApolloProvider client={client}>
+            <Rehydrated>
+              <CurrentUserProvider currentUser={this.state.currentUser}>
+                <ThemeProvider theme={getElementsTheme(getTheme(muiTheme))}>
+                  <ThemeContext.Provider value={getTheme(muiTheme)}>
+                    {
+                      typeof(this.state.currentUser) === 'undefined' ? (
+                        null
+                      ) : (
+                        <AppNavigator />
+                      )
+                    }
+                  </ThemeContext.Provider>
+                </ThemeProvider>
+              </CurrentUserProvider>
+            </Rehydrated>
+          </ApolloProvider>
+        </ActionSheetProvider>
       )
     );
   }
