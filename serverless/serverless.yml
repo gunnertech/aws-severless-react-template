@@ -2,7 +2,7 @@ service:
   name: "<project name>" #PRE DEPLOY TODO: REPLACE THIS
 
 custom:
-  environment: ${file(env.yml):${self:custom.stage}, file(env.yml):dev}
+  environment: ${file(env.yml):${self:custom.stage}, file(env.yml):development}
   pinpointAppId: ${self:custom.environment.PINPOINT_APP_ID, 'NONE'}
   stage: ${opt:stage, self:provider.stage}
   developmentAccountId: "658832833553" #PRE DEPLOY TODO: REPLACE THIS $ aws organizations list-accounts
@@ -654,11 +654,11 @@ resources:
               Ref: authRoleArn
       DependsOn: IdentityPool    
     UploadBucketPolicy: 
-      DependsOn: UploadBucket
+      DependsOn: S3BucketUploads
       Type: AWS::S3::BucketPolicy
       Properties: 
         Bucket: 
-          Ref: UploadBucket
+          Ref: S3BucketUploads
         PolicyDocument: 
           Statement: 
             - 
@@ -691,13 +691,13 @@ resources:
       Properties:
          CloudFrontOriginAccessIdentityConfig:
           Comment: "AccessFor"
-    UploadBucket:
+    S3BucketUploads:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: 
           Ref: s3BucketName
     CDN:
-      DependsOn: UploadBucket
+      DependsOn: S3BucketUploads
       Type: "AWS::CloudFront::Distribution"
       Properties:
         DistributionConfig:
