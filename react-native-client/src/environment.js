@@ -9,7 +9,7 @@ import { Constants } from 'expo'
 // $ aws cloudfront list-distributions --profile simplisurvey-developmentdeveloper # cdn
 // sentry_url will be the same for every env. You have to add the project to the gunner tech account to get the sentry_url (https://sentry.io/organizations/gunner-technology/projects/new/)
 
-const sentry_url = 'https://9d5eb4ad17f847bfb974e22a1b797b6e@sentry.io/1385931'
+const sentry_url = 'https://b9af8b89206f42c48c69bc4274a427ac@sentry.io/1323219'
 
 const ENV = {
   development: {
