@@ -8,13 +8,14 @@ import AWSAppSyncClient, { createAppSyncLink, createLinkWithCache } from "aws-ap
 import { ApolloLink } from 'apollo-link';
 import Sentry from 'sentry-expo';
 import { withClientState } from 'apollo-link-state';
+import { ThemeProvider } from 'react-native-elements';
 
 import AppNavigator from './src/Navigators/App'
 import muiTheme from './src/Styles/muiTheme'
+import getElementsTheme from './src/Styles/elementsTheme'
 import ENV from './src/environment'
 
 import { CurrentUserProvider } from './src/Contexts/CurrentUser'
-
 
 
 // Remove this once Sentry is correctly setup.
