@@ -13,11 +13,12 @@ custom:
   uploadBucketName: "com-gunnertech-${self:service.name}-${self:custom.stage}"
   appSync:
     name:  "${self:custom.stage}-api"
-    authenticationType: AMAZON_COGNITO_USER_POOLS
-    userPoolConfig:
-      awsRegion: ${self:custom.region}
-      defaultAction: ALLOW
-      userPoolId: { Ref: UserPool }
+    authenticationType: API_KEY
+    # authenticationType: AMAZON_COGNITO_USER_POOLS
+    # userPoolConfig:
+    #   awsRegion: ${self:custom.region}
+    #   defaultAction: ALLOW
+    #   userPoolId: { Ref: UserPool }
     mappingTemplates:
       - dataSource: Campaigns
         type: Organization
@@ -328,7 +329,7 @@ resources:
       Default: "Requires Lowercase,Requires Uppercase,Requires Numbers,Requires Symbols"
     requiredAttributes:
       Type: CommaDelimitedList
-      Default: email
+      Default: email,name
     userpoolClientName: 
       Type: String
       Default: "cognito${self:custom.stage}_app_client"
@@ -1124,6 +1125,7 @@ resources:
     UserPool:
       Type: AWS::Cognito::UserPool
       Properties:
+        UsernameAttributes: [phone_number,email]
         UserPoolName: 
           Ref: userPoolName
         Schema: 
@@ -1132,7 +1134,10 @@ resources:
             Name: email
             Required: true
             Mutable: true
-          
+          -
+            Name: name
+            Required: true
+            Mutable: true
         
         AutoVerifiedAttributes: 
           Ref: autoVerifiedAttributes

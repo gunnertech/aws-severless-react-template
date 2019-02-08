@@ -8,9 +8,11 @@ import AWSAppSyncClient, { createAppSyncLink, createLinkWithCache } from "aws-ap
 import { ApolloLink } from 'apollo-link';
 import Sentry from 'sentry-expo';
 import { withClientState } from 'apollo-link-state';
+import { ThemeProvider } from 'react-native-elements';
 
 import AppNavigator from './src/Navigators/App'
 import muiTheme from './src/Styles/muiTheme'
+import getElementsTheme from './src/Styles/elementsTheme'
 import ENV from './src/environment'
 
 import { CurrentUserProvider } from './src/Contexts/CurrentUser'
@@ -20,7 +22,6 @@ import { CurrentUserProvider } from './src/Contexts/CurrentUser'
 import GetUser from "./src/api/Queries/GetUser"
 import CreateUser from "./src/api/Mutations/CreateUser"
 import UpdateUser from "./src/api/Mutations/UpdateUser"
-import CreateOrganization from "./src/api/Mutations/CreateOrganization"
 import CreateAssignedRole from "./src/api/Mutations/CreateAssignedRole"
 import CreateRole from "./src/api/Mutations/CreateRole"
 import QueryRolesByNameIdIndex from './src/api/Queries/QueryRolesByNameIdIndex'
@@ -128,16 +129,7 @@ class App extends React.Component {
           (!!invitation.phone && normalizePhoneNumber(invitation.phone||"") === normalizePhoneNumber(user.phone||"")))
       )
 
-  _createOrganization = user =>
-    client.mutate({
-      mutation: CreateOrganization,
-      onError: e => console.log("_createOrganization", e),
-      variables: {
-        name: `${user.id}'s Org`,
-        ownerId: user.id
-      },
-    })
-
+  
   _addUserToOrganization = (user, organizationId) =>
     client.mutate({
       mutation: UpdateUser,
@@ -235,8 +227,7 @@ class App extends React.Component {
           user.organization ? (
             Promise.resolve(user)
           ) : (
-            this._createOrganization(user)
-              .then(({data: { createOrganization }}) => this._addUserToOrganization(user, createOrganization.id))
+            null
           )
         )
         .then(user =>
@@ -280,21 +271,25 @@ class App extends React.Component {
       !this.state.fontLoaded ? (
         null
       ) : (
-        <ApolloProvider client={client}>
-          <Rehydrated>
-            <CurrentUserProvider currentUser={this.state.currentUser}>
-              <ThemeContext.Provider value={getTheme(muiTheme)}>
-                {
-                  typeof(this.state.currentUser) === 'undefined' ? (
-                    null
-                  ) : (
-                    <AppNavigator />
-                  )
-                }
-              </ThemeContext.Provider>
-            </CurrentUserProvider>
-          </Rehydrated>
-        </ApolloProvider>
+        <ActionSheetProvider>
+          <ApolloProvider client={client}>
+            <Rehydrated>
+              <CurrentUserProvider currentUser={this.state.currentUser}>
+                <ThemeProvider theme={getElementsTheme(getTheme(muiTheme))}>
+                  <ThemeContext.Provider value={getTheme(muiTheme)}>
+                    {
+                      typeof(this.state.currentUser) === 'undefined' ? (
+                        null
+                      ) : (
+                        <AppNavigator />
+                      )
+                    }
+                  </ThemeContext.Provider>
+                </ThemeProvider>
+              </CurrentUserProvider>
+            </Rehydrated>
+          </ApolloProvider>
+        </ActionSheetProvider>
       )
     );
   }
