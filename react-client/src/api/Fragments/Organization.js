@@ -8,6 +8,7 @@ const Organization = {
         __typename
         id
         name
+        ownerId
         campaigns {
           items {
             ...CampaignEntry

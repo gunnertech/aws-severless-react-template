@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { ActivityIndicator, View } from 'react-native'
+import { ActivityIndicator, View, Alert } from 'react-native'
 import {
   Button,
   Toolbar
@@ -14,7 +14,7 @@ import { Card, Text } from 'react-native-elements'
 import { Dropdown } from 'react-native-material-dropdown';
 import { TextField } from 'react-native-material-textfield';
 import { compose, graphql } from 'react-apollo';
-
+import moment from 'moment';
 
 import Toast from 'react-native-root-toast';
 
@@ -23,6 +23,7 @@ import CreateSurvey from '../api/Mutations/CreateSurvey';
 import { withMuiTheme } from '../Styles/muiTheme';
 import withCurrentUser from '../Hocs/withCurrentUser';
 import Container from '../Components/Container'
+import normalizePhoneNumber from '../Util/normalizePhoneNumber'
 
 import ENV from '../environment'
 
@@ -98,7 +99,7 @@ class Home extends React.PureComponent {
     submitted: false
   }
 
-  _sendSms = survey => console.log(`+1${survey.recipientContact}`) ||
+  _sendSms = survey =>
     Auth.currentCredentials()
       .then(credentials =>
         new SNS({
@@ -108,7 +109,7 @@ class Home extends React.PureComponent {
         })
         .publish({
           Message: `Please take this survey - ${ENV.base_url}/surveys/${survey.id}`,
-          PhoneNumber: `+1${survey.recipientContact}`
+          PhoneNumber: normalizePhoneNumber(survey.recipientContact)
         })
         .promise()
         .then(console.log)
@@ -194,10 +195,21 @@ class Home extends React.PureComponent {
       })
     )
     .then(entry =>
-      this.state.recipientContact.match(/@/) ? (
+      (this.state.recipientContact||"").match(/@/) ? (
         this._sendEmail(entry.data.createSurvey)
-      ) : (
+      ) : !!normalizePhoneNumber(this.state.recipientContact) ? (
         this._sendSms(entry.data.createSurvey)
+      ) : (
+        new Promise((resolve, reject) =>
+          Alert.alert(
+            'Invalid Contact',
+            'You must enter a valid email address or Phone number',
+            [
+              {text: 'OK', onPress: reject},
+            ],
+            {cancelable: false},
+          )
+        )
       )
     )
     .then(() =>
@@ -240,6 +252,17 @@ class Home extends React.PureComponent {
     return !currentUser ? null : (
       <Container>
         <Card style={{container: classes.cardContainer}}>
+          {
+            moment.duration(
+              moment(currentUser.createdAt).diff(
+                new moment()
+              )
+            ).asMinutes() < 2 && currentUser.organization.ownerId !== currentUser.id ? (
+              <Text>Success! You joined {JSON.stringify(currentUser.organization)}</Text>
+            ) : (
+              null
+            )
+          }
           <Text>Fill out the form below to send a survey</Text>
           <Dropdown
             label='Select Campaign'

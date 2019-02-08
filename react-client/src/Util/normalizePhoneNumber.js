@@ -2,7 +2,7 @@ import { pipe, ifElse } from 'ramda'
 
 const normalizePhoneNumber = phoneNumber =>
   pipe(
-    phoneNumber => phoneNumber.replace(/\D/,""),
+    phoneNumber => (phoneNumber||"").replace(/\D/,""),
     ifElse(
       phoneNumber => phoneNumber.length === 10,
       phoneNumber => `+1${phoneNumber}`,

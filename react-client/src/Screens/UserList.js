@@ -23,6 +23,7 @@ import { Auth } from 'aws-amplify';
 import SES from 'aws-sdk/clients/ses';
 import SNS from 'aws-sdk/clients/sns';
 
+import normalizePhoneNumber from '../Util/normalizePhoneNumber'
 
 import UserForm from '../Components/UserForm';
 import Container from '../Components/Container'
@@ -160,19 +161,31 @@ class UserList extends React.Component {
         .promise()
       )
 
+  _validEmail = email =>
+    email && !!email.match(/@/)
+  
+  _validPhone = phone => console.log("hiu?", normalizePhoneNumber(phone)) ||
+    phone && !!normalizePhoneNumber(phone)
+
   _inviteUser = data => 
-    Promise.resolve({
-      id: (new Date().getTime()).toString(),
-      invitorId: this.props.currentUser.id,
-      organizationId: this.props.currentUser.organizationId,
-      roleName: data.user.role || null,
-      name: data.user.name || null,
-      title: data.user.title || null,
-      phone: data.user.phone || undefined,
-      email: data.user.email || undefined
-    })
+    new Promise((resolve, reject) => 
+      this._validEmail(data.user.email) || this._validPhone(data.user.phone) ? (
+        resolve({
+          id: (new Date().getTime()).toString(),
+          invitorId: this.props.currentUser.id,
+          organizationId: this.props.currentUser.organizationId,
+          roleName: data.user.role || null,
+          name: data.user.name || null,
+          title: data.user.title || null,
+          phone: data.user.phone || undefined,
+          email: data.user.email || undefined
+        })
+      ) : (
+        reject({message: "You must enter a valid email address or mobile number"})
+      )
+    )
       .then(params => 
-        params.email && !params.phone ? (
+        this._validEmail(params.email) && !this._validPhone(params.phone) ? (
           this._sendEmail(params)
             .then(() => params)
             .catch(args => console.log(args) || params)
@@ -181,7 +194,7 @@ class UserList extends React.Component {
          )
       )
       .then(params => 
-        params.phone ? (
+        this._validPhone(params.phone) ? (
           this._sendSms(params)
             .then(() => params)
             .catch(args => console.log(args) || params)
@@ -210,7 +223,7 @@ class UserList extends React.Component {
         })
           .then(() => params)
       )
-      .catch(err => console.log(err) || this.props.history.push("/sign-out")) //THIS MEANS THE SESSION EXPIRED
+      .catch(err => window.alert(err.message))
 
   _handleSubmit = (user, data) =>
     new Promise(resolve => 

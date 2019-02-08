@@ -151,6 +151,17 @@ class Home extends React.Component {
     const { selectedCampaignId, expanded, selectedSurveyTemplate, startDate, sendingEmail } = this.state;
     return !currentUser ? null : (
       <Container>
+        {
+          moment.duration(
+            moment(currentUser.createdAt).diff(
+              new moment()
+            )
+          ).asMinutes() < 2 && currentUser.organization.ownerId !== currentUser.id ? (
+            <Typography variant="h5">Success! You joined {JSON.stringify(currentUser.organization)}</Typography>
+          ) : (
+            null
+          )
+        }
         { 
           !currentUser.organization.campaigns.items.length ? (
             <Welcome currentUser={currentUser} />
