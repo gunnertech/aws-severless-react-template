@@ -29,6 +29,21 @@ import ListInvitations from './src/api/Queries/ListInvitations'
 
 import normalizePhoneNumber from './src/Util/normalizePhoneNumber'
 
+import { I18n } from 'aws-amplify';
+
+const authScreenLabels = {
+    en: {
+        "Username": "Email",
+        "Enter your username": "Enter your email",
+        'Sign Up': 'Create new account',
+        'Sign Up Account': 'Create a new account'
+    }
+};
+
+I18n.setLanguage('en');
+I18n.putVocabularies(authScreenLabels);
+
+
 
 
 // Remove this once Sentry is correctly setup.
@@ -271,7 +286,6 @@ class App extends React.Component {
       !this.state.fontLoaded ? (
         null
       ) : (
-        <ActionSheetProvider>
           <ApolloProvider client={client}>
             <Rehydrated>
               <CurrentUserProvider currentUser={this.state.currentUser}>
@@ -289,7 +303,6 @@ class App extends React.Component {
               </CurrentUserProvider>
             </Rehydrated>
           </ApolloProvider>
-        </ActionSheetProvider>
       )
     );
   }

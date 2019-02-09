@@ -68,7 +68,7 @@ export default class Privacy extends Component {
         "Privacy Policy"
       }
       onLeftElementPress={() =>
-        navigationProps.navigation.goBack()
+        navigationProps.navigation.popToTop()
       }
     />
   })

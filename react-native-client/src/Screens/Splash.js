@@ -1,5 +1,6 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { View } from 'react-native'
+import { Text } from 'react-native-elements'
 import {
   Button,
   // Card,
@@ -18,21 +19,22 @@ const styles = theme => ({
 });
 
 class Splash extends React.Component {
-  componentDidUpdate() {
+
+  componentDidMount() {
     if(this.props.currentUser) {
       this.props.navigation.navigate("Gated")
     }
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, theme } = this.props;
     return (
       <Container>
         <Card>
           <View>
-            <Text>Simplisurvey is a tool for interpreting real time customer satisfaction and analysis.</Text>
-            <Text>It works by polling customers with a simple algorithm and presenting findings on an easy to use dashboard.</Text>
-            <Text>To send a survey, sign in with your account or, if you were invited, register for a new account using the email address and/or phone number where you received the invitation.</Text>
+            <Text style={{paddingBottom: theme.spacing.sm}}>SimpliSurvey is a tool for interpreting real time customer satisfaction and analysis.</Text>
+            <Text style={{paddingBottom: theme.spacing.sm}}>It works by polling customers with a simple algorithm and presenting findings on an easy to use dashboard.</Text>
+            <Text style={{paddingBottom: theme.spacing.sm}}>To send a survey, sign in with your account or, if you were invited, register for a new account using the email address and/or phone number where you received the invitation.</Text>
           </View>
           <Button onPress={() => this.props.navigation.navigate("Gated")} style={{container: classes.commentButtonContainer}} primary text="Sign In" iconSet="FontAwesome" icon="sign-in" raised />
           <Button 

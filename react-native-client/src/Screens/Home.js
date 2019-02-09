@@ -252,86 +252,88 @@ class Home extends React.PureComponent {
     return !currentUser ? null : (
       <Container>
         <Card style={{container: classes.cardContainer}}>
-          {
-            moment.duration(
-              moment(currentUser.createdAt).diff(
-                new moment()
-              )
-            ).asMinutes() < 2 && currentUser.organization.ownerId !== currentUser.id ? (
-              <Text>Success! You joined {JSON.stringify(currentUser.organization)}</Text>
-            ) : (
-              null
-            )
-          }
-          <Text>Fill out the form below to send a survey</Text>
-          <Dropdown
-            label='Select Campaign'
-            data={currentUser.organization.campaigns.items.filter(campaign => !!campaign.active).map(campaign => ({value: campaign.campaignTemplate.name, id: campaign.campaignTemplate.id, campaign}))}
-            onChangeText={(value, index, data) => this.setState({
-              selectedCampaignTemplateId: data[index].id,
-              selectedCampaignId: data[index].campaign.id
-            })}
-            value={
-              !!this.state.selectedCampaignTemplateId ? (
-                currentUser.organization.campaigns.items
-                  .filter(campaign => !!campaign.active)
-                  .find(campaign => campaign.campaignTemplate.id === this.state.selectedCampaignTemplateId)
-                  .campaignTemplate.name
-              ) : (
-                ""
-              )
-              }
-          />
-          {
-            this.state.selectedCampaignTemplateId &&
-            <Dropdown
-              label='Select Survey'
-              data={
-                currentUser.organization.campaigns.items
-                  .filter(campaign => !!campaign.active)
-                  .find(campaign => campaign.campaignTemplate.id === this.state.selectedCampaignTemplateId)
-                  .campaignTemplate.surveyTemplates.items.map(surveyTemplate => ({value: surveyTemplate.name, id: surveyTemplate.id}))
-              }
-              onChangeText={(value, index, data) => this.setState({selectedSurveyTemplateId: data[index].id})}
-            />
-          }
-          {
-            this.state.selectedSurveyTemplateId &&
-            <TextField
-              autoCapitalize={"none"}
-              autoCorrect={false}
-              label='Recipient Contact'
-              title='Email address or mobile number to send survey to'
-              value={this.state.recipientContact || ''}
-              onChangeText={ recipientContact => this.setState({ recipientContact }) }
-            />
-          }
-          {
-            this.state.recipientContact &&
-            <TextField
-              autoCapitalize={"none"}
-              autoCorrect={false}
-              label='Recipient Identifier'
-              value={this.state.recipientIdentifier || ''}
-              title='(Optional) Name or identifier to indentify the recipient'
-              onChangeText={ recipientIdentifier => this.setState({ recipientIdentifier }) }
-            />
-          }
-          <View style={classes.buttonContainer}>
+          <View>
             {
-              this.state.submitting ? (
-                <ActivityIndicator size="large" />
-              ) : this.state.recipientContact ? (
-                <Button raised primary text="Send" icon="send" onPress={this._handleSubmit.bind(this)} />
+              moment.duration(
+                moment(currentUser.createdAt).diff(
+                  new moment()
+                )
+              ).asMinutes() < 2 && currentUser.organization.ownerId !== currentUser.id ? (
+                <Text>Success! You joined {JSON.stringify(currentUser.organization)}</Text>
               ) : (
                 null
               )
             }
+            <Text>Fill out the form below to send a survey</Text>
+            <Dropdown
+              label='Select Campaign'
+              data={currentUser.organization.campaigns.items.filter(campaign => !!campaign.active).map(campaign => ({value: campaign.campaignTemplate.name, id: campaign.campaignTemplate.id, campaign}))}
+              onChangeText={(value, index, data) => this.setState({
+                selectedCampaignTemplateId: data[index].id,
+                selectedCampaignId: data[index].campaign.id
+              })}
+              value={
+                !!this.state.selectedCampaignTemplateId ? (
+                  currentUser.organization.campaigns.items
+                    .filter(campaign => !!campaign.active)
+                    .find(campaign => campaign.campaignTemplate.id === this.state.selectedCampaignTemplateId)
+                    .campaignTemplate.name
+                ) : (
+                  ""
+                )
+                }
+            />
+            {
+              this.state.selectedCampaignTemplateId &&
+              <Dropdown
+                label='Select Survey'
+                data={
+                  currentUser.organization.campaigns.items
+                    .filter(campaign => !!campaign.active)
+                    .find(campaign => campaign.campaignTemplate.id === this.state.selectedCampaignTemplateId)
+                    .campaignTemplate.surveyTemplates.items.map(surveyTemplate => ({value: surveyTemplate.name, id: surveyTemplate.id}))
+                }
+                onChangeText={(value, index, data) => this.setState({selectedSurveyTemplateId: data[index].id})}
+              />
+            }
+            {
+              this.state.selectedSurveyTemplateId &&
+              <TextField
+                autoCapitalize={"none"}
+                autoCorrect={false}
+                label='Recipient Contact'
+                title='Email address or mobile number to send survey to'
+                value={this.state.recipientContact || ''}
+                onChangeText={ recipientContact => this.setState({ recipientContact }) }
+              />
+            }
+            {
+              this.state.recipientContact &&
+              <TextField
+                autoCapitalize={"none"}
+                autoCorrect={false}
+                label='Recipient Identifier'
+                value={this.state.recipientIdentifier || ''}
+                title='(Optional) Name or identifier to indentify the recipient'
+                onChangeText={ recipientIdentifier => this.setState({ recipientIdentifier }) }
+              />
+            }
+            <View style={classes.buttonContainer}>
+              {
+                this.state.submitting ? (
+                  <ActivityIndicator size="large" />
+                ) : this.state.recipientContact ? (
+                  <Button raised primary text="Send" icon="send" onPress={this._handleSubmit.bind(this)} />
+                ) : (
+                  null
+                )
+              }
+            </View>
+            {
+              this.state.submitted &&
+              <SubmissionToast onHidden={() => this.setState({submitted: false})} />
+            }
           </View>
-          {
-            this.state.submitted &&
-            <SubmissionToast onHidden={() => this.setState({submitted: false})} />
-          }
         </Card>
       </Container>
     )
