@@ -140,8 +140,8 @@ class App extends React.Component {
       .then(({data: {listInvitations: {items}}}) => items)
       .then(invitations => invitations.find(
         invitation => 
-          (!!invitation.email && (invitation.email||"").toLowerCase() === (user.email||"").toLowerCase()) || 
-          (!!invitation.phone && normalizePhoneNumber(invitation.phone||"") === normalizePhoneNumber(user.phone||"")))
+        (!!invitation.email && !!user.email && (invitation.email||"").toLowerCase() === (user.email||"").toLowerCase()) || 
+        (!!invitation.phone && !!user.phone && normalizePhoneNumber(invitation.phone||"") === normalizePhoneNumber(user.phone||"")))
       )
 
   
