@@ -164,7 +164,7 @@ class UserList extends React.Component {
   _validEmail = email =>
     email && !!email.match(/@/)
   
-  _validPhone = phone => console.log("hiu?", normalizePhoneNumber(phone)) ||
+  _validPhone = phone =>
     phone && !!normalizePhoneNumber(phone)
 
   _inviteUser = data => 
