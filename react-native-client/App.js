@@ -37,7 +37,8 @@ const authScreenLabels = {
         "Username": "Email",
         "Enter your username": "Enter your email",
         'Sign Up': 'Create new account',
-        'Sign Up Account': 'Create a new account'
+        'Sign Up Account': 'Create a new account',
+        'Confirm Sign Up': 'Confirm Sign Up by entering the code that was sent to your email address'
     }
 };
 
