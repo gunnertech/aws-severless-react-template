@@ -260,7 +260,7 @@ class Home extends React.PureComponent {
                   new moment()
                 )
               ).asMinutes() < 2 && currentUser.organization.ownerId !== currentUser.id ? (
-                <Text>Success! You joined</Text>
+                <Text>Success! You joined {currentUser.organization.name}</Text>
               ) : (
                 null
               )

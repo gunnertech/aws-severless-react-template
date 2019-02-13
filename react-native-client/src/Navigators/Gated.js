@@ -2,12 +2,13 @@ import React from 'react';
 import { createStackNavigator, createDrawerNavigator, SafeAreaView } from 'react-navigation';
 import { Drawer } from 'react-native-material-ui';
 // import { withAuthenticator } from 'aws-amplify-react-native';
-import { ConfirmSignIn, ConfirmSignUp, ForgotPassword, RequireNewPassword, SignIn, VerifyContact, withAuthenticator } from 'aws-amplify-react-native';
+import { ConfirmSignIn, ConfirmSignUp, ForgotPassword, RequireNewPassword, VerifyContact, withAuthenticator } from 'aws-amplify-react-native';
 
 // import AmplifyTheme from '../Styles/amplifyTheme'; theme={AmplifyTheme}
 import Home from '../Screens/Home';
 import SignOut from '../Screens/SignOut';
 import SignUp from '../Screens/SignUp'
+import SignIn from '../Screens/SignIn'
 import theme from '../Styles/muiTheme'
 
 

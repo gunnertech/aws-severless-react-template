@@ -105,6 +105,11 @@ custom:
         field: createInvitation
         request: "createInvitation-request.vtl"
         response: "createInvitation-response.vtl"
+      - dataSource: Invitations
+        type: Mutation
+        field: updateInvitation
+        request: "genericUpdate-request.vtl"
+        response: "generic-response.vtl"
       - dataSource: Users
         type: Mutation
         field: updateUser

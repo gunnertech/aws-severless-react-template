@@ -38,6 +38,7 @@ import QueryUsersByOrganizationIdCreatedAtIndex from "../api/Queries/QueryUsersB
 import QueryInvitationsByOrganizationIdIdIndex from "../api/Queries/QueryInvitationsByOrganizationIdIdIndex"
 import UpdateUser from "../api/Mutations/UpdateUser"
 import CreateInvitation from '../api/Mutations/CreateInvitation';
+import ListInvitations from '../api/Queries/ListInvitations';
 
 
 const ActionMenu = ({onClick}) => (
@@ -167,28 +168,32 @@ class UserList extends React.Component {
   _validPhone = phone =>
     phone && !!normalizePhoneNumber(phone)
 
-  _inviteUser = data => 
+  _inviteUser = (data, invitations) =>
     new Promise((resolve, reject) => 
-      this._validEmail(data.user.email) || this._validPhone(data.user.phone) ? (
-        resolve({
-          id: (new Date().getTime()).toString(),
-          invitorId: this.props.currentUser.id,
-          organizationId: this.props.currentUser.organizationId,
-          roleName: data.user.role || null,
-          name: data.user.name || null,
-          title: data.user.title || null,
-          phone: data.user.phone || undefined,
-          email: data.user.email || undefined
-        })
+      this._validEmail(data.user.email) ? (
+        !!invitations.find(invitation => invitation.email && invitation.email.toLowerCase() === data.user.email.toLowerCase()) ? (
+          reject({message: "There is already an invitation associated with that email address"})
+        ) : (
+          resolve({
+            id: (new Date().getTime()).toString(),
+            invitorId: this.props.currentUser.id,
+            organizationId: this.props.currentUser.organizationId,
+            roleName: data.user.role || null,
+            name: data.user.name || null,
+            title: data.user.title || null,
+            phone: normalizePhoneNumber(data.user.phone) || undefined,
+            email: !!data.user.email ? data.user.email.toLowerCase() : undefined
+          })
+        )
       ) : (
-        reject({message: "You must enter a valid email address or mobile number"})
+        reject({message: "You must enter a valid email address"})
       )
     )
       .then(params => 
         this._validEmail(params.email) && !this._validPhone(params.phone) ? (
           this._sendEmail(params)
             .then(() => params)
-            .catch(args => console.log(args) || params)
+            .catch(args => params)
          ) : (
            Promise.resolve(params)
          )
@@ -197,7 +202,7 @@ class UserList extends React.Component {
         this._validPhone(params.phone) ? (
           this._sendSms(params)
             .then(() => params)
-            .catch(args => console.log(args) || params)
+            .catch(args => params)
          ) : (
            Promise.resolve(params)
          )
@@ -223,9 +228,9 @@ class UserList extends React.Component {
         })
           .then(() => params)
       )
-      .catch(err => window.alert(err.message))
+      .catch(err => window.alert(err.message) || false)
 
-  _handleSubmit = (user, data) =>
+  _handleSubmit = (user, invitations, data) =>
     new Promise(resolve => 
       this.setState({submittingForm: true}, resolve)
     )
@@ -236,10 +241,15 @@ class UserList extends React.Component {
             name: data.user.name || user.name
           })
         ) : (
-          this._inviteUser(data)
+          this._inviteUser(data, invitations)
         )
       ))
-      .then(() => this.setState({submittingForm: false, showFormModal: false, editUser: null}))
+      .then(result => new Promise(resolve => !result ? (
+          this.setState({submittingForm: false, showFormModal: true}, () => resolve(result))
+        ) : (
+          this.setState({submittingForm: false, showFormModal: false, editUser: null}, () => resolve(result))
+        )
+      ))
 
   _handleMenuClick = () =>
     this.setState({showFormModal: true})
@@ -303,7 +313,20 @@ class UserList extends React.Component {
       <Container>
         {
           this.state.showFormModal ? (
-            <UserForm user={this.state.editUser} onClose={() => this.setState({showFormModal: false, editUser: null})} open={this.state.showFormModal} onSubmit={this._handleSubmit.bind(this, this.state.editUser)} submitting={this.state.submittingForm} />
+            <Query
+              variables={{first: 1000}}
+              query={ListInvitations}
+            >
+              {({loading, error, data: {listInvitations: {items} = {items: []}} = {}}) => 
+                <UserForm 
+                  user={this.state.editUser} 
+                  onClose={() => this.setState({showFormModal: false, editUser: null})} 
+                  open={this.state.showFormModal} 
+                  onSubmit={this._handleSubmit.bind(this, this.state.editUser, items.filter(invitation => !invitation.accepted))} 
+                  submitting={this.state.submittingForm} 
+                />
+              }
+            </Query>
           ) : (
             null
           )
@@ -345,8 +368,8 @@ class UserList extends React.Component {
               variables={{organizationId: currentUser.organizationId }}
             >
               {entry => entry.loading || !((entry.data||{}).queryInvitationsByOrganizationIdIdIndex||{}).items ? "Loading Invitations..." : (
-                entry.data.queryInvitationsByOrganizationIdIdIndex.items.map((user, i) =>
-                  <ListItem key={user.id} divider={i !== entry.data.queryInvitationsByOrganizationIdIdIndex.items.length-1}>
+                entry.data.queryInvitationsByOrganizationIdIdIndex.items.filter(i => !i.accepted).map((user, i) =>
+                  <ListItem key={user.id} divider={i !== entry.data.queryInvitationsByOrganizationIdIdIndex.items.filter(i => !i.accepted).length-1}>
                     <ListItemText
                       primary={`${user.name || user.id} ${user.title ? `(${user.title})` : ''}`} 
                       secondary={`${user.roleName} - Invite Pending`}

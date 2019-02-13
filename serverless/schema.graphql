@@ -54,6 +54,7 @@ type Invitation {
 	invitorId: ID!
 	roleName: String!
 	title: String
+	accepted: Boolean
 }
 
 type InvitationConnection {
@@ -278,6 +279,11 @@ input UpdateUserInput {
 	active: Boolean
 }
 
+input UpdateInvitationInput {
+	id: ID!
+	accepted: Boolean
+}
+
 input UpdateResponseInput {
 	id: ID!
 	reviewerId: ID
@@ -319,15 +325,18 @@ type Mutation {
 	updateCampaign(input: UpdateCampaignInput!): Campaign
 	updateOrganization(input: UpdateOrganizationInput!): Organization
 	updateResponse(input: UpdateResponseInput!): Response
+	updateInvitation(input: UpdateInvitationInput!): Invitation
 }
 
 type Query {
 	listCampaignTemplates(first: Int, after: String): CampaignTemplateConnection
 	listInvitations(first: Int, after: String): InvitationConnection
+	
 	queryInvitationsByOrganizationIdIdIndex(organizationId: ID!, first: Int, after: String): InvitationConnection
 	queryRolesByNameIdIndex(name: String!, first: Int, after: String): RoleConnection
 	queryUsersByOrganizationIdCreatedAtIndex(organizationId: ID!, first: Int, after: String): UserConnection
 	querySurveysByCampaignIdCreatedAtIndex(campaignId: ID!, first: Int, after: String): SurveyConnection
+	
 	getUser(id: ID!): User
 	getSurvey(id: ID!): Survey
 }

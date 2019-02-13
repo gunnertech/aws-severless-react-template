@@ -231,6 +231,8 @@ const countryDialCodes = [
 
 class MySignUp extends SignUp {
   signUp() {
+    this.inputs.username = (this.inputs.username||"").toLowerCase()
+    this.inputs.email = (this.inputs.email||"").toLowerCase()
     if (!this.inputs.dial_code) {
         this.inputs.dial_code = this.getDefaultDialCode();
     }

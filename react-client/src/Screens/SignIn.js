@@ -24,7 +24,11 @@ import {
 
 
 class MySignIn extends SignIn {
-  
+  async signIn() {
+    this.inputs.username = this.inputs.username.toLowerCase()
+    super.signIn()
+  }
+
   showComponent(theme) {
     const { authState, federated, onStateChange, onAuthEvent } = this.props;
     // if (hide && hide.includes(SignIn)) { return null; }

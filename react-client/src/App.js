@@ -12,6 +12,7 @@ import { ConfirmSignIn, ConfirmSignUp, ForgotPassword, RequireNewPassword, Verif
 import GetUser from "./api/Queries/GetUser"
 import CreateUser from "./api/Mutations/CreateUser"
 import UpdateUser from "./api/Mutations/UpdateUser"
+import UpdateInvitation from "./api/Mutations/UpdateInvitation"
 import CreateOrganization from "./api/Mutations/CreateOrganization"
 import CreateAssignedRole from "./api/Mutations/CreateAssignedRole"
 import CreateRole from "./api/Mutations/CreateRole"
@@ -34,7 +35,7 @@ import { NotificationsProvider } from './Contexts/Notifications'
 import { ActionMenuProvider } from './Contexts/ActionMenu';
 import { LayoutProvider } from './Contexts/Layout'
 
-import normalizePhoneNumber from './Util/normalizePhoneNumber'
+// import normalizePhoneNumber from './Util/normalizePhoneNumber'
 
 import { I18n } from 'aws-amplify';
 
@@ -199,11 +200,10 @@ class App extends Component {
       fetchPolicy: "network-only"
     })
       .then(({data: {listInvitations: {items}}}) => items)
-      .then(invitations => invitations.find(
+      .then(invitations => invitations.filter(invitation => !invitation.accepted).find(
         invitation => 
-        (!!invitation.email && !!user.email && (invitation.email||"").toLowerCase() === (user.email||"").toLowerCase()) || 
-        (!!invitation.phone && !!user.phone && normalizePhoneNumber(invitation.phone||"") === normalizePhoneNumber(user.phone||"")))
-      )
+          (!!invitation.email && !!user.email && (invitation.email||"").toLowerCase() === (user.email||"").toLowerCase())
+      ))
 
   _createOrganization = user =>
     client.mutate({
@@ -227,7 +227,16 @@ class App extends Component {
       .then(({data: {updateUser}}) => Promise.resolve(updateUser))
 
   _acceptInvitationForUser = (invitation, user) =>
-    this._addRoleToUser(invitation.roleName, user)
+    client.mutate({
+      mutation: UpdateInvitation,
+      onError: e => console.log("_acceptInvitationForUser", e),
+      variables: {
+        id: invitation.id,
+        accepted: true
+      },
+    })
+      .then(({data: {updateInvitation}}) => this._addRoleToUser(invitation.roleName, user))
+    
 
   _addRoleToUser = (roleName, user) =>
     client.query({

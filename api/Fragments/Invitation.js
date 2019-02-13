@@ -14,6 +14,7 @@ const Invitation = {
         invitorId
         roleName
         title
+        accepted
       }
     `
   }

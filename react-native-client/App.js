@@ -26,8 +26,9 @@ import CreateAssignedRole from "./src/api/Mutations/CreateAssignedRole"
 import CreateRole from "./src/api/Mutations/CreateRole"
 import QueryRolesByNameIdIndex from './src/api/Queries/QueryRolesByNameIdIndex'
 import ListInvitations from './src/api/Queries/ListInvitations'
+import UpdateInvitation from "./src/api/Mutations/UpdateInvitation"
 
-import normalizePhoneNumber from './src/Util/normalizePhoneNumber'
+// import normalizePhoneNumber from './src/Util/normalizePhoneNumber'
 
 import { I18n } from 'aws-amplify';
 
@@ -138,11 +139,10 @@ class App extends React.Component {
       fetchPolicy: "network-only"
     })
       .then(({data: {listInvitations: {items}}}) => items)
-      .then(invitations => invitations.find(
+      .then(invitations => invitations.filter(invitation => !invitation.accepted).find(
         invitation => 
-        (!!invitation.email && !!user.email && (invitation.email||"").toLowerCase() === (user.email||"").toLowerCase()) || 
-        (!!invitation.phone && !!user.phone && normalizePhoneNumber(invitation.phone||"") === normalizePhoneNumber(user.phone||"")))
-      )
+          (!!invitation.email && !!user.email && (invitation.email||"").toLowerCase() === (user.email||"").toLowerCase())
+      ))
 
   
   _addUserToOrganization = (user, organizationId) =>
@@ -157,7 +157,15 @@ class App extends React.Component {
       .then(({data: {updateUser}}) => Promise.resolve(updateUser))
 
   _acceptInvitationForUser = (invitation, user) =>
-    this._addRoleToUser(invitation.roleName, user)
+    client.mutate({
+      mutation: UpdateInvitation,
+      onError: e => console.log("_acceptInvitationForUser", e),
+      variables: {
+        id: invitation.id,
+        accepted: true
+      },
+    })
+      .then(({data: {updateInvitation}}) => this._addRoleToUser(invitation.roleName, user))
 
   _addRoleToUser = (roleName, user) =>
     client.query({

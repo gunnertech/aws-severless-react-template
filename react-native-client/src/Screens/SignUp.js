@@ -41,7 +41,7 @@ class MySignUp extends SignUp {
                                   const stateObj = this.state;
                                   stateObj[field.key] = text;
                                   if(field.key === 'email') {
-                                    stateObj['username'] = text;
+                                    stateObj['username'] = text.toLowerCase();
                                   }
                                   this.setState(stateObj)
                                 }

@@ -66,10 +66,10 @@ class UserForm extends React.Component {
   }
 
   _handleSubmit = (data, cb) =>
-    Promise.all([
-      this.setState(this._initialState),
       cb(data)
-    ])
+        .then(result => 
+          result && this.setState(this._initialState)
+        )
 
   _handleChange = (field, event) =>
     this.setState({
@@ -79,8 +79,6 @@ class UserForm extends React.Component {
       }
     })
 
-  _resetState = () =>
-    this.setState(this._initialState)
 
   componentDidMount() {
     if(this.props.user) {
