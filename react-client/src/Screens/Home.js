@@ -157,7 +157,7 @@ class Home extends React.Component {
               new moment()
             )
           ).asMinutes() < 2 && currentUser.organization.ownerId !== currentUser.id ? (
-            <Typography variant="h5">Success! You joined {JSON.stringify(currentUser.organization)}</Typography>
+            <Typography variant="h5">Success! You joined</Typography>
           ) : (
             null
           )

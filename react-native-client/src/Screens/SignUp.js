@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { TouchableWithoutFeedback, ScrollView, View, Keyboard } from 'react-native'
+
 import { SignUp } from 'aws-amplify-react-native';
 
 import {

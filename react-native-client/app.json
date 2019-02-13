@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "SimplySurvey",
-    "scheme": "SimplySurvey",
+    "name": "simplisurvey",
+    "scheme": "simplisurvey",
     "description": "This project is really great.",
-    "slug": "SimplySurvey",
+    "slug": "simplisurvey",
     "privacy": "public",
     "sdkVersion": "32.0.0",
     "platforms": ["ios", "android"],
@@ -21,7 +21,7 @@
           "file": "sentry-expo/upload-sourcemaps",
           "config": {
             "organization": "gunner-technology",
-            "project": "SimplySurvey",
+            "project": "simplisurvey",
             "authToken": "eaf415b826c5424496d5262df653cb357011cc7549004b40921445ca66b49876"
           }
         }
@@ -36,7 +36,7 @@
     "android": {
       "package": "com.gunnertech.simplisurvey",
       "playStoreUrl": "https://play.google.com/store/apps/details?id=com.gunnertech.simplisurvey",
-      "versionCode": 3,
+      "versionCode": 5,
       "config": {
         "branch": {
           "apiKey": "key_live_djIahXDtsxh0VrlEgrm9qniouxpWclLZ"
@@ -46,7 +46,7 @@
     "ios": {
       "bundleIdentifier": "com.gunnertech.simplisurvey",
       "supportsTablet": true,
-      "buildNumber": "2",
+      "buildNumber": "5",
       "config": {
         "usesNonExemptEncryption": false,
         "branch": {

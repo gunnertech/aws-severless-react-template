@@ -25,15 +25,15 @@ const ENV = {
     sentry_url
   },
   staging: {
-    userPoolId: 'us-east-1_i3GQhFH8j',
+    userPoolId: 'us-east-1_frzrddXO2',
     identityPoolId: 'us-east-1:6168941b-1c37-4980-8de2-6ed799625309',
     awsRegion: 'us-east-1',
-    userPoolWebClientId: '7uusqgijeoqntktnhqcfi2ftvk',
+    userPoolWebClientId: '6mqltu1tln70f7fok4cfqogo0k',
     aws_appsync_graphqlEndpoint: 'https://l2egmjy6dfgwhpzkxkpp27urpq.appsync-api.us-east-1.amazonaws.com/graphql',
     bucket: 'com-gunnertech-simplisurvey-staging',
     pinpoint_app_id: "5a1bcb16c71d4cfab5e8f7f965540c75",
     cdn: 'd1446fel4axapv.cloudfront.net',
-    base_url: "https://simplisurvey.com",
+    base_url: "https://staging.d2x31qlfq03ed5.amplifyapp.com	",
     sentry_url
   },
   prodution: {

@@ -1,7 +1,6 @@
 # Setup
 ## AWS account
 
-
 $ cd ~/workspace/aws
 $ ./organization add -n <project-name>-development -e <project-name>-development@gunnertech.com -u <your root username> -g <groupname>
 $ ./organization add -n <project-name>-staging -e <project-name>-staging@gunnertech.com -u <your root username> -g <groupname>
@@ -21,8 +20,7 @@ $ git clone --single-branch -b template https://git-codecommit.us-east-1.amazona
 ## Serverless
 $ code <project-name>/serverless
 1) Global search for PRE DEPLOY TODO
-$ yarn upgrade
-$ yarn install
+$ yarn
 $ sls deploy -s development
 $ sls deploy -s staging
 $ sls deploy -s production
@@ -79,7 +77,7 @@ $ #work work work
 $ git add .; git commit -am “closes #%issue-number%”
 $ git checkout %dev name%
 $ git merge %issue-number%
-$ git push origin %dev name%
+$ git push
 $ git branch -D %issue-number%
 $ ## repeat on more issues throughout the iteration
 $ git checkout -b %iteration-date (format: YYYYMMDD) %
@@ -109,6 +107,7 @@ $ sls deploy -s staging
 ### React Native Front End
 $ cd react-native-client
 $ ###if you need to build a new standalone (i.e. expo or react version changes, icon, splash changes)
+$ #update version code, build numbers, etc in app.json
 $ expo build:ios --release-channel staging
 $ expo build:android --release-channel staging
 $ ###end if
@@ -130,6 +129,11 @@ $ sls deploy -s production
 
 ### React Native Front End
 $ cd react-native-client
+$ ###if you need to build a new standalone (i.e. expo or react version changes, icon, splash changes)
+$ #update version code, build numbers, etc in app.json
+$ expo build:ios --release-channel production
+$ expo build:android --release-channel production
+$ ###end if
 $ expo publish --release-channel production
 
 ### React Front End (automatically from the git push)
