@@ -86,6 +86,7 @@ $ git push origin %iteration-date%
 $ git tag released/%iteration-date%
 $ git push origin released/%iteration-date%
 $ git push staging %iteration-date%
+$ git branch -D <iteration-date>
 $ ## Submit pull request
 
 ## Amplify
@@ -96,7 +97,7 @@ Log into the console and setup the deploy as seen in this video: https://youtu.b
 ## Deploying (Staging)
 
 $ git checkout staging
-$ git merge released/<iteration-date>
+$ git pull
 $ git merge master # (make sure you have the latest hotfixes)
 $ git push
 
@@ -119,9 +120,8 @@ $ expo publish --release-channel staging
 
 ### Client approves iteration
 $ git checkout master
-$ git merge released/<iteration-date>
+$ git merge staging
 $ git push
-$ git branch -D <iteration-date>
 
 ### Backend
 $ cd serverless

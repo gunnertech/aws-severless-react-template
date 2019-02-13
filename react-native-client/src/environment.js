@@ -33,7 +33,7 @@ const ENV = {
     bucket: 'com-gunnertech-simplisurvey-staging',
     pinpoint_app_id: "5a1bcb16c71d4cfab5e8f7f965540c75",
     cdn: 'd1446fel4axapv.cloudfront.net',
-    base_url: "https://staging.d2x31qlfq03ed5.amplifyapp.com	",
+    base_url: "https://staging.d2x31qlfq03ed5.amplifyapp.com",
     sentry_url
   },
   prodution: {

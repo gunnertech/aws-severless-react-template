@@ -139,7 +139,8 @@ class Home extends React.PureComponent {
               Charset: "UTF-8",
               Data: `<html>
                         <body>
-                          <a href="${ENV.base_url}/surveys/${survey.id}">Please take this survey</a>
+                          <p><a href="${ENV.base_url}/surveys/${survey.id}">Please take this survey</a></p>
+                          <p>${ENV.base_url}/surveys/${survey.id}</p>
                         </body>
                       </html>`
               },
