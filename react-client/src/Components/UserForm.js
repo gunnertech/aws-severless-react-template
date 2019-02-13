@@ -128,7 +128,7 @@ class UserForm extends React.Component {
             <FormControl className={classes.formControl} fullWidth>
               <InputLabel htmlFor="phone">Phone</InputLabel>
               <Input
-                value={this.state.user.phone.replace("+1","")}
+                value={(this.state.user.phone||"").replace("+1","")}
                 onChange={this._handleChange.bind(this, 'phone')}
                 id="phone"
                 inputComponent={TextMaskCustom}
