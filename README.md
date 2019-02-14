@@ -143,6 +143,6 @@ $ expo build:android --release-channel production
 $ # Upload .apk to play store - if first time, you'll have to add the new app
 $ ###else
 $ expo publish --release-channel production
-$ ###end if
+$ ###end if 
 
 ### React Front End (automatically from the git push)
