@@ -108,12 +108,16 @@ $ sls deploy -s staging
 
 ### React Native Front End
 $ cd react-native-client
+$ yarn start
 $ ###if you need to build a new standalone (i.e. expo or react version changes, icon, splash changes)
 $ #update version code, build numbers, etc in app.json
 $ expo build:ios --release-channel staging
+$ # UPLOAD .ipa USING APPLICATION LOADER - if first time, you'll have to add it via itunes connect first
 $ expo build:android --release-channel staging
-$ ###end if
+$ # Upload .apk to play store - if first time, you'll have to add the new app
+$ ###else
 $ expo publish --release-channel staging
+$ ###end if
 
 ### React Front End (automatically from the git push)
 
@@ -130,11 +134,15 @@ $ sls deploy -s production
 
 ### React Native Front End
 $ cd react-native-client
+$ yarn start
 $ ###if you need to build a new standalone (i.e. expo or react version changes, icon, splash changes)
-$ #update version code, build numbers, etc in app.json
+$ #update version code, build numbers, etc in app.jso
 $ expo build:ios --release-channel production
+$ # UPLOAD .ipa  USING APPLICATION LOADER - if first time, you'll have to add it via itunes connect first
 $ expo build:android --release-channel production
-$ ###end if
+$ # Upload .apk to play store - if first time, you'll have to add the new app
+$ ###else
 $ expo publish --release-channel production
+$ ###end if
 
 ### React Front End (automatically from the git push)
