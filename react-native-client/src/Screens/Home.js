@@ -224,7 +224,7 @@ class Home extends React.PureComponent {
     .catch(console.log)
 
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps, prevState, snapshot) {
     const isValid = !!(
       this.state.selectedCampaignTemplateId &&
       this.state.selectedSurveyTemplateId &&
@@ -234,6 +234,15 @@ class Home extends React.PureComponent {
 
     if(isValid !== wasValid) {
       this.props.navigation.setParams({valid: isValid})
+    }
+
+    if(!!this.state.selectedCampaignTemplateId && !prevState.selectedCampaignTemplateId) {
+      this.setState({
+        selectedSurveyTemplateId: this.props.currentUser.organization.campaigns.items
+          .filter(campaign => !!campaign.active)
+          .find(campaign => campaign.campaignTemplate.id === this.state.selectedCampaignTemplateId)
+          .campaignTemplate.surveyTemplates.items[0].id
+      })
     }
 
     if(this.props.currentUser && this.props.currentUser.organization.campaigns.items.filter(campaign => !!campaign.active).length === 1 && !this.state.selectedCampaignTemplateId) {
@@ -288,6 +297,12 @@ class Home extends React.PureComponent {
               this.state.selectedCampaignTemplateId &&
               <Dropdown
                 label='Select Survey'
+                value={
+                  currentUser.organization.campaigns.items
+                    .filter(campaign => !!campaign.active)
+                    .find(campaign => campaign.campaignTemplate.id === this.state.selectedCampaignTemplateId)
+                    .campaignTemplate.surveyTemplates.items[0].name
+                }
                 data={
                   currentUser.organization.campaigns.items
                     .filter(campaign => !!campaign.active)
