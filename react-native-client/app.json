@@ -36,7 +36,7 @@
     "android": {
       "package": "com.gunnertech.simplisurvey",
       "playStoreUrl": "https://play.google.com/store/apps/details?id=com.gunnertech.simplisurvey",
-      "versionCode": 5,
+      "versionCode": 6,
       "permissions": [
         "CAMERA",
         "NOTIFICATIONS",
@@ -54,7 +54,7 @@
     "ios": {
       "bundleIdentifier": "com.gunnertech.simplisurvey",
       "supportsTablet": true,
-      "buildNumber": "5",
+      "buildNumber": "6",
       "config": {
         "usesNonExemptEncryption": false,
         "branch": {

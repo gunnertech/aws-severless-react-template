@@ -86,6 +86,7 @@ $ git push origin %iteration-date%
 $ git tag released/%iteration-date%
 $ git push origin released/%iteration-date%
 $ git push staging %iteration-date%
+$ git checkout %dev name%
 $ git branch -D <iteration-date>
 $ ## Submit pull request
 
