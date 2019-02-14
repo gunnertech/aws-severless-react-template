@@ -1,7 +1,7 @@
 
 import { convertArrayToCSV } from "convert-array-to-csv";
 
-const campaignToCSV = (campaign, surveys) => console.log(campaign, surveys) ||
+const campaignToCSV = (campaign, surveys, users) =>
   Promise.resolve(["Campaign", "Survey", "Prompt", "Response", "User", "Respondent", "Date"])
     .then(header => ({
       header,
@@ -24,7 +24,7 @@ const campaignToCSV = (campaign, surveys) => console.log(campaign, surveys) ||
           )
           .find(option => !!option)
           .name,
-          (survey.user.name || survey.user.id),
+          users.find(user => user.id === survey.userId).name,
           `${survey.recipientContact} - ${survey.recipientIdentifier}`,
           survey.createdAt
         ]

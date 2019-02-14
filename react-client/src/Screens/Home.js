@@ -87,15 +87,22 @@ class Home extends React.Component {
   _handleMenuClick = () =>
     new Promise(resolve => this.setState({sendingEmail: true}, resolve))
       .then(() => 
-        this.props.client.query({
-          query: QuerySurveysByCampaignIdCreatedAtIndex,
-          variables: { campaignId: this.state.selectedCampaignId },
-        })
+        Promise.all([
+          this.props.client.query({
+            query: QuerySurveysByCampaignIdCreatedAtIndex,
+            variables: { campaignId: this.state.selectedCampaignId },
+          }),
+          this.props.client.query({
+            query: QueryUsersByOrganizationIdCreatedAtIndex,
+            variables: { organizationId: this.props.currentUser.organizationId },
+          })
+        ])
       )
-      .then(({ data, loading, error }) => data.querySurveysByCampaignIdCreatedAtIndex.items)
-      .then(surveys => campaignToCSV(
+      // .then(({ data, loading, error }) => data.querySurveysByCampaignIdCreatedAtIndex.items)
+      .then(([surveysEntry, usersEntry]) => campaignToCSV(
         this.props.currentUser.organization.campaigns.items.find(campaign => campaign.id === this.state.selectedCampaignId),
-        surveys
+        surveysEntry.data.querySurveysByCampaignIdCreatedAtIndex.items,
+        usersEntry.data.queryUsersByOrganizationIdCreatedAtIndex.items
       ))
       .then(csv => emailCSV(this.props.currentUser.email, csv))
       .then(() => new Promise(resolve => setTimeout(() => 
@@ -122,7 +129,6 @@ class Home extends React.Component {
           selectedSurveyTemplate: this.props.currentUser.organization.campaigns.items.find(campaign => campaign.id === this.state.selectedCampaignId).campaignTemplate.surveyTemplates.items.find(surveyTemplate => surveyTemplate.id === selectedSurveyTemplateId)
         }, resolve))
       )
-      .then(() => console.log("done"))
 
   _handleChange = (panel, event, expanded) =>
     this.setState({

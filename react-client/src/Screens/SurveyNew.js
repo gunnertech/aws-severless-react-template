@@ -8,6 +8,7 @@ import { Query, compose, graphql } from 'react-apollo';
 import withLayout from '../Hocs/withLayout'
 
 import GetSurvey from '../api/Queries/GetSurvey';
+import GetUser from '../api/Queries/GetUser';
 import CreateResponse from '../api/Mutations/CreateResponse';
 
 const styles = theme => ({
@@ -124,7 +125,7 @@ class SurveyNew extends React.Component {
           query={GetSurvey}
           variables={{id: surveyId}}
         >
-        {({loading, error, data, refetch}) =>
+        {({loading, error, data, refetch}) => console.log(error) ||
           error ? (
             "Something went wrong..."
           ) : loading ? (
@@ -135,62 +136,69 @@ class SurveyNew extends React.Component {
             ) : !data.getSurvey.surveyTemplate ? (
               refetch().then(() => this.setState({reload: true})) && (console.log("GOT IT") || "Loading...") //BUG: Fix this. Weird bug with AppSync/Resolver where data.getSurvey.surveyTemplate is sometimes null
             ) : (
-              <Paper elevation={2} className={classes.root}>
-                <div>
-                  <Typography variant="h4">{data.getSurvey.user.organization.name} Survey</Typography>
-                  <Typography paragraph>Please answer all prompts by clicking your response and then click "Submit" when finished.</Typography>
-                </div>
-                <div className={classes.surveyTemplate}>
-                  <div className={classes.surveyTemplateBody}>
-                    {
-                      (((data.getSurvey.surveyTemplate||{}).prompts||{}).items||[]).map(prompt =>
-                        <div className={classes.promptWrapper} key={`prompt-${prompt.id}`}>
-                          <Typography variant="subtitle1">{prompt.body}</Typography>
-                          <div className={classes.prompt}>
-                            {
-                              prompt.options.items.map(option => 
-                                <div className={prompts[prompt.id] && prompts[prompt.id].optionId === option.id ? `${classes.selectedOption} ${classes.option}` : classes.option} key={`option-${option.id}`}>
-                                  <img
-                                    onClick={this._handleOptionSelect.bind(this, prompt.id, option, prompt.options.items)} 
-                                    src={require(`../assets/images/survey/${option.position}.png`)} 
-                                    style={{width: '100%', height: 'auto', cursor: 'pointer'}} 
-                                    alt={option.name}
-                                  />
-                                  <Hidden smUp>
-                                    <Typography 
-                                      onClick={this._handleOptionSelect.bind(this, prompt.id, option, prompt.options.items)} 
-                                      color={'secondary'} 
-                                      style={{cursor: 'pointer', fontSize: 8}} 
-                                      variant="caption" 
-                                      align={`center`}
-                                    >
-                                      {option.name}
-                                    </Typography>
-                                  </Hidden>
-                                  <Hidden xsDown>
-                                    <Typography 
-                                      onClick={this._handleOptionSelect.bind(this, prompt.id, option, prompt.options.items)} 
-                                      color={'secondary'} 
-                                      style={{cursor: 'pointer'}} 
-                                      variant="caption" 
-                                      align={`center`}
-                                    >
-                                      {option.name}
-                                    </Typography>
-                                  </Hidden>
-                                </div>
-                              )
-                            }
-                          </div>
-                        </div>
-                      )
-                    }
-                  </div>
-                </div>
-                <p>{data.getSurvey.user.name || data.getSurvey.user.id} sent you this survey.</p>
-                <Divider />
-                <Button disabled={!Object.keys(this.state.prompts).length || Object.keys(this.state.prompts).length !== data.getSurvey.surveyTemplate.prompts.items.length} variant="contained" onClick={this._handleSubmit.bind(this)} className={classes.button} color="primary">Submit</Button>
-              </Paper>
+              <Query
+                query={GetUser}
+                variables={{id: data.getSurvey.userId}}
+              >
+                {({data: { getUser } = {}}) =>
+                  <Paper elevation={2} className={classes.root}>
+                    <div>
+                      <Typography variant="h4">{getUser.organization.name} Survey</Typography>
+                      <Typography paragraph>Please answer all prompts by clicking your response and then click "Submit" when finished.</Typography>
+                    </div>
+                    <div className={classes.surveyTemplate}>
+                      <div className={classes.surveyTemplateBody}>
+                        {
+                          (((data.getSurvey.surveyTemplate||{}).prompts||{}).items||[]).map(prompt =>
+                            <div className={classes.promptWrapper} key={`prompt-${prompt.id}`}>
+                              <Typography variant="subtitle1">{prompt.body}</Typography>
+                              <div className={classes.prompt}>
+                                {
+                                  prompt.options.items.map(option => 
+                                    <div className={prompts[prompt.id] && prompts[prompt.id].optionId === option.id ? `${classes.selectedOption} ${classes.option}` : classes.option} key={`option-${option.id}`}>
+                                      <img
+                                        onClick={this._handleOptionSelect.bind(this, prompt.id, option, prompt.options.items)} 
+                                        src={require(`../assets/images/survey/${option.position}.png`)} 
+                                        style={{width: '100%', height: 'auto', cursor: 'pointer'}} 
+                                        alt={option.name}
+                                      />
+                                      <Hidden smUp>
+                                        <Typography 
+                                          onClick={this._handleOptionSelect.bind(this, prompt.id, option, prompt.options.items)} 
+                                          color={'secondary'} 
+                                          style={{cursor: 'pointer', fontSize: 8}} 
+                                          variant="caption" 
+                                          align={`center`}
+                                        >
+                                          {option.name}
+                                        </Typography>
+                                      </Hidden>
+                                      <Hidden xsDown>
+                                        <Typography 
+                                          onClick={this._handleOptionSelect.bind(this, prompt.id, option, prompt.options.items)} 
+                                          color={'secondary'} 
+                                          style={{cursor: 'pointer'}} 
+                                          variant="caption" 
+                                          align={`center`}
+                                        >
+                                          {option.name}
+                                        </Typography>
+                                      </Hidden>
+                                    </div>
+                                  )
+                                }
+                              </div>
+                            </div>
+                          )
+                        }
+                      </div>
+                    </div>
+                    <p>{getUser.name} sent you this survey.</p>
+                    <Divider />
+                    <Button disabled={!Object.keys(this.state.prompts).length || Object.keys(this.state.prompts).length !== data.getSurvey.surveyTemplate.prompts.items.length} variant="contained" onClick={this._handleSubmit.bind(this)} className={classes.button} color="primary">Submit</Button>
+                  </Paper>
+                }
+              </Query>
             )
           ) : (
             "Something Went Wrong"

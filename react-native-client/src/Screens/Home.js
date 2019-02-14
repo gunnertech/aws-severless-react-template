@@ -263,7 +263,7 @@ class Home extends React.PureComponent {
       <Container>
         <Card style={{container: classes.cardContainer}}>
           <View>
-            {
+            { ///If the signed up less than two minutes ago, show them a welcome message
               moment.duration(
                 moment(currentUser.createdAt).diff(
                   new moment()

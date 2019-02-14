@@ -16,10 +16,6 @@ const Survey = {
         recipientContact
         recipientIdentifier
         createdAt
-        user {
-          __typename
-          ...UserEntry
-        }
         surveyTemplate {
           __typename
           ...SurveyTemplateEntry
@@ -32,7 +28,6 @@ const Survey = {
         }
       }
       ${SurveyTemplate.fragments.global}
-      ${User.fragments.global}
       ${Response.fragments.global}
     `
   }

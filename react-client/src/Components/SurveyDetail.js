@@ -143,7 +143,12 @@ class SurveyDetail extends React.Component {
           <div>
             {
               selectedOption &&
-              <ResponseList option={selectedOption} surveys={this.surveysForOption(selectedOption.id, startDate, endDate, userId, data.querySurveysByCampaignIdCreatedAtIndex.items)} open={!!selectedOption} onClose={() => this.setState({selectedOption: null})} />
+              <ResponseList 
+                option={selectedOption} 
+                surveys={this.surveysForOption(selectedOption.id, startDate, endDate, userId, data.querySurveysByCampaignIdCreatedAtIndex.items)} 
+                open={!!selectedOption} 
+                onClose={() => this.setState({selectedOption: null})} 
+              />
             }
             
             {
