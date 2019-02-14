@@ -4,6 +4,7 @@ service:
 custom:
   environment: ${file(env.yml):${self:custom.stage}, file(env.yml):development}
   pinpointAppId: ${self:custom.environment.PINPOINT_APP_ID, 'NONE'}
+  domainName: ${self:custom.environment.DOMAIN_NAME}
   stage: ${opt:stage, self:provider.stage}
   developmentAccountId: "602149969834"
   stagingAccountId: "822408163170"
@@ -410,6 +411,13 @@ resources:
 ####END STANDARD CONDITIONS
 
   Resources:
+    DNS: 
+      Type: "AWS::Route53::HostedZone"
+      Properties: 
+        HostedZoneConfig: 
+          Comment: "My hosted zone for ${self:custom.domainName}"
+        Name: ${self:custom.domainName}
+
     SMSTopic:
       Type: AWS::SNS::Topic
       Properties: 
