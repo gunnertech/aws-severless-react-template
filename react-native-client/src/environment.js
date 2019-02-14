@@ -21,7 +21,7 @@ const ENV = {
     bucket: 'com-gunnertech-simplisurvey-development',
     pinpoint_app_id: "67be524b1e9f4f9cb49a11e40e370a01",
     cdn: 'dtfsbcv3jr02i.cloudfront.net',
-    base_url: "https://simplisurvey.com",
+    base_url: "http://localhost:3000",
     sentry_url
   },
   staging: {
@@ -36,7 +36,7 @@ const ENV = {
     base_url: "https://staging.d2x31qlfq03ed5.amplifyapp.com",
     sentry_url
   },
-  prodution: {
+  production: {
     userPoolId: 'us-east-1_Z0JoU0XJg',
     identityPoolId: 'us-east-1:98ee0dc7-f50d-4141-8f8b-317bed59e312',
     awsRegion: 'us-east-1',
