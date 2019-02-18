@@ -36,7 +36,7 @@
     "android": {
       "package": "com.gunnertech.simplisurvey",
       "playStoreUrl": "https://play.google.com/store/apps/details?id=com.gunnertech.simplisurvey",
-      "versionCode": 6,
+      "versionCode": 7,
       "permissions": [
         "CAMERA",
         "NOTIFICATIONS",
