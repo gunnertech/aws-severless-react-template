@@ -15,6 +15,8 @@ const Invitation = {
         roleName
         title
         accepted
+        createdAt
+        updatedAt
       }
     `
   }

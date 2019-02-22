@@ -55,6 +55,8 @@ type Invitation {
 	roleName: String!
 	title: String
 	accepted: Boolean
+	createdAt: String!
+	updatedAt: String!
 }
 
 type InvitationConnection {
@@ -259,6 +261,12 @@ input CreateInvitationInput {
 	invitorId: ID!
 	roleName: String!
 	title: String
+	createdAt: String
+	updatedAt: String
+}
+
+input DeleteInvitationInput {
+	id: ID!
 }
 
 input CreateUserInput {
@@ -320,6 +328,8 @@ type Mutation {
 	createCampaign(input: CreateCampaignInput!): Campaign
 	createUser(input: CreateUserInput!): User
 	createInvitation(input: CreateInvitationInput!): Invitation
+
+	deleteInvitation(input: DeleteInvitationInput!): Invitation
 
 	updateUser(input: UpdateUserInput!): User
 	updateCampaign(input: UpdateCampaignInput!): Campaign

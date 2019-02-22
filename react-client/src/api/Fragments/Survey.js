@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 import SurveyTemplate from './SurveyTemplate';
-import User from './User';
+// import User from './User';
 import Response from './Response';
 
 const Survey = {

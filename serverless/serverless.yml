@@ -108,6 +108,11 @@ custom:
         response: "createInvitation-response.vtl"
       - dataSource: Invitations
         type: Mutation
+        field: deleteInvitation
+        request: "genericDelete-request.vtl"
+        response: "generic-response.vtl"
+      - dataSource: Invitations
+        type: Mutation
         field: updateInvitation
         request: "genericUpdate-request.vtl"
         response: "generic-response.vtl"

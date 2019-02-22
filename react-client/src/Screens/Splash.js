@@ -20,13 +20,13 @@ const Splash = props => {
       <Typography paragraph>If you were invited to join, follow the link and use the email and/or phone number your invite was sent to, otherwise, get started with your own free organization: <Link to={`/dashboard`}>Sign In</Link></Typography>
       <Grid container className={classes.root} spacing={16} justify={'space-around'}>
         <Grid item xs={12} md={3} style={{marginTop: "48px"}}>
-          <img src={require("../assets/images/send.png")} style={{maxWidth: "100%", height: "auto"}} />
+          <img alt="send" src={require("../assets/images/send.png")} style={{maxWidth: "100%", height: "auto"}} />
         </Grid>
         <Grid item xs={12} md={3} style={{marginTop: "48px"}}>
-          <img src={require("../assets/images/respond.png")} style={{maxWidth: "100%", height: "auto"}} />
+          <img alt="respond" src={require("../assets/images/respond.png")} style={{maxWidth: "100%", height: "auto"}} />
         </Grid>
         <Grid item xs={12} md={3} style={{marginTop: "48px"}}>
-          <img src={require("../assets/images/analyze.png")} style={{maxWidth: "100%", height: "auto"}} />
+          <img alt="analyze" src={require("../assets/images/analyze.png")} style={{maxWidth: "100%", height: "auto"}} />
         </Grid>
       </Grid>
     </div>

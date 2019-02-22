@@ -14,10 +14,12 @@ import {
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
-
+import moment from 'moment';
 import AccountPlusIcon from 'mdi-material-ui/AccountPlus';
+import DeleteIcon from '@material-ui/icons/Delete';
+import SendIcon from '@material-ui/icons/Send';
 
-import { Query, compose, graphql } from 'react-apollo';
+import { Query, compose, graphql, Mutation } from 'react-apollo';
 
 import { Auth } from 'aws-amplify';
 import SES from 'aws-sdk/clients/ses';
@@ -39,6 +41,7 @@ import QueryInvitationsByOrganizationIdIdIndex from "../api/Queries/QueryInvitat
 import UpdateUser from "../api/Mutations/UpdateUser"
 import CreateInvitation from '../api/Mutations/CreateInvitation';
 import ListInvitations from '../api/Queries/ListInvitations';
+import DeleteInvitation from '../api/Mutations/DeleteInvitation'
 
 
 const ActionMenu = ({onClick}) => (
@@ -52,18 +55,6 @@ const ActionMenu = ({onClick}) => (
 )
 
 const styles = theme => ({
-  button: {
-    margin: theme.spacing.unit,
-  },
-  leftIcon: {
-    marginRight: theme.spacing.unit,
-  },
-  rightIcon: {
-    marginLeft: theme.spacing.unit,
-  },
-  iconSmall: {
-    fontSize: 20,
-  },
   container: {
     flexWrap: 'wrap',
     textAlign: 'left',
@@ -78,7 +69,19 @@ const styles = theme => ({
   },
   listItemText: {
     cursor: "pointer"
-  }
+  },
+  button: {
+    margin: theme.spacing.unit,
+  },
+  leftIcon: {
+    marginRight: theme.spacing.unit,
+  },
+  rightIcon: {
+    marginLeft: theme.spacing.unit,
+  },
+  iconSmall: {
+    fontSize: 20,
+  },
 });
 
 class UserList extends React.Component {
@@ -368,12 +371,60 @@ class UserList extends React.Component {
               variables={{organizationId: currentUser.organizationId }}
             >
               {entry => entry.loading || !((entry.data||{}).queryInvitationsByOrganizationIdIdIndex||{}).items ? "Loading Invitations..." : (
-                entry.data.queryInvitationsByOrganizationIdIdIndex.items.filter(i => !i.accepted).map((user, i) =>
-                  <ListItem key={user.id} divider={i !== entry.data.queryInvitationsByOrganizationIdIdIndex.items.filter(i => !i.accepted).length-1}>
+                entry.data.queryInvitationsByOrganizationIdIdIndex.items.filter(i => !i.accepted).map((invitation, i) =>
+                  <ListItem key={invitation.id} divider={i !== entry.data.queryInvitationsByOrganizationIdIdIndex.items.filter(i => !i.accepted).length-1}>
                     <ListItemText
-                      primary={`${user.name || user.id} ${user.title ? `(${user.title})` : ''}`} 
-                      secondary={`${user.roleName} - Invite Pending`}
+                      primary={`${invitation.name || invitation.id} ${!!invitation.title ? `(${invitation.title})` : ''}`} 
+                      secondary={`${invitation.roleName} - Invited ${moment(invitation.updatedAt).format('MMMM Do YYYY')}`}
                     />
+                    <Mutation mutation={CreateInvitation}>
+                      { createInvitation =>
+                        <Mutation mutation={DeleteInvitation}>
+                          { deleteInvitation =>
+                            <ListItemSecondaryAction>
+                              <IconButton
+                                aria-haspopup="true"
+                                onClick={() => 
+                                  window.confirm("Resend this invitation?") && deleteInvitation({
+                                    variables: {
+                                      id: invitation.id,
+                                    }
+                                  })
+                                  .then(() => this._inviteUser({user: {
+                                    email: invitation.email,
+                                    role: invitation.roleName,
+                                    phone: invitation.phone,
+                                    name: invitation.name
+                                  }}, []))
+                                }
+                              >
+                                <SendIcon />
+                              </IconButton>
+                              <br />
+                              <IconButton
+                                aria-haspopup="true"
+                                onClick={() => 
+                                  window.confirm("Delete this invitation?") && deleteInvitation({
+                                    variables: {
+                                      id: invitation.id,
+                                    },
+                                    onError: console.log,
+                                    refetchQueries: [
+                                      {
+                                        query: QueryInvitationsByOrganizationIdIdIndex,
+                                        variables: {organizationId: currentUser.organizationId}
+                                      },
+                                    ],
+                                  })
+                                }
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </ListItemSecondaryAction>
+                          }
+                        </Mutation>
+                      }
+                    </Mutation>
                   </ListItem>      
                 )
               )}

@@ -123,8 +123,8 @@ class UserForm extends React.Component {
               fullWidth
             />
 
-            <FormControl className={classes.formControl} fullWidth>
-              <InputLabel htmlFor="phone">Phone</InputLabel>
+            <FormControl  className={classes.formControl} fullWidth>
+              <InputLabel shrink htmlFor="phone">Phone</InputLabel>
               <Input
                 value={(this.state.user.phone||"").replace("+1","")}
                 onChange={this._handleChange.bind(this, 'phone')}
