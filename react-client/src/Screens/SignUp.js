@@ -306,6 +306,7 @@ class MySignUp extends SignUp {
                                     key={field.key}
                                     onChange={this.handleInputChange}
                                 />
+                                {field.key === 'password' && <div style={{color: 'red'}}>Must be at least 7 characters long with an upper and lower case letter, number and one special character (i.e. !$%^)</div>}
                             </FormField>
                         ) : (
                             <FormField theme={theme} key="phone_number">

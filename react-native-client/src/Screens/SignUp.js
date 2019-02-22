@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { TouchableWithoutFeedback, ScrollView, View, Keyboard } from 'react-native'
+import { TouchableWithoutFeedback, ScrollView, View, Keyboard, Text } from 'react-native'
 
 import { SignUp } from 'aws-amplify-react-native';
 
@@ -32,6 +32,7 @@ class MySignUp extends SignUp {
               {
                   this.signUpFields.map((field) => {
                       return field.key !== 'phone_number' ?  (
+                          <View key={field.key}>
                           <FormField
                               key = {field.key}
                               theme={theme}
@@ -50,6 +51,11 @@ class MySignUp extends SignUp {
                               placeholder={I18n.get(field.placeholder)}
                               required={field.required}
                           />
+                          {
+                            field.key === 'password' && 
+                            <Text style={{color: 'red', marginBottom: 16}}>Password must be at least 7 characters long with an upper and lower case letter, number and one special character (i.e. !$%^)</Text>
+                          }
+                          </View>
                       ) : (
                           <PhoneField
                               theme={theme}
