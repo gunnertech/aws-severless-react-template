@@ -82,7 +82,7 @@ class SurveyDetail extends React.Component {
 
   surveysForOption = (optionId, startDate, endDate, userId, surveys) =>
     this.validSurveys(startDate, endDate, userId, surveys)
-      .filter(survey => survey.responses.items.find( response => response.optionId === optionId))
+      .filter(survey => !!survey.responses.items.find( response =>response.optionId === optionId))
 
   responseCountForOption = (optionId, startDate, endDate, userId, surveys) =>
     this.surveysForOption(optionId, startDate, endDate, userId, surveys)
@@ -166,16 +166,16 @@ class SurveyDetail extends React.Component {
                               <div style={{height: this.responseCountForOption(option.id, startDate, endDate, userId, data.querySurveysByCampaignIdCreatedAtIndex.items) * 10, backgroundColor: colors[option.position-1], width: '100%'}}></div>
                             </div>
                             <img
-                              onClick={() => option.position > 3 ? this.setState({selectedOption: option}) : null} 
+                              onClick={() => option.position > 3 || true ? this.setState({selectedOption: option}) : null} 
                               src={require(`../assets/images/survey/${option.position}.png`)} 
-                              style={{width: '100%', height: 'auto', cursor: option.position > 3 ? 'pointer' : 'default'}} 
+                              style={{width: '100%', height: 'auto', cursor: option.position > 3 || true ? 'pointer' : 'default'}} 
                               alt={option.name}
                             />
                             <Hidden smUp>
                               <Typography 
-                                onClick={() => option.position > 3 ? this.setState({selectedOption: option}) : null} 
+                                onClick={() => option.position > 3 || true ? this.setState({selectedOption: option}) : null} 
                                 color={option.position > 3 ? 'secondary' : 'default'} 
-                                style={{cursor: option.position > 3 ? 'pointer' : 'default', fontSize: 8}} 
+                                style={{cursor: option.position > 3 || true ? 'pointer' : 'default', fontSize: 8}} 
                                 variant="caption" 
                                 align={`center`}
                               >
@@ -184,9 +184,9 @@ class SurveyDetail extends React.Component {
                             </Hidden>
                             <Hidden xsDown>
                               <Typography 
-                                onClick={() => option.position > 3 ? this.setState({selectedOption: option}) : null} 
-                                color={option.position > 3 ? 'secondary' : 'default'} 
-                                style={{cursor: option.position > 3 ? 'pointer' : 'default'}} 
+                                onClick={() => option.position > 3 || true ? this.setState({selectedOption: option}) : null} 
+                                color={option.position > 3 || true ? 'secondary' : 'default'} 
+                                style={{cursor: option.position > 3 || true ? 'pointer' : 'default'}} 
                                 variant="caption" 
                                 align={`center`}
                               >

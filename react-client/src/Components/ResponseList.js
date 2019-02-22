@@ -67,18 +67,18 @@ class ResponseList extends React.Component {
           </DialogContentText>
           <List style={{flex: 1}}>
             {
-              surveys.filter(survey => !!survey.responses.items[0].reason).map(survey => 
-                <ListItem key={survey.id} button onClick={this._handleToggle(survey.responses.items[0])}>
+              surveys.filter(survey => !!survey.responses.items.find(response => response.optionId === option.id).reason).map(survey => 
+                <ListItem key={survey.id} button onClick={this._handleToggle(survey.responses.items.find(response => response.optionId === option.id))}>
                   <ListItemText 
                     primary={`${survey.recipientContact} (${survey.recipientIdentifier||''})`} 
-                    secondary={`${moment(survey.responses.items[0].createdAt).format("M-D-YYYY")} - (${survey.responses.items[0].reason})`} 
+                    secondary={`${moment(survey.responses.items.find(response => response.optionId === option.id).createdAt).format("M-D-YYYY")} - (${survey.responses.items.find(response => response.optionId === option.id).reason})`} 
                   />
                   <ListItemSecondaryAction>
                     <Checkbox
-                      checked={survey.responses.items[0].reviewerId}
+                      checked={survey.responses.items.find(response => response.optionId === option.id).reviewerId}
                       tabIndex={-1}
                       disableRipple
-                      onChange={this._handleToggle(survey.responses.items[0])}
+                      onChange={this._handleToggle(survey.responses.items.find(response => response.optionId === option.id))}
                     />
                   </ListItemSecondaryAction>
                 </ListItem>

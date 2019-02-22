@@ -60,7 +60,7 @@ class SurveyNew extends React.Component {
           ...this.state.prompts,
           [promptId]: {
             optionId: selectedOption.id,
-            reason: (selectedOption.position >= options.length-1 ? (
+            reason: (true || selectedOption.position >= options.length-1 ? (
               window.prompt("(Optional) Please explain your response")
             ) : (
               ""
@@ -80,7 +80,7 @@ class SurveyNew extends React.Component {
           surveyId: this.props.match.params.surveyId,
           createdAt: (new Date()).toISOString()
         }))))
-          .then(params => console.log("params", params) ||
+          .then(params =>
             this.props.createResponse({ 
               variables: { 
                 ...params,
@@ -125,7 +125,7 @@ class SurveyNew extends React.Component {
           query={GetSurvey}
           variables={{id: surveyId}}
         >
-        {({loading, error, data, refetch}) => console.log(error) ||
+        {({loading, error, data, refetch}) => console.log("GetSurvey",error) ||
           error ? (
             "Something went wrong..."
           ) : loading ? (
@@ -140,7 +140,7 @@ class SurveyNew extends React.Component {
                 query={GetUser}
                 variables={{id: data.getSurvey.userId}}
               >
-                {({data: { getUser } = {}}) =>
+                {({data: { getUser } = {}}) => !getUser ? null :
                   <Paper elevation={2} className={classes.root}>
                     <div>
                       <Typography variant="h4">{getUser.organization.name} Survey</Typography>
