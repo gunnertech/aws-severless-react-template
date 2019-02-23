@@ -8,27 +8,19 @@ export class CurrentUserProvider extends React.Component {
     super(props);
 
     this.state = {
-      currentUser: this.props.currentUser || null
+      currentUser: props.currentUser || null
     };
   }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> cody
   render() {
+    const { currentUser, children } = this.props;
     return (
       <CurrentUser.Provider
         value={{
-<<<<<<< HEAD
-          currentUser: this.props.currentUser
-=======
-          currentUser: this.props.currentUser,
-          refreshCurrentUser: this.props.refreshCurrentUser
->>>>>>> cody
+          currentUser: currentUser
         }}
       >      
-        {this.props.children}
+        {children}
       </CurrentUser.Provider>
     );
   }

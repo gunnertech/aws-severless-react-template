@@ -18,17 +18,11 @@ import ENV from './src/environment'
 import { CurrentUserProvider } from './src/Contexts/CurrentUser'
 
 
-<<<<<<< HEAD
-=======
 
 import GetUser from "./src/api/Queries/GetUser"
 import CreateUser from "./src/api/Mutations/CreateUser"
 import UpdateUser from "./src/api/Mutations/UpdateUser"
-import CreateAssignedRole from "./src/api/Mutations/CreateAssignedRole"
-import CreateRole from "./src/api/Mutations/CreateRole"
-import QueryRolesByNameIdIndex from './src/api/Queries/QueryRolesByNameIdIndex'
-import ListInvitations from './src/api/Queries/ListInvitations'
-import UpdateInvitation from "./src/api/Mutations/UpdateInvitation"
+
 
 // import normalizePhoneNumber from './src/Util/normalizePhoneNumber'
 
@@ -50,7 +44,6 @@ I18n.putVocabularies(authScreenLabels);
 
 
 
->>>>>>> cody
 // Remove this once Sentry is correctly setup.
 Sentry.enableInExpoDevelopment = true;
 

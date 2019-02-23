@@ -1,10 +1,6 @@
 # Setup
 ## AWS account
-<<<<<<< HEAD
-
-=======
 ````
->>>>>>> cody
 $ cd ~/workspace/aws
 $ ./organization add -n <project-name>-development -e <project-name>-development@gunnertech.com -u <your root username> -g <groupname>
 $ ./organization add -n <project-name>-staging -e <project-name>-staging@gunnertech.com -u <your root username> -g <groupname>
@@ -20,7 +16,8 @@ helper = !aws --profile simplisurveydeveloper codecommit credential-helper $@
 ## Project 
 ````
 $ cd ~/workspace/javascript/serverless
-$ git clone --single-branch -b template https://git-codecommit.us-east-1.amazonaws.com/v1/repos/simplisurvey <project name>
+$ git clone --single-branch -b template https://git-codecommit.us-east-1.amazonaws.com/v1/repos/simplisurvey <project-name>
+$ ##Do a global search and replace for <project-name> and replace with, well, the name of the project
 ````
 
 ## Serverless
@@ -42,7 +39,7 @@ $ sls deploy -s production
 $ yarn global add expo-cli
 $ cd <project-name>/react-native-client
 ````
-1) Modify app.json (replace <project name>) and environment.js (set up variables) to fit your project
+1) Modify app.json (replace <project-name>) and environment.js (set up variables) to fit your project
 ````
 $ yarn upgrade
 $ yarn install
@@ -61,7 +58,7 @@ $ yarn start (to make sure everything worked)
 ## Git
 modify <project-name>/.git/config with this: https://gist.githubusercontent.com/CodySwannGT/ea1dcb937426d8121576b59334000d58/raw/e2c22870a4c72807837fabd1f705c337bdda1358/config.txt
 
-and replace <project name>
+and replace <project-name>
 ````
 $ cd <project-name>
 $ git checkout -b <dev name>

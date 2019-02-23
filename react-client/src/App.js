@@ -249,7 +249,7 @@ class App extends Component {
       <ApolloProvider client={client}>
         <Rehydrated>
           <NotificationsProvider notifications={notifications}>
-            <CurrentUserProvider currentUser={currentUser} refreshCurrentUser={this._refreshCurrentUser.bind(this)}>
+            <CurrentUserProvider currentUser={currentUser}>
               {
                 typeof(currentUser) === 'undefined' ? (
                   null
