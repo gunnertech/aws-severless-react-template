@@ -9,16 +9,16 @@ const theme = createMuiTheme({
   typography: {
     useNextVariants: true,
     fontSize: 18,
-    subtitle1: {
-      color: "#EF4035" 
-    }
+    // subtitle1: {
+    //   color: "#EF4035" 
+    // }
   },
   palette: {
     primary: {
-      main: "#222222"
+      main: "#b78df9"
     },
     secondary: {
-      main: "#EF4035"
+      main: "#b78df9"
     }
   }
 });

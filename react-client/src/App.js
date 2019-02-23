@@ -7,20 +7,91 @@ import AWSAppSyncClient, { createAppSyncLink, createLinkWithCache } from "aws-ap
 import { ApolloLink } from 'apollo-link';
 import { withClientState } from 'apollo-link-state';
 import * as Sentry from '@sentry/browser';
-import { withAuthenticator } from 'aws-amplify-react';
+import { ConfirmSignIn, ConfirmSignUp, ForgotPassword, RequireNewPassword, VerifyContact, withAuthenticator } from 'aws-amplify-react';
 
-import Home from "./Screens/Home";
-import Splash from "./Screens/Splash";
-import SignOut from "./Screens/SignOut";
+import GetUser from "./api/Queries/GetUser"
+import CreateUser from "./api/Mutations/CreateUser"
+import UpdateUser from "./api/Mutations/UpdateUser"
 
-import { LayoutProvider } from './Contexts/Layout'
+import SignUp from "./Screens/SignUp";
+import SignIn from "./Screens/SignIn";
+import HomeScreen from "./Screens/Home";
+import SplashScreen from "./Screens/Splash";
+import PrivacyPolicyScreen from "./Screens/PrivacyPolicy";
+import SignOutScreen from "./Screens/SignOut";
+
 import { CurrentUserProvider } from './Contexts/CurrentUser'
-import { ActionMenuProvider } from './Contexts/ActionMenu';
 import { NotificationsProvider } from './Contexts/Notifications'
+import { ActionMenuProvider } from './Contexts/ActionMenu';
+import { LayoutProvider } from './Contexts/Layout'
+
+
+import { I18n } from 'aws-amplify';
+
+const authScreenLabels = {
+    en: {
+        "Username": "Email",
+        "Enter your username": "Enter your email",
+        'Sign Up': 'Create new account',
+        'Sign Up Account': 'Create a new account',
+        'Confirm Sign Up': 'Confirm Sign Up by entering the code that was sent to your email address'
+    }
+};
+
+I18n.setLanguage('en');
+I18n.putVocabularies(authScreenLabels);
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={props => {
-    const ComponentWithAuth = withAuthenticator(Component, false);
+    const ComponentWithAuth = withAuthenticator(Component, false, [
+      <SignIn/>,
+      <ConfirmSignIn/>,
+      <VerifyContact/>,
+      <SignUp
+
+        signUpConfig={{
+          hideAllDefaults: true,
+          signUpFields: [
+            {
+              key: 'email',
+              type: 'email',
+              required: true,
+              label: 'Email',
+              displayOrder: 2,
+              placeholder: "Enter your email (used to sign in)"
+            },
+            {
+              key: 'name',
+              type: 'text',
+              required: true,
+              label: 'Name',
+              displayOrder: 1,
+              placeholder: "Enter the name you want others to see"
+            },
+            {
+              key: 'phone_number',
+              type: 'tel',
+              required: false,
+              label: 'Mobile',
+              displayOrder: 4,
+              placeholder: "Enter your mobile number"
+            },
+            {
+              key: 'password',
+              type: 'password',
+              required: true,
+              label: 'Password',
+              displayOrder: 4,
+              placeholder: "Enter your password"
+            }
+          ]
+      }}
+    />,
+    <ConfirmSignUp/>,
+    <ForgotPassword/>,
+    <RequireNewPassword />
+  ], false);
+
     return (
       <ComponentWithAuth {...props} />
     )
@@ -49,14 +120,17 @@ const appSyncLink = createAppSyncLink({
         const session = await Auth.currentSession();
         return session.getIdToken().getJwtToken();
       } catch(e) {
-        return null;
+        await Auth.signIn('simplisurveyguest@gunnertech.com', 'Sim2010!!'); //TODO: For new environments, you'll have to create this account
+        const session = await Auth.currentSession();
+        return session.getIdToken().getJwtToken();
+
       }
     },
   },
 });
 
 const link = ApolloLink.from([stateLink, appSyncLink]);
-const client = new AWSAppSyncClient({disableOffline: false}, { link });
+const client = new AWSAppSyncClient({disableOffline: true}, { link });
 
 Sentry.init({
   dsn: process.env.REACT_APP_sentry_url
@@ -105,13 +179,42 @@ class App extends Component {
 
   state = {
     currentUser: undefined,
-    showNav: true
+    showNav: true,
+    notifications: []
   }
+
+  _createNewUser = cognitoUser =>
+    client.mutate({
+      mutation: CreateUser,
+      onError: e => console.log("_createNewUser", e),
+      variables: {
+        id: cognitoUser.username,
+        phone: cognitoUser.attributes.phone_number || undefined,
+        email: cognitoUser.attributes.email || undefined,
+        name: cognitoUser.attributes.name || undefined,
+        active: true,
+      },
+    })
+    .then(({data: {createUser}}) => Promise.resolve(createUser))
 
   _handleSignIn = () =>
     new Promise(resolve => this.setState({currentUser: undefined}, resolve))
       .then(() =>
         Auth.currentAuthenticatedUser()
+      )
+      .then(cognitoUser => Promise.all([
+        client.query({
+          query: GetUser,
+          variables: {id: cognitoUser.username},
+          fetchPolicy: "network-only"
+        }),
+        cognitoUser
+      ]))
+      .then(([{data: { getUser }, loading}, cognitoUser]) => !!getUser ? (
+          Promise.resolve(getUser)
+        ) : (
+          this._createNewUser(cognitoUser)
+        )
       )
       .then(currentUser => new Promise(resolve => this.setState({currentUser}, resolve.bind(null, currentUser))))
       .catch(err => console.log("ERROR", err) || this.setState({currentUser: null}));
@@ -120,6 +223,13 @@ class App extends Component {
     switch (capsule.payload.event) {
       case 'signOut':
         this.setState({currentUser: null})
+        break;
+      case 'signIn_failure':
+      case 'signUp_failure':
+        this.setState(
+          {notifications: [capsule.payload.data]}, 
+          () => setTimeout(() => this.setState({notifications: []}), 4000)
+        )
         break;
       case 'signIn':
         this._handleSignIn()
@@ -134,30 +244,32 @@ class App extends Component {
   }
 
   render() {
+    const { currentUser, notifications } = this.state;
     return (
       <ApolloProvider client={client}>
         <Rehydrated>
-          <ActionMenuProvider>
-            <NotificationsProvider notifications={this.state.notifications}>
-              <CurrentUserProvider currentUser={this.state.currentUser}>
-                {
-                  typeof(this.state.currentUser) === 'undefined' ? (
-                    null
-                  ) : (
+          <NotificationsProvider notifications={notifications}>
+            <CurrentUserProvider currentUser={currentUser} refreshCurrentUser={this._refreshCurrentUser.bind(this)}>
+              {
+                typeof(currentUser) === 'undefined' ? (
+                  null
+                ) : (
+                  <ActionMenuProvider>
                     <Router>
                       <LayoutProvider showNav={true}>
                         <Switch>
-                          <Route path='/' exact component={Splash} />
-                          <Route path='/sign-out' exact component={SignOut} />
-                          <PrivateRoute path='/home' exact component={Home} />
+                          <Route path='/' exact component={SplashScreen} />
+                          <Route path='/sign-out' exact component={SignOutScreen} />
+                          <Route path='/privacy-policy' exact component={PrivacyPolicyScreen} />
+                          <PrivateRoute path='/home' exact component={HomeScreen} />
                         </Switch>
                       </LayoutProvider>
                     </Router>
-                  )
-                }
-              </CurrentUserProvider>
-            </NotificationsProvider>
-          </ActionMenuProvider>
+                  </ActionMenuProvider>
+                )
+              }
+            </CurrentUserProvider>
+          </NotificationsProvider>
         </Rehydrated>
       </ApolloProvider>
     );

@@ -15,10 +15,12 @@ const styles = theme => ({
       'max-width': '100%'
     },
     'div[class*="Toast__toast"]': {
-      zIndex: "2000"
+      zIndex: "2000",
+      position: "fixed"
     },
     '.Toast__toast___2YWKB': {
-      zIndex: "2000"
+      zIndex: "2000",
+      position: "fixed"
     },
     'a': {
       'color': theme.palette.secondary.main,
@@ -66,11 +68,11 @@ const styles = theme => ({
   
 
 
-const Template = ({ navigate, location, data, children }) => 
+const Template = ({ navigate, location, data, children, showNav, notifications }) => console.log(notifications) ||
   <Container>
     <Helmet
       encodeSpecialCharacters={true}
-      title="Fresh"
+      title="SimpliSurvey"
       meta={[
         { name: `description`, content: `TODO` },
         { name: `keywords`, content: `TODO` },
@@ -80,11 +82,18 @@ const Template = ({ navigate, location, data, children }) =>
         { rel: "canonical", value: `TODO${location.pathname}`}
       ]}
     />
-    <MainNavigation data={ data }>
-      {children}
-    </MainNavigation>
+    {
+      !showNav ? (
+        children  
+      ) : (
+        <MainNavigation notifications={notifications} data={ data }>
+          {children}
+        </MainNavigation>
+      )
+    }
   </Container>
   
+
 
   const TemplateWithStyles = withRoot(
     withRouter(

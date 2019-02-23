@@ -10,13 +10,47 @@ type Organization {
 	users: UserConnection
 }
 
-type User {
+type Contact {
 	id: ID!
 	name: String!
+	email: String
+	phone: String
+	contactGroupId: ID!
+	createdAt: String!
+	updatedAt: String!
+	contactGroup: ContactGroup
+}
+
+type ContactConnection {
+	items: [Contact]
+	nextToken: String
+}
+
+type ContactGroup {
+	id: ID!
+	name: String
+	organizationId: ID!
+	createdAt: String!
+	updatedAt: String!
+	organization: Organization!
+}
+
+type ContactGroupConnection {
+	items: [ContactGroup]
+	nextToken: String
+}
+
+type User {
+	id: ID!
+	name: String
 	title: String
 	phone: String
 	email: String
-	organizationId: ID!
+	active: Boolean
+	organizationId: ID
+	createdAt: String
+	updatedAt: String
+	assignedRoles: AssignedRoleConnection
 	organization: Organization
 }
 
@@ -25,13 +59,59 @@ type UserConnection {
 	nextToken: String
 }
 
-type Campaign {
+type AssignedRole {
+	id: ID!
+	roleId: ID!
+	userId: ID!
+	createdAt: String
+	updatedAt: String
+	role: Role
+	user: User
+}
+
+
+type AssignedRoleConnection {
+	items: [AssignedRole]
+	nextToken: String
+}
+
+type Invitation {
 	id: ID!
 	name: String!
-	templateId: ID
+	phone: String
+	email: String
+	organizationId: ID!
+	invitorId: ID!
+	roleName: String!
+	title: String
+	accepted: Boolean
+	createdAt: String!
+	updatedAt: String!
+}
+
+type InvitationConnection {
+	items: [Invitation]
+	nextToken: String
+}
+
+type Role {
+	id: ID!
+	name: String!
+	assignedRoles: AssignedRoleConnection
+}
+
+type RoleConnection {
+	items: [Role]
+	nextToken: String
+}
+
+type Campaign {
+	id: ID!
+	campaignTemplateId: ID
 	organizationId: ID
+	active: Boolean
 	organization: Organization
-	template: CampaignTemplate
+	campaignTemplate: CampaignTemplate
 	surveys: SurveyConnection
 }
 
@@ -44,7 +124,7 @@ type CampaignTemplate {
 	id: ID!
 	name: String!
 	campaigns: CampaignConnection
-	prompts: PromptConnection
+	surveyTemplates: SurveyTemplateConnection
 }
 
 type CampaignTemplateConnection {
@@ -52,11 +132,27 @@ type CampaignTemplateConnection {
 	nextToken: String
 }
 
+type SurveyTemplate {
+	id: ID!
+	name: String!
+	position: Int!
+	campaignTemplateId: ID!
+	campaignTemplate: CampaignTemplate
+	prompts: PromptConnection
+	surveys: SurveyConnection
+}
+
+type SurveyTemplateConnection {
+	items: [SurveyTemplate]
+	nextToken: String
+}
+
 type Prompt {
 	id: ID!
 	body: String!
-	templateId: ID
-	template: CampaignTemplate
+	position: Int!
+	surveyTemplateId: ID
+	surveyTemplate: SurveyTemplate
 	options: OptionConnection
 }
 
@@ -71,6 +167,7 @@ type Option {
 	name: String!
 	iconUrl: String
 	promptId: ID!
+	position: Int!
 	prompt: Prompt
 	responses: ResponseConnection
 }
@@ -84,13 +181,14 @@ type Survey {
 	id: ID!
 	userId: ID!
 	campaignId: ID!
-	phone: String
-	email: String
-	patientIdentifier: String
-	caregiverIdentifier: String
+	surveyTemplateId: ID!
+	recipientContact: String
+	recipientIdentifier: String
 	user: User!
 	campaign: Campaign!
+	surveyTemplate: SurveyTemplate
 	responses: ResponseConnection
+	createdAt: String
 }
 
 type SurveyConnection {
@@ -102,8 +200,13 @@ type Response {
 	id: ID!
 	optionId: ID!
 	surveyId: ID!
+	reviewerId: ID
+	reviewer: User
+	reason: String
 	option: Option!
 	survey: Survey
+	createdAt: String
+	reviewedAt: String
 }
 
 type ResponseConnection {
@@ -120,20 +223,35 @@ input CreateOrganizationInput {
 	ownerId: ID
 }
 
+input CreateRoleInput {
+	id: ID
+	name: String!
+}
+
+input CreateAssignedRoleInput {
+	id: ID
+	roleId: ID!
+	userId: ID!
+	createdAt: String
+	updatedAt: String
+}
+
 input CreateResponseInput {
 	id: ID
 	optionId: ID!
 	surveyId: ID!
+	reason: String
+	createdAt: String
 }
 
 input CreateSurveyInput {
 	id: ID
 	userId: ID!
 	campaignId: ID!
-	phone: String
-	email: String
-	patientIdentifier: String
-	caregiverIdentifier: String
+	surveyTemplateId: ID!
+	recipientContact: String!
+	recipientIdentifier: String
+	createdAt: String
 }
 
 input CreateOptionInput {
@@ -141,13 +259,15 @@ input CreateOptionInput {
 	value: Int!
 	name: String!
 	iconUrl: String
+	position: Int!
 	promptId: ID!
 }
 
 input CreatePromptInput {
 	id: ID
 	body: String!
-	templateId: ID!
+	position: Int!
+	surveyTemplateId: ID!
 }
 
 input CreateCampaignTemplateInput {
@@ -157,34 +277,136 @@ input CreateCampaignTemplateInput {
 
 input CreateCampaignInput {
 	id: ID
-	name: String!
-	templateId: ID!
+	campaignTemplateId: ID!
 	organizationId: ID!
+	active: Boolean
 }
 
-input CreateUserInput {
+input CreateInvitationInput {
 	id: ID
 	name: String!
-	title: String
 	phone: String
 	email: String
 	organizationId: ID!
+	invitorId: ID!
+	roleName: String!
+	title: String
+	createdAt: String
+	updatedAt: String
 }
 
+input DeleteContactInput {
+	id: ID!
+}
+
+input DeleteInvitationInput {
+	id: ID!
+}
+
+input CreateUserInput {
+	id: ID!
+	name: String
+	title: String
+	phone: String
+	email: String
+	organizationId: ID
+	active: Boolean!
+}
+
+input UpdateUserInput {
+	id: ID!
+	name: String
+	title: String
+	organizationId: ID
+	active: Boolean
+}
+
+input UpdateInvitationInput {
+	id: ID!
+	accepted: Boolean
+}
+
+input UpdateResponseInput {
+	id: ID!
+	reviewerId: ID
+	reviewedAt: String
+}
+
+input UpdateCampaignInput {
+	id: ID!
+	active: Boolean
+}
+
+input UpdateOrganizationInput {
+	id: ID!
+	name: String
+}
+
+input CreateSurveyTemplateInput {
+	id: ID
+	name: String!
+	position: Int!
+	campaignTemplateId: ID!
+}
+
+input CreateContactGroupInput {
+	id: ID
+	name: String!
+	organizationId: ID!
+	createdAt: String
+	updatedAt: String
+}
+
+input CreateContactInput {
+	id: ID
+	name: String!
+	contactGroupId: ID!
+	phone: String
+	email: String
+	createdAt: String
+	updatedAt: String
+}
 
 type Mutation {
+	createContact(input: CreateContactInput!): Contact
+	createContactGroup(input: CreateContactGroupInput!): ContactGroup
 	createOrganization(input: CreateOrganizationInput!): Organization
 	createResponse(input: CreateResponseInput!): Response
+	createAssignedRole(input: CreateAssignedRoleInput!): AssignedRole
+	createRole(input: CreateRoleInput!): Role
 	createSurvey(input: CreateSurveyInput!): Survey
+	createSurveyTemplate(input: CreateSurveyTemplateInput!): SurveyTemplate
 	createOption(input: CreateOptionInput!): Option
 	createPrompt(input: CreatePromptInput!): Prompt
 	createCampaignTemplate(input: CreateCampaignTemplateInput!): CampaignTemplate
 	createCampaign(input: CreateCampaignInput!): Campaign
 	createUser(input: CreateUserInput!): User
+	createInvitation(input: CreateInvitationInput!): Invitation
+
+	deleteContact(input: DeleteContactInput!): Contact
+	deleteInvitation(input: DeleteInvitationInput!): Invitation
+
+	updateUser(input: UpdateUserInput!): User
+	updateCampaign(input: UpdateCampaignInput!): Campaign
+	updateOrganization(input: UpdateOrganizationInput!): Organization
+	updateResponse(input: UpdateResponseInput!): Response
+	updateInvitation(input: UpdateInvitationInput!): Invitation
 }
 
 type Query {
 	listCampaignTemplates(first: Int, after: String): CampaignTemplateConnection
+	listInvitations(first: Int, after: String): InvitationConnection
+	
+	queryContactsByContactGroupIdIdIndex(contactGroupId: ID!, first: Int, after: String): ContactConnection
+	queryContactGroupsByOrganizationIdIdIndex(organizationId: ID!, first: Int, after: String): ContactGroupConnection
+	queryInvitationsByOrganizationIdIdIndex(organizationId: ID!, first: Int, after: String): InvitationConnection
+	queryRolesByNameIdIndex(name: String!, first: Int, after: String): RoleConnection
+	querySurveysByCampaignIdCreatedAtIndex(campaignId: ID!, first: Int, after: String): SurveyConnection
+	queryUsersByOrganizationIdCreatedAtIndex(organizationId: ID!, first: Int, after: String): UserConnection
+	
+	getContactGroup(id: ID!): ContactGroup
+	getUser(id: ID!): User
+	getSurvey(id: ID!): Survey
 }
 
 type Subscription {

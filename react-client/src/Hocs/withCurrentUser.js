@@ -9,7 +9,11 @@ const withCurrentUser = () => {
       render() {
         return (
           <CurrentUserConsumer>
+<<<<<<< HEAD
             {({currentUser}) => <WrappedComponent {...this.props} currentUser={currentUser} />}
+=======
+            {({currentUser, refreshCurrentUser}) => <WrappedComponent {...this.props} currentUser={currentUser} refreshCurrentUser={refreshCurrentUser} />}
+>>>>>>> cody
           </CurrentUserConsumer>
         );
       }

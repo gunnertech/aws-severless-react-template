@@ -18,6 +18,39 @@ import ENV from './src/environment'
 import { CurrentUserProvider } from './src/Contexts/CurrentUser'
 
 
+<<<<<<< HEAD
+=======
+
+import GetUser from "./src/api/Queries/GetUser"
+import CreateUser from "./src/api/Mutations/CreateUser"
+import UpdateUser from "./src/api/Mutations/UpdateUser"
+import CreateAssignedRole from "./src/api/Mutations/CreateAssignedRole"
+import CreateRole from "./src/api/Mutations/CreateRole"
+import QueryRolesByNameIdIndex from './src/api/Queries/QueryRolesByNameIdIndex'
+import ListInvitations from './src/api/Queries/ListInvitations'
+import UpdateInvitation from "./src/api/Mutations/UpdateInvitation"
+
+// import normalizePhoneNumber from './src/Util/normalizePhoneNumber'
+
+import { I18n } from 'aws-amplify';
+
+const authScreenLabels = {
+    en: {
+        "Username": "Email",
+        "Enter your username": "Enter your email",
+        'Sign Up': 'Create new account',
+        'Sign Up Account': 'Create a new account',
+        'Confirm Sign Up': 'Confirm Sign Up by entering the code that was sent to your email address'
+    }
+};
+
+I18n.setLanguage('en');
+I18n.putVocabularies(authScreenLabels);
+
+
+
+
+>>>>>>> cody
 // Remove this once Sentry is correctly setup.
 Sentry.enableInExpoDevelopment = true;
 
@@ -102,10 +135,135 @@ class App extends React.Component {
     currentUser: undefined
   };
 
+
+  _findInvitation = user =>
+    client.query({
+      query: ListInvitations,
+      variables: {first: 10000},
+      fetchPolicy: "network-only"
+    })
+      .then(({data: {listInvitations: {items}}}) => items)
+      .then(invitations => invitations.filter(invitation => !invitation.accepted).find(
+        invitation => 
+          (!!invitation.email && !!user.email && (invitation.email||"").toLowerCase() === (user.email||"").toLowerCase())
+      ))
+
+  
+  _addUserToOrganization = (user, organizationId) =>
+    client.mutate({
+      mutation: UpdateUser,
+      onError: e => console.log("_addUserToOrganization", e),
+      variables: {
+        id: user.id,
+        organizationId: organizationId
+      },
+    })
+      .then(({data: {updateUser}}) => Promise.resolve(updateUser))
+
+  _acceptInvitationForUser = (invitation, user) =>
+    client.mutate({
+      mutation: UpdateInvitation,
+      onError: e => console.log("_acceptInvitationForUser", e),
+      variables: {
+        id: invitation.id,
+        accepted: true
+      },
+    })
+      .then(({data: {updateInvitation}}) => this._addRoleToUser(invitation.roleName, user))
+
+  _addRoleToUser = (roleName, user) =>
+    client.query({
+      query: QueryRolesByNameIdIndex,
+      variables: {name: roleName},
+      fetchPolicy: "network-only"
+    })
+    .then(({data: { queryRolesByNameIdIndex }}) =>
+      (
+        !queryRolesByNameIdIndex || !queryRolesByNameIdIndex.items.length ? (
+          client.mutate({
+            mutation: CreateRole,
+            onError: e => console.log("CreateRole", e),
+            variables: {
+              name: roleName,
+            },
+          })
+          .then(({data: {createRole}}) => Promise.resolve(createRole))
+        ) : (
+          Promise.resolve(queryRolesByNameIdIndex.items[0])
+        )
+      )
+      .then(role =>
+        client.mutate({
+          mutation: CreateAssignedRole,
+          onError: e => console.log("CreateAssignedRole", e),
+          variables: {
+            roleId: role.id,
+            userId: user.id
+          },
+        })
+        .then(() => Promise.resolve(user))
+      )
+    )
+
+  _createNewUser = cognitoUser =>
+    client.mutate({
+      mutation: CreateUser,
+      onError: e => console.log("_createNewUser", e),
+      variables: {
+        id: cognitoUser.username,
+        phone: cognitoUser.attributes.phone_number || "",
+        email: cognitoUser.attributes.email || "",
+        active: true,
+      },
+    })
+    .then(({data: {createUser}}) => Promise.resolve(createUser))
+
   _handleSignIn = () =>
     new Promise(resolve => this.setState({currentUser: undefined}, resolve))
       .then(() =>
         Auth.currentAuthenticatedUser()
+      )
+      .then(cognitoUser => Promise.all([
+        client.query({
+          query: GetUser,
+          variables: {id: cognitoUser.username},
+          fetchPolicy: "network-only"
+        }),
+        cognitoUser
+      ]))
+      .then(([{data: { getUser }, loading}, cognitoUser]) => !!getUser ? (
+          Promise.resolve(getUser)
+        ) : (
+          this._createNewUser(cognitoUser)
+        )
+      )
+      .then(user => Promise.all([
+        user, this._findInvitation(user)
+      ]))
+      .then(([user, invitation]) => ([user, invitation]))
+      .then(([user, invitation]) => // && !user.organization
+        !!invitation ? (
+          this._addUserToOrganization(user, invitation.organizationId)
+            .then(user => !user.assignedRoles.items.length ? (
+                this._acceptInvitationForUser(invitation, user)
+              ) : (
+                Promise.resolve(user)  
+              )
+            )
+        ) : (
+          user.organization ? (
+            Promise.resolve(user)
+          ) : (
+            null
+          )
+        )
+        .then(user =>
+          !user.assignedRoles.items.length ? (
+            this._addRoleToUser("admin", user)
+          ) : (
+            Promise.resolve(user)
+          )
+        )
       )
       .then(currentUser => new Promise(resolve => this.setState({currentUser}, resolve.bind(null, currentUser))))
       .catch(err => console.log("ERROR", err) || this.setState({currentUser: null}));
@@ -140,7 +298,10 @@ class App extends React.Component {
       !this.state.fontLoaded ? (
         null
       ) : (
+<<<<<<< HEAD
         <ActionSheetProvider>
+=======
+>>>>>>> cody
           <ApolloProvider client={client}>
             <Rehydrated>
               <CurrentUserProvider currentUser={this.state.currentUser}>
@@ -158,7 +319,10 @@ class App extends React.Component {
               </CurrentUserProvider>
             </Rehydrated>
           </ApolloProvider>
+<<<<<<< HEAD
         </ActionSheetProvider>
+=======
+>>>>>>> cody
       )
     );
   }

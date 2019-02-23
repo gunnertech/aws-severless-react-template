@@ -1,50 +1,13 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
+// import { AmplifyTheme } from 'aws-amplify-react-native'
 
-const fonts = {
-  sm: 12,
-  md: 18,
-  lg: 24,
-  primary: 'Cochin',
-  bold: 'bold'
-}
+export const deepSquidInk = '#152939';
+export const linkUnderlayColor = '#FFF';
+export const errorIconColor = '#DD3F5B';
 
-const spacing = {
-  sm: 8,
-  md: 16,
-  lg: 24,
-  xl: 32,
-  xxl: 40
-}
-
-const colors  = {
-  primary: '#2089dc',
-  secondary: '#254B5A',
-  tertiary: '#5DA6A7',
-  error: 'red',
-  white: 'white',
-  transparent: 'rgba(0,0,0,0.75)',
-  gray: '#e1e8ee',
-  black: 'black',
-  success: 'green',
-  darkGray: 'gray'
-}
-
-const dimensions = {
-  fullHeight: Dimensions.get('window').height,
-  fullWidth: Dimensions.get('window').width,
-  screenHeight: Dimensions.get('screen').height,
-  screenWidth: Dimensions.get('screen').width
-}
-
-const baseStyles = {
-    simpleContainer: {
-      flex: 1,
-      flexDirection: 'column',
-    },
-    rowContainer: {
-      flex: 1,
-      flexDirection: 'row',
-    },
+const getAmplifyTheme = muiStyles => ({
+  ...muiStyles,
+  amplify: {
     container: {
       flex: 1,
       flexDirection: 'column',
@@ -52,73 +15,120 @@ const baseStyles = {
       justifyContent: 'space-around',
       paddingTop: 20,
       width: '100%',
+      marginTop: 30,
     },
     section: {
-      flex: 1,
-      width: '100%',
+        flex: 1,
+        width: '100%',
+        padding: 20,
     },
     sectionHeader: {
+        width: '100%',
+        marginBottom: 32
     },
     sectionHeaderText: {
-      width: '100%',
-      padding: 10,
-      textAlign: 'center',
-      backgroundColor: '#007bff',
-      color: '#ffffff',
-      fontSize: 20,
-      fontWeight: '500'
+        color: deepSquidInk,
+        fontSize: 20,
+        fontWeight: '500'
     },
     sectionFooter: {
-      width: '100%',
-      marginTop: 15,
-      padding: 10,
-      flexDirection: 'row',
-      justifyContent: 'space-between'
+        width: '100%',
+        padding: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 15,
+        marginBottom: 20
     },
     sectionFooterLink: {
-      fontSize: 14,
-      color: '#007bff',
-      alignItems: 'baseline',
-      textAlign: 'center'
+        fontSize: 14,
+        color: muiStyles.palette.primaryColor,
+        alignItems: 'baseline',
+        textAlign: 'center'
     },
-    sectionBody: {
+    navBar: {
+        marginTop: 35,
+        padding: 15,
+        flexDirection:'row',
+        justifyContent: 'flex-end',
+        alignItems: 'center'
+    },
+    navButton: {
+        marginLeft: 12,
+        borderRadius: 4
     },
     cell: {
-      flex: 1,
-      width: '50%'
+        flex: 1,
+        width: '50%'
     },
     errorRow: {
-      flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center'
     },
-    erroRowText: {
-      margin: 8,
-      marginTop: 16,
-      color: 'red'
+    errorRowText: {
+        marginLeft: 10
     },
-
     photo: {
-      width: '100%'
+        width: '100%'
     },
     album: {
-      width: '100%'
-    },
-
-    a: {
+        width: '100%'
     },
     button: {
-      backgroundColor: '#2089dc'
+        backgroundColor: muiStyles.palette.primaryColor,
+        alignItems: 'center',
+        padding: 16,
     },
-
+    buttonDisabled: {
+        backgroundColor: muiStyles.palette.primaryColor,
+        opacity: 0.5,
+        alignItems: 'center',
+        padding: 16,
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 14,
+        fontWeight: '600'
+    },
+    formField: {
+        marginBottom: 22
+    },
     input: {
-      margin: 6,
-      color: 'white'
-    }
-};
- 
+        padding: 16,
+        borderWidth: 1,
+        borderRadius: 3,
+        borderColor: "#C4C4C4",
+    },
+    inputLabel: {
+        marginBottom: 8
+    },
+    phoneContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    phoneInput: {
+        flex: 2,
+        padding: 16,
+        borderWidth: 1,
+        borderRadius: 3,
+        borderColor: "#C4C4C4",
+    },
+    picker: {
+        flex: 1,
+        height: 44,
+    },
+    pickerItem: {
+        height: 44,
+    },
+  }
+})
 
-const createStyles = (overrides = {}) => StyleSheet.create({...baseStyles, ...overrides});
-const AmplifyTheme = StyleSheet.create(baseStyles);
+export default getAmplifyTheme;
 
-export default AmplifyTheme;
+// // Colors
+// export const deepSquidInk = '#152939';
+// export const linkUnderlayColor = '#FFF';
+// export const errorIconColor = '#DD3F5B';
 
-export {dimensions, createStyles, colors, fonts, spacing};
+// // Theme
+// export default AmplifyTheme = StyleSheet.create(styles);

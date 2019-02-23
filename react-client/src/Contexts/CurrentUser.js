@@ -12,11 +12,20 @@ export class CurrentUserProvider extends React.Component {
     };
   }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> cody
   render() {
     return (
       <CurrentUser.Provider
         value={{
+<<<<<<< HEAD
           currentUser: this.props.currentUser
+=======
+          currentUser: this.props.currentUser,
+          refreshCurrentUser: this.props.refreshCurrentUser
+>>>>>>> cody
         }}
       >      
         {this.props.children}

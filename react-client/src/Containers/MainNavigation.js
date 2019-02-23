@@ -11,18 +11,22 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
 import Divider from '@material-ui/core/Divider';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
 import { ListItem, ListItemIcon, ListItemText, ListSubheader } from '@material-ui/core';
 
 import MenuIcon from '@material-ui/icons/Menu';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import HomeIcon from '@material-ui/icons/Home';
-import ContactPhoneIcon from '@material-ui/icons/ContactPhone';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import DescriptionIcon from '@material-ui/icons/Description';
+import AssessmentIcon from '@material-ui/icons/Assessment';
 
+import AccountKeyIcon from 'mdi-material-ui/AccountKey'
+import SettingsIcon from 'mdi-material-ui/Settings';
+import AccountGroupIcon from 'mdi-material-ui/AccountGroup';
 
-import { Facebook, Twitter, Instagram, Youtube, GithubCircle, Itunes, Linkedin } from 'mdi-material-ui'
-
+import withCurrentUser from '../Hocs/withCurrentUser';
+import { ActionMenuConsumer } from '../Contexts/ActionMenu';
+import NotificationToast from '../Components/NotificationToast'
 
 
 
@@ -128,18 +132,75 @@ class MainNavigation extends React.Component {
 
 
   render() {
-    const { classes, theme } = this.props;
-    const { anchorEl } = this.state;
-    const open = Boolean(anchorEl);
-
-
+    const { classes, theme, currentUser } = this.props;
     const drawer = (
       <div>
         <div className={classes.toolbar} />
         <Divider />
-        <List subheader={
-          <ListSubheader>Sub Header</ListSubheader>
-        }>
+        {
+          !!currentUser && !!currentUser.organization &&
+          <List subheader={
+            <ListSubheader>{currentUser.organization.name}</ListSubheader>
+          }>
+            <ListItem 
+              component={Link} 
+              to={`/dashboard`} 
+              button  
+              onClick={this.handleDrawerToggle}
+            >
+              <ListItemIcon>
+                <AssessmentIcon />
+              </ListItemIcon>
+              <ListItemText><Typography  className={classes.link}>Dashboard</Typography></ListItemText>
+            </ListItem>
+            <ListItem 
+              component={Link} 
+              to={`/users`} 
+              button  
+              onClick={this.handleDrawerToggle}
+            >
+              <ListItemIcon>
+                <AccountCircleIcon />
+              </ListItemIcon>
+              <ListItemText><Typography  className={classes.link}>Users</Typography></ListItemText>
+            </ListItem>
+            <ListItem 
+              component={Link} 
+              to={`/campaigns`} 
+              button  
+              onClick={this.handleDrawerToggle}
+            >
+              <ListItemIcon>
+                <DescriptionIcon />
+              </ListItemIcon>
+              <ListItemText><Typography  className={classes.link}>Campaigns</Typography></ListItemText>
+            </ListItem>
+            <ListItem 
+              component={Link} 
+              to={`/contacts`} 
+              button  
+              onClick={this.handleDrawerToggle}
+            >
+              <ListItemIcon>
+                <AccountGroupIcon />
+              </ListItemIcon>
+              <ListItemText><Typography  className={classes.link}>Contacts</Typography></ListItemText>
+            </ListItem>
+            <ListItem 
+              component={Link} 
+              to={`/settings`} 
+              button  
+              onClick={this.handleDrawerToggle}
+            >
+              <ListItemIcon>
+                <SettingsIcon />
+              </ListItemIcon>
+              <ListItemText><Typography className={classes.link}>Settings</Typography></ListItemText>
+            </ListItem>
+          </List>
+        }
+        <Divider />
+        <List>
           <ListItem 
             component={Link} 
             to={`/`} 
@@ -151,33 +212,33 @@ class MainNavigation extends React.Component {
             </ListItemIcon>
             <ListItemText><Typography  className={classes.link}>Home</Typography></ListItemText>
           </ListItem>
-        </List>
-        <Divider />
-        <List subheader={
-          <ListSubheader>Sub Header</ListSubheader>
-        }>
-          <ListItem 
-            component={Link} 
-            to={`/splash/`} 
-            button  
-            onClick={this.handleDrawerToggle}
-          >
-            <ListItemIcon>
-              <HomeIcon />
-            </ListItemIcon>
-            <ListItemText><Typography  className={classes.link}>Splash</Typography></ListItemText>
-          </ListItem>
-          <ListItem 
-            component={Link} 
-            to={`/sign-out/`} 
-            button  
-            onClick={this.handleDrawerToggle}
-          >
-            <ListItemIcon>
-              <ExitToAppIcon />
-            </ListItemIcon>
-            <ListItemText><Typography  className={classes.link}>Sign Out</Typography></ListItemText>
-          </ListItem>
+          {
+            !!currentUser ? (
+              <ListItem 
+                component={Link} 
+                to={`/sign-out/`} 
+                button  
+                onClick={this.handleDrawerToggle}
+              >
+                <ListItemIcon>
+                  <ExitToAppIcon />
+                </ListItemIcon>
+                <ListItemText><Typography  className={classes.link}>Sign Out</Typography></ListItemText>
+              </ListItem>
+            ) : (
+              <ListItem 
+                component={Link} 
+                to={`/dashboard/`} 
+                button  
+                onClick={this.handleDrawerToggle}
+              >
+                <ListItemIcon>
+                  <AccountKeyIcon />
+                </ListItemIcon>
+                <ListItemText><Typography  className={classes.link}>Sign In</Typography></ListItemText>
+              </ListItem>
+            )
+          }
         </List>
       </div>
     );
@@ -196,39 +257,14 @@ class MainNavigation extends React.Component {
             </IconButton>
             <Link to="/" className={classes.flex}>
               <img 
-                src={require('../assets/images/nav-logo.png')}
+                src={require('../assets/images/logo.png')}
                 className={classes.logo}
                 alt="Home"
               />
             </Link>
-            <div>
-              <IconButton
-                aria-owns={open ? 'menu-appbar' : null}
-                aria-haspopup="true"
-                onClick={this.handleMenu}
-                color="inherit"
-              >
-                <ContactPhoneIcon />
-              </IconButton>
-              <Menu
-                style={{zIndex: 2000}}
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={open}
-                onClose={this.handleClose}
-              >
-                <MenuItem onClick={this.handleClose}><a href="mailto:contact@gunnertech.com">contact@gunnertech.com</a></MenuItem>
-                <MenuItem onClick={this.handleClose}><a href="tel:+1844-846-8338">844-846-8338</a></MenuItem>
-              </Menu>
-            </div>
+            <ActionMenuConsumer>
+              {({Element}) => Element ? Element : null}
+            </ActionMenuConsumer>
           </Toolbar>
         </AppBar>
         <Hidden mdUp>
@@ -261,9 +297,13 @@ class MainNavigation extends React.Component {
         <div className={classes.content}>
           <div className={classes.toolbar} />
           <div className={classes.flex}>
+            {(this.props.notifications||[]).map((notification, i) =>
+              <NotificationToast message={notification.message} key={i} />
+            )}
             {this.props.children}
           </div>
           <footer className={classes.footer}>
+            {/*
             <ul className={classes.social}>
               <li className={classes.socialItem}>
                 <a target="_blank" rel="noopener noreferrer nofollow" href="https://facebook.com/gunnertechnology"><Facebook /></a>
@@ -287,15 +327,10 @@ class MainNavigation extends React.Component {
                 <a target="_blank" rel="noopener noreferrer nofollow" href="https://www.linkedin.com/company/gunner-technology/"><Linkedin /></a>
               </li>
             </ul>
-
+            */}
 
             <Typography paragraph>
-              5348 Vegas Drive <br />
-              Las Vegas, NV 89108 <br />
-              <a target="_blank" rel="noopener noreferrer nofollow" href="https://www.gsaelibrary.gsa.gov/ElibMain/contractorInfo.do?contractNumber=GS-35F-306GA&amp;contractorName=GUNNER+TECHNOLOGY&amp;executeQuery=YES">GSA: GS-35F-306GA</a> |
-              CAGE: 7Q6F5 | 
-              DUNS: 078818362 <br />
-              © {(new Date()).getFullYear()} Gunner Technology <br />
+              © {(new Date()).getFullYear()} AZ Tech <br />
               <Link to={`/privacy-policy`}>Privacy Policy</Link>
             </Typography>
           </footer>
@@ -315,7 +350,9 @@ MainNavigation.propTypes = {
   ])
 };
 
-export default withStyles(
-  styles, 
-  { withTheme: true }
-)(MainNavigation);
+export default withCurrentUser()(
+  withStyles(
+    styles, 
+    { withTheme: true }
+  )(MainNavigation)
+);

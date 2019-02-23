@@ -1,11 +1,15 @@
 import React from 'react';
 import { createStackNavigator, createDrawerNavigator, SafeAreaView } from 'react-navigation';
 import { Drawer } from 'react-native-material-ui';
-import { withAuthenticator } from 'aws-amplify-react-native';
+// import { withAuthenticator } from 'aws-amplify-react-native';
+import { ConfirmSignIn, ConfirmSignUp, ForgotPassword, RequireNewPassword, VerifyContact, withAuthenticator } from 'aws-amplify-react-native';
 
 // import AmplifyTheme from '../Styles/amplifyTheme'; theme={AmplifyTheme}
 import Home from '../Screens/Home';
 import SignOut from '../Screens/SignOut';
+import SignUp from '../Screens/SignUp'
+import SignIn from '../Screens/SignIn'
+import theme from '../Styles/muiTheme'
 
 
 const screens = {
@@ -65,7 +69,45 @@ const DrawerNavigator = createDrawerNavigator(screens, {
   initialRouteName: 'Home'
 });
 
-const GatedComponentWithAuth = withAuthenticator(GatedComponent, false);
+const GatedComponentWithAuth = withAuthenticator(GatedComponent, false, [
+  <SignIn/>,
+  <ConfirmSignIn/>,
+  <VerifyContact/>,
+  <SignUp
+    signUpConfig={{
+      hideAllDefaults: true,
+      signUpFields: [
+        {
+          key: 'email',
+          type: 'email',
+          required: true,
+          label: 'Email',
+          displayOrder: 2,
+          placeholder: "Enter your email (used to sign in)"
+        },
+        {
+          key: 'name',
+          type: 'text',
+          required: true,
+          label: 'Name',
+          displayOrder: 1,
+          placeholder: "Enter the name you want others to see"
+        },
+        {
+          key: 'password',
+          type: 'password',
+          required: true,
+          label: 'Password',
+          displayOrder: 3,
+          placeholder: "Enter your password"
+        }
+      ]
+    }}
+  />,
+  <ConfirmSignUp/>,
+  <ForgotPassword/>,
+  <RequireNewPassword />
+], false, theme.amplify);
 
 class GatedNavigator extends React.Component {
   static router = DrawerNavigator.router;
