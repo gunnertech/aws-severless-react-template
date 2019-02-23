@@ -29,6 +29,7 @@ import UserListScreen from "./Screens/UserList";
 import CampaignListScreen from "./Screens/CampaignList";
 import OrganizationEditScreen from "./Screens/OrganizationEdit";
 import SurveyNewScreen from "./Screens/SurveyNew";
+import ContactGroupListScreen from "./Screens/ContactGroupList";
 
 import { CurrentUserProvider } from './Contexts/CurrentUser'
 import { NotificationsProvider } from './Contexts/Notifications'
@@ -389,6 +390,7 @@ class App extends Component {
                         <Switch>
                           <PrivateRoute path='/users' exact component={UserListScreen} />
                           <PrivateRoute path='/campaigns' exact component={CampaignListScreen} />
+                          <PrivateRoute path='/contacts' exact component={ContactGroupListScreen} />
                           <PrivateRoute path='/settings' exact component={OrganizationEditScreen} />
                           <Route path='/' exact component={SplashScreen} />
                           <Route path='/sign-out' exact component={SignOutScreen} />

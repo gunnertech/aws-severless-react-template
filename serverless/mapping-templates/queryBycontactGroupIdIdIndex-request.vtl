@@ -1,0 +1,18 @@
+{
+  "version": "2017-02-28",
+  "operation": "Query",
+  "query": {
+    "expression": "#contactGroupId = :contactGroupId",
+    "expressionNames": {
+      "#contactGroupId": "contactGroupId",
+    },
+    "expressionValues": {
+      ":contactGroupId": $util.dynamodb.toDynamoDBJson($ctx.args.contactGroupId),
+    },
+  },
+  "index": "contactGroupId-id-index",
+  "limit": $util.defaultIfNull($ctx.args.first, 20),
+  "nextToken": $util.toJson($util.defaultIfNullOrEmpty($ctx.args.after, null)),
+  "scanIndexForward": false,
+  "select": "ALL_ATTRIBUTES",
+}

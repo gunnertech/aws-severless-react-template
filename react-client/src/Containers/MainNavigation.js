@@ -22,6 +22,7 @@ import AssessmentIcon from '@material-ui/icons/Assessment';
 
 import AccountKeyIcon from 'mdi-material-ui/AccountKey'
 import SettingsIcon from 'mdi-material-ui/Settings';
+import AccountGroupIcon from 'mdi-material-ui/AccountGroup';
 
 import withCurrentUser from '../Hocs/withCurrentUser';
 import { ActionMenuConsumer } from '../Contexts/ActionMenu';
@@ -173,6 +174,17 @@ class MainNavigation extends React.Component {
                 <DescriptionIcon />
               </ListItemIcon>
               <ListItemText><Typography  className={classes.link}>Campaigns</Typography></ListItemText>
+            </ListItem>
+            <ListItem 
+              component={Link} 
+              to={`/contacts`} 
+              button  
+              onClick={this.handleDrawerToggle}
+            >
+              <ListItemIcon>
+                <AccountGroupIcon />
+              </ListItemIcon>
+              <ListItemText><Typography  className={classes.link}>Contacts</Typography></ListItemText>
             </ListItem>
             <ListItem 
               component={Link} 

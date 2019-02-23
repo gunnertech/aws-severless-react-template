@@ -26,6 +26,36 @@ custom:
         field: campaigns
         request: "Organization.campaigns-request.vtl"
         response: "Organization.campaigns-response.vtl"
+      - dataSource: Contacts
+        type: Mutation
+        field: createContact
+        request: "genericCreate-request.vtl"
+        response: "generic-response.vtl"
+      - dataSource: Contacts
+        type: Mutation
+        field: deleteContact
+        request: "genericDelete-request.vtl"
+        response: "generic-response.vtl"
+      - dataSource: Contacts
+        type: Query
+        field: queryContactsByContactGroupIdIdIndex
+        request: "queryByContactGroupIdIdIndex-request.vtl"
+        response: "generic-response.vtl"
+      - dataSource: ContactGroups
+        type: Mutation
+        field: createContactGroup
+        request: "genericCreate-request.vtl"
+        response: "generic-response.vtl"
+      - dataSource: ContactGroups
+        type: Query
+        field: queryContactGroupsByOrganizationIdIdIndex
+        request: "queryByOrganizationIdIdIndex-request.vtl"
+        response: "generic-response.vtl"
+      - dataSource: ContactGroups
+        type: Query
+        field: getContactGroup
+        request: "genericGet-request.vtl"
+        response: "generic-response.vtl"
       - dataSource: Roles
         type: AssignedRole
         field: role
@@ -222,6 +252,16 @@ custom:
         description: 'Campaigns table'
         config:
           tableName: { Ref: CampaignTable }
+      - type: AMAZON_DYNAMODB
+        name: Contacts
+        description: 'Contacts table'
+        config:
+          tableName: { Ref: ContactTable }
+      - type: AMAZON_DYNAMODB
+        name: ContactGroups
+        description: 'ContactGroups table'
+        config:
+          tableName: { Ref: ContactGroupTable }
       - type: AMAZON_DYNAMODB
         name: CampaignTemplates
         description: 'Campaign Templates table'
@@ -917,6 +957,65 @@ resources:
             # ProvisionedThroughput: 
             #   ReadCapacityUnits: "1"
             #   WriteCapacityUnits: "1"                                
+    
+    ContactGroupTable:
+      DependsOn: ResponseTable
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        BillingMode: PAY_PER_REQUEST
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        AttributeDefinitions:
+          -
+            AttributeName: organizationId
+            AttributeType: S
+          -
+            AttributeName: id
+            AttributeType: S
+        TableName: "${self:custom.stage}-ContactGroups"
+        GlobalSecondaryIndexes: 
+          - 
+            IndexName: "organizationId-id-index"
+            KeySchema: 
+              - 
+                AttributeName: "organizationId"
+                KeyType: "HASH"
+              - 
+                AttributeName: "id"
+                KeyType: "RANGE"
+            Projection: 
+              ProjectionType: "ALL"
+    ContactTable:
+      DependsOn: ContactGroupTable
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        BillingMode: PAY_PER_REQUEST
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        AttributeDefinitions:
+          -
+            AttributeName: contactGroupId
+            AttributeType: S
+          -
+            AttributeName: id
+            AttributeType: S
+        TableName: "${self:custom.stage}-Contacts"
+        GlobalSecondaryIndexes: 
+          - 
+            IndexName: "contactGroupId-id-index"
+            KeySchema: 
+              - 
+                AttributeName: "contactGroupId"
+                KeyType: "HASH"
+              - 
+                AttributeName: "id"
+                KeyType: "RANGE"
+            Projection: 
+              ProjectionType: "ALL"
 
 ####BEGIN STANDARD RESOURCES
     LambdaExecutionRole:

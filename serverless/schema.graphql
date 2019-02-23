@@ -10,6 +10,36 @@ type Organization {
 	users: UserConnection
 }
 
+type Contact {
+	id: ID!
+	name: String!
+	email: String
+	phone: String
+	contactGroupId: ID!
+	createdAt: String!
+	updatedAt: String!
+	contactGroup: ContactGroup
+}
+
+type ContactConnection {
+	items: [Contact]
+	nextToken: String
+}
+
+type ContactGroup {
+	id: ID!
+	name: String
+	organizationId: ID!
+	createdAt: String!
+	updatedAt: String!
+	organization: Organization!
+}
+
+type ContactGroupConnection {
+	items: [ContactGroup]
+	nextToken: String
+}
+
 type User {
 	id: ID!
 	name: String
@@ -265,6 +295,10 @@ input CreateInvitationInput {
 	updatedAt: String
 }
 
+input DeleteContactInput {
+	id: ID!
+}
+
 input DeleteInvitationInput {
 	id: ID!
 }
@@ -315,7 +349,27 @@ input CreateSurveyTemplateInput {
 	campaignTemplateId: ID!
 }
 
+input CreateContactGroupInput {
+	id: ID
+	name: String!
+	organizationId: ID!
+	createdAt: String
+	updatedAt: String
+}
+
+input CreateContactInput {
+	id: ID
+	name: String!
+	contactGroupId: ID!
+	phone: String
+	email: String
+	createdAt: String
+	updatedAt: String
+}
+
 type Mutation {
+	createContact(input: CreateContactInput!): Contact
+	createContactGroup(input: CreateContactGroupInput!): ContactGroup
 	createOrganization(input: CreateOrganizationInput!): Organization
 	createResponse(input: CreateResponseInput!): Response
 	createAssignedRole(input: CreateAssignedRoleInput!): AssignedRole
@@ -329,6 +383,7 @@ type Mutation {
 	createUser(input: CreateUserInput!): User
 	createInvitation(input: CreateInvitationInput!): Invitation
 
+	deleteContact(input: DeleteContactInput!): Contact
 	deleteInvitation(input: DeleteInvitationInput!): Invitation
 
 	updateUser(input: UpdateUserInput!): User
@@ -342,11 +397,14 @@ type Query {
 	listCampaignTemplates(first: Int, after: String): CampaignTemplateConnection
 	listInvitations(first: Int, after: String): InvitationConnection
 	
+	queryContactsByContactGroupIdIdIndex(contactGroupId: ID!, first: Int, after: String): ContactConnection
+	queryContactGroupsByOrganizationIdIdIndex(organizationId: ID!, first: Int, after: String): ContactGroupConnection
 	queryInvitationsByOrganizationIdIdIndex(organizationId: ID!, first: Int, after: String): InvitationConnection
 	queryRolesByNameIdIndex(name: String!, first: Int, after: String): RoleConnection
-	queryUsersByOrganizationIdCreatedAtIndex(organizationId: ID!, first: Int, after: String): UserConnection
 	querySurveysByCampaignIdCreatedAtIndex(campaignId: ID!, first: Int, after: String): SurveyConnection
+	queryUsersByOrganizationIdCreatedAtIndex(organizationId: ID!, first: Int, after: String): UserConnection
 	
+	getContactGroup(id: ID!): ContactGroup
 	getUser(id: ID!): User
 	getSurvey(id: ID!): Survey
 }
