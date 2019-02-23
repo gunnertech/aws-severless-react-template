@@ -32,9 +32,7 @@ class Splash extends React.Component {
       <Container>
         <Card>
           <View>
-            <Text style={{paddingBottom: theme.spacing.sm}}>SimpliSurvey is a tool for interpreting real time customer satisfaction and analysis.</Text>
-            <Text style={{paddingBottom: theme.spacing.sm}}>It works by polling customers with a simple algorithm and presenting findings on an easy to use dashboard.</Text>
-            <Text style={{paddingBottom: theme.spacing.sm}}>To send a survey, sign in with your account or, if you were invited, register for a new account using the email address and/or phone number where you received the invitation.</Text>
+            <Text style={{paddingBottom: theme.spacing.sm}}>Welcome! Please sign in or create an account!</Text>
           </View>
           <Button onPress={() => this.props.navigation.navigate("Gated")} style={{container: classes.commentButtonContainer}} primary text="Sign In" iconSet="FontAwesome" icon="sign-in" raised />
           <Button 

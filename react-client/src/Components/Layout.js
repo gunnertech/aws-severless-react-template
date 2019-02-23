@@ -72,14 +72,14 @@ const Template = ({ navigate, location, data, children, showNav, notifications }
   <Container>
     <Helmet
       encodeSpecialCharacters={true}
-      title="SimpliSurvey"
+      title="<project-name>"
       meta={[
-        { name: `description`, content: `TODO` },
-        { name: `keywords`, content: `TODO` },
-        { name: 'og:url', content: `TODO${location.pathname}` }
+        { name: `description`, content: `<project-name>` },
+        { name: `keywords`, content: `<project-name>` },
+        { name: 'og:url', content: `${REACT_APP_base_url}${location.pathname}` }
       ]}
       link={[
-        { rel: "canonical", value: `TODO${location.pathname}`}
+        { rel: "canonical", value: `${REACT_APP_base_url}${location.pathname}`}
       ]}
     />
     {

@@ -120,7 +120,7 @@ const appSyncLink = createAppSyncLink({
         const session = await Auth.currentSession();
         return session.getIdToken().getJwtToken();
       } catch(e) {
-        await Auth.signIn('simplisurveyguest@gunnertech.com', 'Sim2010!!'); //TODO: For new environments, you'll have to create this account
+        await Auth.signIn('<project-name>guest@gunnertech.com', 'Sim2010!!'); //TODO: For new environments, you'll have to create this guest account if you need guest access to the graphql API
         const session = await Auth.currentSession();
         return session.getIdToken().getJwtToken();
 

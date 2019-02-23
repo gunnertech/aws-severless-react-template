@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "simplisurvey",
-    "scheme": "simplisurvey",
+    "name": "<project-name>",
+    "scheme": "<project-name>",
     "description": "This project is really great.",
-    "slug": "simplisurvey",
+    "slug": "<project-name>",
     "privacy": "public",
     "sdkVersion": "32.0.0",
     "platforms": ["ios", "android"],
@@ -21,7 +21,7 @@
           "file": "sentry-expo/upload-sourcemaps",
           "config": {
             "organization": "gunner-technology",
-            "project": "simplisurvey",
+            "project": "<project-name>",
             "authToken": "eaf415b826c5424496d5262df653cb357011cc7549004b40921445ca66b49876"
           }
         }
@@ -34,8 +34,8 @@
       "**/*"
     ],
     "android": {
-      "package": "com.gunnertech.simplisurvey",
-      "playStoreUrl": "https://play.google.com/store/apps/details?id=com.gunnertech.simplisurvey",
+      "package": "com.gunnertech.<project-name>",
+      "playStoreUrl": "https://play.google.com/store/apps/details?id=com.gunnertech.<project-name>",
       "versionCode": 7,
       "permissions": [
         "CAMERA",
@@ -52,7 +52,7 @@
       }
     },
     "ios": {
-      "bundleIdentifier": "com.gunnertech.simplisurvey",
+      "bundleIdentifier": "com.gunnertech.<project-name>",
       "supportsTablet": true,
       "buildNumber": "6",
       "config": {

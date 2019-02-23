@@ -1,6 +1,6 @@
 {
-  "short_name": "SimpliSurvey",
-  "name": "SimpliSurvey",
+  "short_name": "<project-name>",
+  "name": "<project-name>",
   "icons": [
     {
       "src": "favicon.ico",
