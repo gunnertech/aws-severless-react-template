@@ -9,7 +9,7 @@ $ ./organization add -n <project-name>-production -e <project-name>-production@g
 
 add helper to ~/.gitconfig (if you haven't before - you'll also need access to the simplisurveydeveloper profile)
 ````
-[credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/simplisurvey/"]
+[credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/simplisurvey-development/"]
 UseHttpPath = true
 helper = !aws --profile simplisurveydeveloper codecommit credential-helper $@
 ````

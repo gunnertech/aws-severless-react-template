@@ -76,10 +76,10 @@ const Template = ({ navigate, location, data, children, showNav, notifications }
       meta={[
         { name: `description`, content: `<project-name>` },
         { name: `keywords`, content: `<project-name>` },
-        { name: 'og:url', content: `${REACT_APP_base_url}${location.pathname}` }
+        { name: 'og:url', content: `${process.env.REACT_APP_base_url}${location.pathname}` }
       ]}
       link={[
-        { rel: "canonical", value: `${REACT_APP_base_url}${location.pathname}`}
+        { rel: "canonical", value: `${process.env.REACT_APP_base_url}${location.pathname}`}
       ]}
     />
     {
