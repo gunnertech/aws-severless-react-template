@@ -47,12 +47,12 @@ class CampaignTemplate extends React.Component {
     console.log(campaign)
     return (
       <ExpansionPanel 
-        classes={{root: campaign.active ? null : classes.disabledPanel}}
+        classes={{root: !campaign || campaign.active ? null : classes.disabledPanel}}
         expanded={expanded === `panel${campaignTemplate.id}`} 
         onChange={onChange.bind(null, `panel${campaignTemplate.id}`)}
       >
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography className={campaign.active ? null : classes.heading}>{campaignTemplate.name}</Typography>
+          <Typography className={!campaign || campaign.active ? null : classes.heading}>{campaignTemplate.name}</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.panelDetails}>
           {

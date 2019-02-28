@@ -111,16 +111,17 @@ class Home extends React.Component {
       .catch(console.log)
 
   _handleTabChange = (event, value) =>
-    new Promise(resolve => this.setState({ selectedCampaignId: value, selectedSurveyTemplateId: null, selectedSurveyTemplate: null }, () => resolve(value)))
-      .then(selectedCampaignId =>
-        Promise.resolve(this.props.currentUser.organization.campaigns.items.find(campaign => campaign.id === selectedCampaignId).campaignTemplate.surveyTemplates.items[0])
-      )
-      .then(selectedSurveyTemplate =>
-        new Promise(resolve => this.setState({ 
-          selectedSurveyTemplate,
-          selectedSurveyTemplateId: selectedSurveyTemplate.id
-        }, resolve))
-      )
+    this.props.history.push(`/dashboard/${value}`)
+    // new Promise(resolve => this.setState({ selectedCampaignId: value, selectedSurveyTemplateId: null, selectedSurveyTemplate: null }, () => resolve(value)))
+    //   .then(selectedCampaignId =>
+    //     Promise.resolve(this.props.currentUser.organization.campaigns.items.find(campaign => campaign.id === selectedCampaignId).campaignTemplate.surveyTemplates.items[0])
+    //   )
+    //   .then(selectedSurveyTemplate =>
+    //     new Promise(resolve => this.setState({ 
+    //       selectedSurveyTemplate,
+    //       selectedSurveyTemplateId: selectedSurveyTemplate.id
+    //     }, resolve))
+    //   )
 
   _handleSurveyTemplateChange = event => 
     new Promise(resolve => this.setState({ selectedSurveyTemplateId: event.target.value }, () => resolve(event.target.value)))
@@ -143,9 +144,14 @@ class Home extends React.Component {
 
   componentDidMount() {
     if(!!this.props.currentUser && !!this.props.currentUser.organization.campaigns.items.filter(campaign => campaign.active).length) {
+      const selectedCampaign = this.props.match.params.campaignId ? (
+          this.props.currentUser.organization.campaigns.items.find(campaign => campaign.id === this.props.match.params.campaignId)
+        ) : (
+          this.props.currentUser.organization.campaigns.items.filter(campaign => campaign.active)[0]
+        )
       this.setState({
-        selectedSurveyTemplate: this.props.currentUser.organization.campaigns.items.filter(campaign => campaign.active)[0].campaignTemplate.surveyTemplates.items[0],
-        selectedCampaignId: this.props.currentUser.organization.campaigns.items.filter(campaign => campaign.active)[0].id
+        selectedSurveyTemplate: selectedCampaign.campaignTemplate.surveyTemplates.items[0],
+        selectedCampaignId: selectedCampaign.id
       })
     }
 

@@ -397,6 +397,7 @@ class App extends Component {
                           <Route path='/surveys/:surveyId' exact component={SurveyNewScreen} />
                           <Route path='/privacy-policy' exact component={PrivacyPolicyScreen} />
                           <PrivateRoute path='/dashboard' exact component={HomeScreen} />
+                          <PrivateRoute path='/dashboard/:campaignId' exact component={HomeScreen} />
                         </Switch>
                       </LayoutProvider>
                     </Router>
