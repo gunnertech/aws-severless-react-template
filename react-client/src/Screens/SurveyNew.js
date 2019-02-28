@@ -143,6 +143,7 @@ class SurveyNew extends React.Component {
                 {({data: { getUser } = {}}) => !getUser ? null :
                   <Paper elevation={2} className={classes.root}>
                     <div>
+                      <Typography paragraph>{getUser.name} sent you this survey.</Typography>
                       <Typography variant="h4">{getUser.organization.name} Survey</Typography>
                       <Typography paragraph>Please answer all prompts by clicking your response and then click "Submit" when finished.</Typography>
                     </div>
@@ -193,7 +194,6 @@ class SurveyNew extends React.Component {
                         }
                       </div>
                     </div>
-                    <p>{getUser.name} sent you this survey.</p>
                     <Divider />
                     <Button disabled={!Object.keys(this.state.prompts).length || Object.keys(this.state.prompts).length !== data.getSurvey.surveyTemplate.prompts.items.length} variant="contained" onClick={this._handleSubmit.bind(this)} className={classes.button} color="primary">Submit</Button>
                   </Paper>
