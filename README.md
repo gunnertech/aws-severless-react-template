@@ -93,7 +93,8 @@ $ git push origin released/%iteration-date%
 $ git push staging %iteration-date%
 $ git checkout %dev name%
 $ git branch -D <iteration-date>
-$ ## Submit pull request
+$ ## Submit pull request:
+$ aws codecommit create-pull-request --title "20190226 Iteration Pull Request" --description "20190226 Iteration Pull Request" --client-request-token 20190226 --targets repositoryName=simplisurvey-staging,sourceReference=20190226 --profile  simplisurvey-stagingdeveloper
 ````
   
 ## Amplify

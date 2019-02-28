@@ -54,7 +54,7 @@
     "ios": {
       "bundleIdentifier": "com.gunnertech.simplisurvey",
       "supportsTablet": true,
-      "buildNumber": "6",
+      "buildNumber": "8",
       "config": {
         "usesNonExemptEncryption": false,
         "branch": {

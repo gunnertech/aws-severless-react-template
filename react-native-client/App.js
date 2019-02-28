@@ -208,8 +208,8 @@ class App extends React.Component {
       onError: e => console.log("_createNewUser", e),
       variables: {
         id: cognitoUser.username,
-        phone: cognitoUser.attributes.phone_number || "",
-        email: cognitoUser.attributes.email || "",
+        phone: cognitoUser.attributes.phone_number || undefined,
+        email: cognitoUser.attributes.email || undefined,
         active: true,
       },
     })
