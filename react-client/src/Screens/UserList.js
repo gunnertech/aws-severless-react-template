@@ -105,7 +105,7 @@ class UserList extends React.Component {
           ) : (
             `${this.props.currentUser.name} invited you to join SimpliSurvey. To get started, Android users click this link https://play.google.com/store/apps/details?id=com.gunnertech.simplisurvey. iOS users, click this link https://testflight.apple.com/join/TjLjqY9z`
           )}`,
-          PhoneNumber: `+1${phone}`
+          PhoneNumber: `${phone}`
         })
         .promise()
       )
@@ -171,7 +171,7 @@ class UserList extends React.Component {
   _validPhone = phone =>
     phone && !!normalizePhoneNumber(phone)
 
-  _inviteUser = (data, invitations) =>
+  _inviteUser = (data, invitations) => console.log("data", data) ||
     new Promise((resolve, reject) => 
       this._validEmail(data.user.email) ? (
         !!invitations.find(invitation => invitation.email && invitation.email.toLowerCase() === data.user.email.toLowerCase()) ? (
@@ -205,7 +205,7 @@ class UserList extends React.Component {
         this._validPhone(params.phone) ? (
           this._sendSms(params)
             .then(() => params)
-            .catch(args => params)
+            .catch(console.log)
          ) : (
            Promise.resolve(params)
          )
