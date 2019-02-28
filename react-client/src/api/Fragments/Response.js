@@ -15,6 +15,7 @@ const Response = {
         createdAt
         reviewerId
         reviewedAt
+        reviewComment
       }
     `
   }

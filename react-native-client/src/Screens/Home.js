@@ -156,9 +156,9 @@ class Home extends React.PureComponent {
               Data: 'SimpliSurvey Invitation'
             }
           },
-          Source: 'simplisurvey@gunnertech.com', /* required */
+          Source: 'no-reply@simplisurvey.com', /* required */
           ReplyToAddresses: [
-            'simplisurvey@gunnertech.com',
+            'no-reply@simplisurvey.com',
           ],
         })
         .promise()

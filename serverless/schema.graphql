@@ -207,6 +207,7 @@ type Response {
 	survey: Survey
 	createdAt: String
 	reviewedAt: String
+	reviewComment: String
 }
 
 type ResponseConnection {
@@ -329,6 +330,7 @@ input UpdateInvitationInput {
 input UpdateResponseInput {
 	id: ID!
 	reviewerId: ID
+	reviewComment: String
 	reviewedAt: String
 }
 

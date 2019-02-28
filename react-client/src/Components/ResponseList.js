@@ -30,6 +30,7 @@ class ResponseList extends React.Component {
     Promise.resolve({
       reviewerId: this.props.currentUser.id,
       reviewedAt: (new Date()).toISOString(),
+      reviewComment: window.prompt("Add a comment (optional)") || undefined
     })
       .then(params =>
         this.props.updateResponse({ 
@@ -70,12 +71,26 @@ class ResponseList extends React.Component {
               surveys.filter(survey => !!survey.responses.items.find(response => response.optionId === option.id).reason).map(survey => 
                 <ListItem key={survey.id} button onClick={this._handleToggle(survey.responses.items.find(response => response.optionId === option.id))}>
                   <ListItemText 
-                    primary={`${survey.recipientContact} (${survey.recipientIdentifier||''})`} 
-                    secondary={`${moment(survey.responses.items.find(response => response.optionId === option.id).createdAt).format("M-D-YYYY")} - (${survey.responses.items.find(response => response.optionId === option.id).reason})`} 
+                    primary={`${survey.recipientContact} ${!!survey.recipientIdentifier ? `(${survey.recipientIdentifier||''})` : ``}`}
+                    secondary={<span>
+                      On {moment(survey.responses.items.find(response => response.optionId === option.id).createdAt).format("M-D-YYYY")}
+                      <br />
+                      "{survey.responses.items.find(response => response.optionId === option.id).reason}"
+                      {!!survey.responses.items.find(response => response.optionId === option.id).reviewedAt && (
+                          <span>
+                            <br />
+                            Reviewed on {moment(survey.responses.items.find(response => response.optionId === option.id).reviewedAt).format("M-D-YYYY")}
+                            {!!survey.responses.items.find(response => response.optionId === option.id).reviewComment && (
+                              <span><br />{survey.responses.items.find(response => response.optionId === option.id).reviewComment}</span>
+                            )}
+                          </span>
+                        )}
+                    </span>} 
                   />
                   <ListItemSecondaryAction>
                     <Checkbox
                       checked={survey.responses.items.find(response => response.optionId === option.id).reviewerId}
+                      disabled={survey.responses.items.find(response => response.optionId === option.id).reviewerId}
                       tabIndex={-1}
                       disableRipple
                       onChange={this._handleToggle(survey.responses.items.find(response => response.optionId === option.id))}
