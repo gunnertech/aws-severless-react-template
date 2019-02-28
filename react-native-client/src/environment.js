@@ -51,13 +51,12 @@ const ENV = {
 }
 
 function getEnvVars(env = '') {
-  // if (env === null || env === undefined || env === '') return ENV.development
-  // if (env.indexOf('development') !== -1) return ENV.development
-  // if (env.indexOf('staging') !== -1) return ENV.staging
-  // if (env.indexOf('production') !== -1) return ENV.production
+  if (env === null || env === undefined || env === '') return ENV.development
+  if (env.indexOf('development') !== -1) return ENV.development
+  if (env.indexOf('staging') !== -1) return ENV.staging
+  if (env.indexOf('production') !== -1) return ENV.production
 
-  // return ENV.development
-  return ENV.staging
+  return ENV.development
 }
 
 
