@@ -12,6 +12,7 @@ import withMobileDialog from '@material-ui/core/withMobileDialog';
 import FilePlusIcon from 'mdi-material-ui/FilePlus';
 
 import { Query, compose, graphql } from 'react-apollo';
+import uuid from 'uuid-v4'
 
 import CampaignNew from '../Components/CampaignNew';
 import Container from '../Components/Container'
@@ -81,7 +82,7 @@ class CampaignList extends React.Component {
     )
       .then(() =>
         Promise.resolve({
-          id: (new Date().getTime()).toString(),
+          id: uuid(),
           campaignTemplateId: selectedCampaignId,
           organizationId: this.props.currentUser.organization.id,
           active: true
@@ -94,7 +95,6 @@ class CampaignList extends React.Component {
             __typename: "Campaign"
           },
           update: (proxy, { data: { createCampaign } }) =>
-            console.log("HERE", createCampaign) ||
             Promise.resolve(
               proxy.writeQuery({ 
                 query: GetUser, 

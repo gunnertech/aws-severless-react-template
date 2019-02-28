@@ -14,6 +14,9 @@ const styles = theme => ({
   panelDetails: {
     flexFlow: "wrap"
   },
+  disabledPanel: {
+    backgroundColor: theme.palette.action.disabledBackground
+  },
   surveyTemplate: {
     flex: '0 0 100%', 
     display: 'flex',
@@ -32,19 +35,24 @@ const styles = theme => ({
   },
   promptWrapper: {
     marginBottom: theme.spacing.unit * 2
+  },
+  heading: {
+    color: theme.palette.text.disabled
   }
 });
 
 class CampaignTemplate extends React.Component {
   render() {
     const { campaignTemplate, expanded, onChange, onSelect, classes, PanelActions, campaign, hideText } = this.props;
+    console.log(campaign)
     return (
       <ExpansionPanel 
+        classes={{root: campaign.active ? null : classes.disabledPanel}}
         expanded={expanded === `panel${campaignTemplate.id}`} 
         onChange={onChange.bind(null, `panel${campaignTemplate.id}`)}
       >
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography className={classes.heading}>{campaignTemplate.name}</Typography>
+          <Typography className={campaign.active ? null : classes.heading}>{campaignTemplate.name}</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.panelDetails}>
           {
