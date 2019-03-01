@@ -7,11 +7,13 @@ export default gql`
     $id: ID!
     $reviewedAt: String
     $reviewerId: ID
+    $reviewComment: String
   ) {
     updateResponse(input:{
       id: $id
       reviewedAt: $reviewedAt
       reviewerId: $reviewerId
+      reviewComment: $reviewComment
     }) {
       ...ResponseEntry
     }

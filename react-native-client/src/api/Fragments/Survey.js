@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 import SurveyTemplate from './SurveyTemplate';
-import User from './User';
+// import User from './User';
 import Response from './Response';
 
 const Survey = {
@@ -16,10 +16,6 @@ const Survey = {
         recipientContact
         recipientIdentifier
         createdAt
-        user {
-          __typename
-          ...UserEntry
-        }
         surveyTemplate {
           __typename
           ...SurveyTemplateEntry
@@ -32,7 +28,6 @@ const Survey = {
         }
       }
       ${SurveyTemplate.fragments.global}
-      ${User.fragments.global}
       ${Response.fragments.global}
     `
   }

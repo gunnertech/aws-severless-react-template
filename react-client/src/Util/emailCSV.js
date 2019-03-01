@@ -6,7 +6,7 @@ AWS.config.update({region: 'us-east-1'});
 
 const emailCSV = (email, csv) =>
   Promise.resolve(
-`From: 'SimpliSurvey' <no-reply@simplisurvey.com>
+`From: 'SimpliSurvey' <${process.env.REACT_APP_bot_email_adress}>
 To: ${email.toLowerCase()}
 Subject: Campaign Export
 MIME-Version: 1.0
@@ -35,7 +35,7 @@ ${csv}
         .sendRawEmail({
           RawMessage: { Data: new Buffer(ses_mail) },
           Destinations: [ email.toLowerCase() ],
-          Source: `'SimpliSurvey' <no-reply@simplisurvey.com>'`
+          Source: `'SimpliSurvey' <${process.env.REACT_APP_bot_email_adress}>'`
         })
         .promise()
         .catch(console.log)

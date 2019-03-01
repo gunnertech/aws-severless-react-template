@@ -22,6 +22,7 @@ const ENV = {
     pinpoint_app_id: "67be524b1e9f4f9cb49a11e40e370a01",
     cdn: 'dtfsbcv3jr02i.cloudfront.net',
     base_url: "http://localhost:3000",
+    bot_email_adress: 'simplisurvey@gunnertech.com',
     sentry_url
   },
   staging: {
@@ -34,6 +35,7 @@ const ENV = {
     pinpoint_app_id: "5a1bcb16c71d4cfab5e8f7f965540c75",
     cdn: 'd1446fel4axapv.cloudfront.net',
     base_url: "https://staging.d2x31qlfq03ed5.amplifyapp.com",
+    bot_email_adress: 'simplisurvey@gunnertech.com',
     sentry_url
   },
   production: {
@@ -46,6 +48,7 @@ const ENV = {
     pinpoint_app_id: "7ea0461c1c444f439bb56775c8ab099b",
     cdn: 'd1b7rae1naarue.cloudfront.net',
     base_url: "https://simplisurvey.com",
+    bot_email_adress: 'no-reply@simplisurvey.com',
     sentry_url
   }
 }

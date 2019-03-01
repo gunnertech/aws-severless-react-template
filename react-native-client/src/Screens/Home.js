@@ -9,16 +9,20 @@ import {
 import SES from 'aws-sdk/clients/ses';
 import SNS from 'aws-sdk/clients/sns';
 import { Auth } from 'aws-amplify';
+import uuid from 'uuid-v4'
 
 import { Card, Text } from 'react-native-elements'
 import { Dropdown } from 'react-native-material-dropdown';
 import { TextField } from 'react-native-material-textfield';
-import { compose, graphql } from 'react-apollo';
+import { compose, graphql, Query } from 'react-apollo';
 import moment from 'moment';
 
 import Toast from 'react-native-root-toast';
 
 import CreateSurvey from '../api/Mutations/CreateSurvey';
+import QueryContactGroupsByOrganizationIdIdIndex from '../api/Queries/QueryContactGroupsByOrganizationIdIdIndex'
+import QueryContactsByContactGroupIdIdIndex from '../api/Queries/QueryContactsByContactGroupIdIdIndex'
+
 
 import { withMuiTheme } from '../Styles/muiTheme';
 import withCurrentUser from '../Hocs/withCurrentUser';
@@ -89,15 +93,27 @@ class Home extends React.PureComponent {
     />
   })
 
-  state = {
-    selectedCampaignTemplateId: null,
-    selectedCampaignId: null,
-    selectedSurveyTemplateId: null,
-    recipientContact: null,
-    recipientIdentifier: null,
-    submitting: false,
-    submitted: false
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      selectedCampaignTemplateId: null,
+      selectedCampaignId: null,
+      selectedSurveyTemplateId: null,
+      selectedContactGroupId: null,
+      recipientContact: null,
+      recipientIdentifier: null,
+      selectedContacts: [],
+      submitting: false,
+      submitted: false
+    }
+
+    this._initialState = this.state;
   }
+
+  _resetState = () =>
+    new Promise(resolve => this.setState(this._initialState, resolve))
+
 
   _sendSms = survey =>
     Auth.currentCredentials()
@@ -156,9 +172,9 @@ class Home extends React.PureComponent {
               Data: 'SimpliSurvey Invitation'
             }
           },
-          Source: 'no-reply@simplisurvey.com', /* required */
+          Source: ENV.bot_email_adress, /* required */
           ReplyToAddresses: [
-            'no-reply@simplisurvey.com',
+            ENV.bot_email_adress,
           ],
         })
         .promise()
@@ -169,58 +185,64 @@ class Home extends React.PureComponent {
       this.setState({submitting: true}, resolve)
     )
     .then(() =>
-      Promise.resolve({
-        id: (new Date().getTime()).toString(),
-        userId: this.props.currentUser.id,
-        campaignId: this.state.selectedCampaignId,
-        surveyTemplateId: this.state.selectedSurveyTemplateId,
-        recipientContact: this.state.recipientContact,
-        recipientIdentifier: this.state.recipientIdentifier || undefined,
-        createdAt: (new Date()).toISOString()
-      })
-    )
-    .then(params =>
-      this.props.createSurvey({ 
-        variables: { 
-          ...params,
-          __typename: "Survey"
-        },
-        onError: console.log,
-        optimisticResponse: {
-          __typename: "Mutation",
-          createSurvey: { 
-            ...params,
-            __typename: "Survey"
-          }
-        }
-      })
-    )
-    .then(entry =>
-      (this.state.recipientContact||"").match(/@/) ? (
-        this._sendEmail(entry.data.createSurvey)
-      ) : !!normalizePhoneNumber(this.state.recipientContact) ? (
-        this._sendSms(entry.data.createSurvey)
+      Promise.resolve(!!this.state.selectedContacts.length ? (
+        this.state.selectedContacts
       ) : (
-        new Promise((resolve, reject) =>
-          Alert.alert(
-            'Invalid Contact',
-            'You must enter a valid email address or Phone number',
-            [
-              {text: 'OK', onPress: reject},
-            ],
-            {cancelable: false},
+        [{
+          name: this.state.recipientIdentifier || undefined,
+          phone: (normalizePhoneNumber(this.state.recipientContact) || undefined),
+          email: !!(this.state.recipientContact||"").match(/@/) ? this.state.recipientContact : undefined
+        }]
+      )
+    ))
+    .then(contacts =>
+      Promise.all(contacts.map(contact => 
+        Promise.resolve({
+          id: uuid(),
+          userId: this.props.currentUser.id,
+          campaignId: this.state.selectedCampaignId,
+          surveyTemplateId: this.state.selectedSurveyTemplateId,
+          recipientContact: contact.phone || contact.email,
+          recipientIdentifier: contact.name || undefined,
+          createdAt: (new Date()).toISOString()
+        })
+        .then(params =>
+          this.props.createSurvey({ 
+            variables: { 
+              ...params,
+              __typename: "Survey"
+            },
+            onError: console.log,
+            optimisticResponse: {
+              __typename: "Mutation",
+              createSurvey: { 
+                ...params,
+                __typename: "Survey"
+              }
+            }
+          })
+        )
+        .then(entry =>
+          (entry.data.createSurvey.recipientContact||"").match(/@/) ? (
+            this._sendEmail(entry.data.createSurvey)
+          ) : !!normalizePhoneNumber(entry.data.createSurvey.recipientContact) ? (
+            this._sendSms(entry.data.createSurvey)
+          ) : (
+            new Promise((resolve, reject) =>
+              Alert.alert(
+                'Invalid Contact',
+                'You must enter a valid email address or Phone number',
+                [
+                  {text: 'OK', onPress: reject},
+                ],
+                {cancelable: false},
+              )
+            )
           )
         )
-      )
+      ))
     )
-    .then(() =>
-      new Promise(resolve => 
-        this.setState(
-          {submitting: false, submitted: true, selectedCampaignTemplateId: null, selectedSurveyTemplateId: null, recipientContact: null, recipientIdentifier: null},
-          resolve
-        )
-      )
-    )
+    .then(this._resetState)
     .catch(console.log)
 
 
@@ -259,6 +281,7 @@ class Home extends React.PureComponent {
 
   render() {
     const { classes, currentUser } = this.props;
+    const { submitted, submitting, selectedCampaignTemplateId, selectedCampaignId, selectedSurveyTemplateId, selectedContacts, selectedContactGroupId, recipientContact, recipientIdentifier } = this.state;
     return !currentUser ? null : (
       <Container>
         <Card style={{container: classes.cardContainer}}>
@@ -283,10 +306,10 @@ class Home extends React.PureComponent {
                 selectedCampaignId: data[index].campaign.id
               })}
               value={
-                !!this.state.selectedCampaignTemplateId ? (
+                !!selectedCampaignTemplateId ? (
                   currentUser.organization.campaigns.items
                     .filter(campaign => !!campaign.active)
-                    .find(campaign => campaign.campaignTemplate.id === this.state.selectedCampaignTemplateId)
+                    .find(campaign => campaign.campaignTemplate.id === selectedCampaignTemplateId)
                     .campaignTemplate.name
                 ) : (
                   ""
@@ -294,51 +317,96 @@ class Home extends React.PureComponent {
                 }
             />
             {
-              this.state.selectedCampaignTemplateId &&
+              selectedCampaignTemplateId &&
               <Dropdown
                 label='Select Survey'
                 value={
                   currentUser.organization.campaigns.items
                     .filter(campaign => !!campaign.active)
-                    .find(campaign => campaign.campaignTemplate.id === this.state.selectedCampaignTemplateId)
+                    .find(campaign => campaign.campaignTemplate.id === selectedCampaignTemplateId)
                     .campaignTemplate.surveyTemplates.items[0].name
                 }
                 data={
                   currentUser.organization.campaigns.items
                     .filter(campaign => !!campaign.active)
-                    .find(campaign => campaign.campaignTemplate.id === this.state.selectedCampaignTemplateId)
+                    .find(campaign => campaign.campaignTemplate.id === selectedCampaignTemplateId)
                     .campaignTemplate.surveyTemplates.items.map(surveyTemplate => ({value: surveyTemplate.name, id: surveyTemplate.id}))
                 }
                 onChangeText={(value, index, data) => this.setState({selectedSurveyTemplateId: data[index].id})}
               />
             }
             {
-              this.state.selectedSurveyTemplateId &&
+              !!selectedSurveyTemplateId &&
+              !selectedContacts.length &&
               <TextField
                 autoCapitalize={"none"}
                 autoCorrect={false}
-                label='Recipient Contact'
+                label='Enter Contact Info or Select from Below'
                 title='Email address or mobile number to send survey to'
-                value={this.state.recipientContact || ''}
-                onChangeText={ recipientContact => this.setState({ recipientContact }) }
+                value={recipientContact || ''}
+                onChangeText={ recipientContact => this.setState({ recipientContact, selectedContacts: [] }) }
               />
             }
             {
-              this.state.recipientContact &&
+              !!recipientContact &&
               <TextField
                 autoCapitalize={"none"}
                 autoCorrect={false}
                 label='Recipient Identifier'
-                value={this.state.recipientIdentifier || ''}
+                value={recipientIdentifier || ''}
                 title='(Optional) Name or identifier to indentify the recipient'
                 onChangeText={ recipientIdentifier => this.setState({ recipientIdentifier }) }
               />
             }
+            {
+              !recipientContact && 
+              <Query
+                query={QueryContactGroupsByOrganizationIdIdIndex}
+                variables={{first: 1000, organizationId: currentUser.organizationId}}
+              >
+                {({loading, error, data: {queryContactGroupsByOrganizationIdIdIndex: {items} = {items: []}} = {}}) => 
+                  !!items.length && 
+                  !!selectedSurveyTemplateId && 
+                  <Dropdown
+                    label='Select Contact Group'
+                    value={
+                      ""
+                    }
+                    data={[
+                      ...items.map(contactGroup => ({value: contactGroup.name, id: contactGroup.id}))
+                    ]}
+                    onChangeText={(value, index, data) => this.setState({selectedContactGroupId: data[index].id})}
+                  />
+                }
+              </Query>
+            }
+            {
+              !!selectedContactGroupId &&
+              <Query
+                query={QueryContactsByContactGroupIdIdIndex}
+                variables={{first: 1000, contactGroupId: selectedContactGroupId}}
+              >
+                {({loading, error, data: {queryContactsByContactGroupIdIdIndex: {items} = {items: []}} = {}}) => 
+                  <Dropdown
+                    label='Select Contact'
+                    value={
+                      ""
+                    }
+                    data={[
+                      ...[{value: "All", id: "all"}],
+                      ...items.map(contact => ({value: contact.name, id: contact.id}))
+                    ]}
+                    onChangeText={(value, index, data) => this.setState({selectedContacts: data[index].id === 'all' ? items : items.filter(contact => contact.id === data[index].id), recipientContact: null})}
+                  />
+                }
+              </Query>
+            }
+            
             <View style={classes.buttonContainer}>
               {
-                this.state.submitting ? (
+                submitting ? (
                   <ActivityIndicator size="large" />
-                ) : this.state.recipientContact ? (
+                ) : recipientContact || !!selectedContacts.length ? (
                   <Button raised primary text="Send" icon="send" onPress={this._handleSubmit.bind(this)} />
                 ) : (
                   null
@@ -346,7 +414,7 @@ class Home extends React.PureComponent {
               }
             </View>
             {
-              this.state.submitted &&
+              submitted &&
               <SubmissionToast onHidden={() => this.setState({submitted: false})} />
             }
           </View>

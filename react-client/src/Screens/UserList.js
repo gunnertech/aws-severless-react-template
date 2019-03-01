@@ -157,9 +157,9 @@ class UserList extends React.Component {
               Data: 'SimpliSurvey Invitation'
             }
           },
-          Source: 'no-reply@simplisurvey.com', /* required */
+          Source: process.env.REACT_APP_bot_email_adress, /* required */
           ReplyToAddresses: [
-            'no-reply@simplisurvey.com',
+            process.env.REACT_APP_bot_email_adress,
           ],
         })
         .promise()
