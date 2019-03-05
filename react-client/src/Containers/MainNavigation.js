@@ -261,6 +261,10 @@ class MainNavigation extends React.Component {
                 className={classes.logo}
                 alt="Home"
               />
+              {
+                !!process.env.REACT_APP_bucket.match(/staging/) &&
+                <span style={{color: "white"}}>- S</span>
+              }
             </Link>
             <ActionMenuConsumer>
               {({Element}) => Element ? Element : null}

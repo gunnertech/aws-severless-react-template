@@ -210,6 +210,7 @@ class App extends React.Component {
         id: cognitoUser.username,
         phone: cognitoUser.attributes.phone_number || undefined,
         email: cognitoUser.attributes.email || undefined,
+        name: cognitoUser.attributes.name || undefined,
         active: true,
       },
     })
