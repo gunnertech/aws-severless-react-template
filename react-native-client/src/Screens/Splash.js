@@ -12,6 +12,8 @@ import { withMuiTheme } from '../Styles/muiTheme';
 import Container from '../Components/Container'
 import withCurrentUser from '../Hocs/withCurrentUser'
 
+import ENV from '../environment'
+
 const styles = theme => ({
   commentButtonContainer: {
     marginTop: theme.spacing.xl
@@ -32,6 +34,10 @@ class Splash extends React.Component {
       <Container>
         <Card>
           <View>
+            {
+              !!ENV.bucket.match(/staging/) &&
+              <Text style={{paddingBottom: theme.spacing.sm}}>*****This is Staging*****</Text>
+            }
             <Text style={{paddingBottom: theme.spacing.sm}}>SimpliSurvey is a tool for interpreting real time customer satisfaction and analysis.</Text>
             <Text style={{paddingBottom: theme.spacing.sm}}>It works by polling customers with a simple algorithm and presenting findings on an easy to use dashboard.</Text>
             <Text style={{paddingBottom: theme.spacing.sm}}>To send a survey, sign in with your account or, if you were invited, register for a new account using the email address and/or phone number where you received the invitation.</Text>

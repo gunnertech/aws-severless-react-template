@@ -83,7 +83,11 @@ class Home extends React.PureComponent {
         "menu"
       }
       centerElement={
-        "SimpliSurvey"
+        !!ENV.bucket.match(/staging/) ? (
+          "SimpliSurvey - S"
+        ) : (
+          "SimpliSurvey"
+        )
       }
       rightElement={
         navigationProps.navigation.getParam('valid') ? "send" : null
