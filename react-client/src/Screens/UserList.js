@@ -103,7 +103,7 @@ class UserList extends React.Component {
           Message: `${roleName.toLowerCase() === 'admin' ? (
             `${this.props.currentUser.name} invited you to join SimpliSurvey. Please follow the link to set up your account ${process.env.REACT_APP_base_url}/dashboard`
           ) : (
-            `${this.props.currentUser.name} invited you to join SimpliSurvey. To get started, Android users click this link https://play.google.com/store/apps/details?id=com.gunnertech.simplisurvey. iOS users, click this link https://testflight.apple.com/join/TjLjqY9z`
+            `${this.props.currentUser.name} invited you to join SimpliSurvey. To get started, Android users click this link https://play.google.com/apps/internaltest/4700494785583836183. iOS users, click this link https://testflight.apple.com/join/TjLjqY9z`
           )}`,
           PhoneNumber: `${phone}`
         })
@@ -136,7 +136,7 @@ class UserList extends React.Component {
                           ${roleName.toLowerCase() === 'admin' ? (
                             `${this.props.currentUser.name} invited you to join SimpliSurvey. Please follow the link to set up your account ${process.env.REACT_APP_base_url}/dashboard`
                           ) : (
-                            `${this.props.currentUser.name} invited you to join SimpliSurvey. To get started, Android users click this link https://play.google.com/store/apps/details?id=com.gunnertech.simplisurvey. iOS users, click this link https://testflight.apple.com/join/TjLjqY9z`
+                            `${this.props.currentUser.name} invited you to join SimpliSurvey. To get started, Android users click this link https://play.google.com/apps/internaltest/4700494785583836183. iOS users, click this link https://testflight.apple.com/join/TjLjqY9z`
                           )}
                         </body>
                       </html>`
@@ -147,7 +147,7 @@ class UserList extends React.Component {
                   ${roleName.toLowerCase() === 'admin' ? (
                     `${this.props.currentUser.name} invited you to join SimpliSurvey. Please follow the link to set up your account ${process.env.REACT_APP_base_url}/dashboard`
                   ) : (
-                    `${this.props.currentUser.name} invited you to join SimpliSurvey. To get started, Android users click this link https://play.google.com/store/apps/details?id=com.gunnertech.simplisurvey. iOS users, click this link https://testflight.apple.com/join/TjLjqY9z`
+                    `${this.props.currentUser.name} invited you to join SimpliSurvey. To get started, Android users click this link https://play.google.com/apps/internaltest/4700494785583836183. iOS users, click this link https://testflight.apple.com/join/TjLjqY9z`
                   )}
                 `
               }
