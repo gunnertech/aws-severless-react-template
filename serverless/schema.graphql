@@ -300,6 +300,11 @@ input DeleteContactInput {
 	id: ID!
 }
 
+input DeleteContactGroupInput {
+	id: ID!
+}
+
+
 input DeleteInvitationInput {
 	id: ID!
 }
@@ -386,6 +391,7 @@ type Mutation {
 	createInvitation(input: CreateInvitationInput!): Invitation
 
 	deleteContact(input: DeleteContactInput!): Contact
+	deleteContactGroup(input: DeleteContactGroupInput!): ContactGroup
 	deleteInvitation(input: DeleteInvitationInput!): Invitation
 
 	updateUser(input: UpdateUserInput!): User

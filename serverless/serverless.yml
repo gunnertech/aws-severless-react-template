@@ -47,6 +47,11 @@ custom:
         request: "genericCreate-request.vtl"
         response: "generic-response.vtl"
       - dataSource: ContactGroups
+        type: Mutation
+        field: deleteContactGroup
+        request: "genericDelete-request.vtl"
+        response: "generic-response.vtl"
+      - dataSource: ContactGroups
         type: Query
         field: queryContactGroupsByOrganizationIdIdIndex
         request: "queryByOrganizationIdIdIndex-request.vtl"

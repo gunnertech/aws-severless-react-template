@@ -85,6 +85,7 @@ class Home extends React.Component {
   };
 
   _handleMenuClick = () =>
+    window.confirm("Export campaign to email?") &&
     new Promise(resolve => this.setState({sendingEmail: true}, resolve))
       .then(() => 
         Promise.all([
@@ -164,11 +165,11 @@ class Home extends React.Component {
     return !currentUser ? null : (
       <Container>
         {
-          moment.duration(
+          Math.abs(moment.duration(
             moment(currentUser.createdAt).diff(
               new moment()
             )
-          ).asMinutes() < 2 && currentUser.organization.ownerId !== currentUser.id ? (
+          ).asMinutes()) < 2 && currentUser.organization.ownerId !== currentUser.id ? (
             <Typography variant="h5">Success! You joined {currentUser.organization.name}</Typography>
           ) : (
             null

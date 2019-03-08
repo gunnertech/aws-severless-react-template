@@ -201,7 +201,7 @@ class Home extends React.PureComponent {
         }]
       )
     ))
-    .then(contacts => console.log("CONTACTS", contacts) ||
+    .then(contacts =>
       Promise.all(contacts.map(contact => 
         Promise.resolve({
           id: uuid(),

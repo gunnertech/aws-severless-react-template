@@ -21,12 +21,14 @@ import { Mutation, Query, compose, graphql } from 'react-apollo';
 import uuid from 'uuid-v4'
 
 import QueryContactsByContactGroupIdIdIndex from "../api/Queries/QueryContactsByContactGroupIdIdIndex"
+import QueryContactGroupsByOrganizationIdIdIndex from "../api/Queries/QueryContactGroupsByOrganizationIdIdIndex"
 import CreateContact from "../api/Mutations/CreateContact"
 import DeleteContact from "../api/Mutations/DeleteContact"
 
 import ContactNew from "../Components/ContactNew"
 
 import normalizePhoneNumber from '../Util/normalizePhoneNumber'
+import DeleteContactGroup from '../api/Mutations/DeleteContactGroup';
 
 
 const styles = theme => ({
@@ -161,6 +163,30 @@ class ContactGroup extends React.Component {
         </ExpansionPanelDetails>
         <Divider />
         <ExpansionPanelActions>
+          <Mutation 
+            mutation={DeleteContactGroup}
+          >
+            {deleteContactGroup =>
+              <Button 
+                className={classes.button}
+                onClick={() =>
+                  window.confirm("Are you sure you want to delete this group? There is no undo.") &&
+                  deleteContactGroup({
+                    variables: {
+                      id: contactGroup.id
+                    },
+                    refetchQueries: [{
+                      query: QueryContactGroupsByOrganizationIdIdIndex,
+                      variables: { first: 1000, organizationId: contactGroup.organizationId }
+                    }],
+                  })
+                }
+              >
+                Delete Group
+                <DeleteIcon className={classes.rightIcon} />
+              </Button>
+            }
+          </Mutation>
           <Button 
             variant="contained" 
             color="primary" 
