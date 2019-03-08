@@ -263,7 +263,13 @@ class App extends React.Component {
           )
         )
       )
-      .then(currentUser => new Promise(resolve => this.setState({currentUser}, resolve.bind(null, currentUser))))
+      .then(currentUser => 
+        !currentUser.active ? (
+          new Promise(resolve => this.setState({currentUser: null}, resolve.bind(null, null)))
+        ) : (
+          new Promise(resolve => this.setState({currentUser}, resolve.bind(null, currentUser)))
+        )
+      )
       .catch(err => console.log("ERROR", err) || this.setState({currentUser: null}));
 
   

@@ -104,6 +104,7 @@ class UserForm extends React.Component {
           }
           <form className={classes.container} noValidate autoComplete="off">
             <TextField
+              required
               id="standard-name"
               label="Name"
               className={classes.textField}
@@ -135,6 +136,7 @@ class UserForm extends React.Component {
             </FormControl>
 
             <TextField
+              required
               id="email"
               label="Email"
               className={classes.textField}

@@ -18,6 +18,7 @@ import moment from 'moment';
 import AccountPlusIcon from 'mdi-material-ui/AccountPlus';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SendIcon from '@material-ui/icons/Send';
+import uuid from 'uuid-v4'
 
 import { Query, compose, graphql, Mutation } from 'react-apollo';
 
@@ -171,14 +172,16 @@ class UserList extends React.Component {
   _validPhone = phone =>
     phone && !!normalizePhoneNumber(phone)
 
-  _inviteUser = (data, invitations) => console.log("data", data) ||
+  _inviteUser = (data, invitations) =>
     new Promise((resolve, reject) => 
-      this._validEmail(data.user.email) ? (
+      !data.user.name ? (
+        reject({message: "You must enter a name"})
+      ) : this._validEmail(data.user.email) ? (
         !!invitations.find(invitation => invitation.email && invitation.email.toLowerCase() === data.user.email.toLowerCase()) ? (
           reject({message: "There is already an invitation associated with that email address"})
         ) : (
           resolve({
-            id: (new Date().getTime()).toString(),
+            id: uuid(),
             invitorId: this.props.currentUser.id,
             organizationId: this.props.currentUser.organizationId,
             roleName: data.user.role || null,
@@ -351,7 +354,7 @@ class UserList extends React.Component {
                         className: classes.listItemText,
                         color: "primary"
                       }}
-                      primary={`${user.name || user.id} ${user.title ? `(${user.title})` : ''}`} 
+                      primary={`${user.name || user.id} ${!!user.title ? `(${user.title})` : ''}`} 
                       secondary={user.assignedRoles.items.map( assignedRole => assignedRole.role.name)[0]}
                       onClick={() => this.setState({showFormModal: true, editUser: user})}
                     />

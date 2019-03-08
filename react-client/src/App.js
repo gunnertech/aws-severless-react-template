@@ -347,7 +347,15 @@ class App extends Component {
           )
         )
       )
-      .then(currentUser => new Promise(resolve => this.setState({currentUser}, resolve.bind(null, currentUser))))
+      .then(currentUser => console.log(currentUser) ||
+        !currentUser.active || /// DON'T ALLOW ACCESS IF NOT ACTIVE
+        !currentUser.assignedRoles.items.find(ai => ai.role.name === 'admin') /// DON'T ALLOW NON ADMINS TO SIGN INTO THE DASHBOARD
+        ? (
+          new Promise(resolve => this.setState({currentUser: null}, resolve.bind(null, null)))
+        ) : (
+          new Promise(resolve => this.setState({currentUser}, resolve.bind(null, currentUser)))
+        )
+      )
       .catch(err => console.log("ERROR", err) || this.setState({currentUser: null}));
 
   onHubCapsule = capsule => {

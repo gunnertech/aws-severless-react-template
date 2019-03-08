@@ -7,7 +7,7 @@
     "privacy": "public",
     "sdkVersion": "32.0.0",
     "platforms": ["ios", "android"],
-    "version": "1.0.3",
+    "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -36,7 +36,7 @@
     "android": {
       "package": "com.gunnertech.simplisurvey",
       "playStoreUrl": "https://play.google.com/store/apps/details?id=com.gunnertech.simplisurvey",
-      "versionCode": 7,
+      "versionCode": 8,
       "permissions": [
         "CAMERA",
         "NOTIFICATIONS",
@@ -47,18 +47,19 @@
       ],
       "config": {
         "branch": {
-          "apiKey": "key_live_djIahXDtsxh0VrlEgrm9qniouxpWclLZ"
+          "apiKey": "key_live_kcRp9dEqccHe8PyqYBkOUoahFEeh9IPj"
         }
       }
     },
     "ios": {
+      "associatedDomains": ["applinks:t1ph.app.link"],
       "bundleIdentifier": "com.gunnertech.simplisurvey",
       "supportsTablet": true,
       "buildNumber": "8",
       "config": {
         "usesNonExemptEncryption": false,
         "branch": {
-          "apiKey": "key_live_djIahXDtsxh0VrlEgrm9qniouxpWclLZ"
+          "apiKey": "key_live_kcRp9dEqccHe8PyqYBkOUoahFEeh9IPj"
         }
       }
     }

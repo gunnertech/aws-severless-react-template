@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { Typography, Hidden, Paper, Button, Divider } from '@material-ui/core';
 
 import { Query, compose, graphql } from 'react-apollo';
+import uuid from 'uuid-v4'
 
 import withLayout from '../Hocs/withLayout'
 
@@ -74,7 +75,7 @@ class SurveyNew extends React.Component {
     Promise.all(
       Object.keys(this.state.prompts).map( (promptId, i) => 
         (new Promise(resolve => this.setState({submitting: true}, resolve({
-          id: `${(new Date().getTime()).toString()}-${i}`,
+          id: uuid(),
           optionId: this.state.prompts[promptId].optionId,
           reason: !!this.state.prompts[promptId].reason ? this.state.prompts[promptId].reason : undefined,
           surveyId: this.props.match.params.surveyId,
