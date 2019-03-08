@@ -92,7 +92,7 @@ class UserList extends React.Component {
     submittingForm: false,
   }
 
-  _sendSms = ({phone, roleName}) =>
+  _sendSms = ({phone, roleName, email}) =>
     Auth.currentCredentials()
       .then(credentials =>
         new SNS({
@@ -102,9 +102,9 @@ class UserList extends React.Component {
         })
         .publish({
           Message: `${roleName.toLowerCase() === 'admin' ? (
-            `${this.props.currentUser.name} invited you to join SimpliSurvey. Please follow the link to set up your account ${process.env.REACT_APP_base_url}/dashboard`
+            `${this.props.currentUser.name} invited you to join SimpliSurvey. Please follow the link to set up your account ${process.env.REACT_APP_base_url}/dashboard and use ${email} when creating your account.`
           ) : (
-            `${this.props.currentUser.name} invited you to join SimpliSurvey. To get started, Android users click this link https://play.google.com/apps/internaltest/4700494785583836183. iOS users, click this link https://testflight.apple.com/join/TjLjqY9z`
+            `${this.props.currentUser.name} invited you to join SimpliSurvey. To get started, Android users click this link https://play.google.com/apps/internaltest/4700494785583836183. iOS users, click this link https://testflight.apple.com/join/TjLjqY9z and use ${email} when creating your account.`
           )}`,
           PhoneNumber: `${phone}`
         })
@@ -135,9 +135,9 @@ class UserList extends React.Component {
               Data: `<html>
                         <body>
                           ${roleName.toLowerCase() === 'admin' ? (
-                            `${this.props.currentUser.name} invited you to join SimpliSurvey. Please follow the link to set up your account ${process.env.REACT_APP_base_url}/dashboard`
+                            `${this.props.currentUser.name} invited you to join SimpliSurvey. Please follow the link to set up your account ${process.env.REACT_APP_base_url}/dashboard  and use ${email} when creating your account.`
                           ) : (
-                            `${this.props.currentUser.name} invited you to join SimpliSurvey. To get started, Android users click this link https://play.google.com/apps/internaltest/4700494785583836183. iOS users, click this link https://testflight.apple.com/join/TjLjqY9z`
+                            `${this.props.currentUser.name} invited you to join SimpliSurvey. To get started, Android users click this link https://play.google.com/apps/internaltest/4700494785583836183. iOS users, click this link https://testflight.apple.com/join/TjLjqY9z  and use ${email} when creating your account.`
                           )}
                         </body>
                       </html>`
@@ -146,9 +146,9 @@ class UserList extends React.Component {
                 Charset: "UTF-8",
                 Data: `
                   ${roleName.toLowerCase() === 'admin' ? (
-                    `${this.props.currentUser.name} invited you to join SimpliSurvey. Please follow the link to set up your account ${process.env.REACT_APP_base_url}/dashboard`
+                    `${this.props.currentUser.name} invited you to join SimpliSurvey. Please follow the link to set up your account ${process.env.REACT_APP_base_url}/dashboard  and use ${email} when creating your account.`
                   ) : (
-                    `${this.props.currentUser.name} invited you to join SimpliSurvey. To get started, Android users click this link https://play.google.com/apps/internaltest/4700494785583836183. iOS users, click this link https://testflight.apple.com/join/TjLjqY9z`
+                    `${this.props.currentUser.name} invited you to join SimpliSurvey. To get started, Android users click this link https://play.google.com/apps/internaltest/4700494785583836183. iOS users, click this link https://testflight.apple.com/join/TjLjqY9z  and use ${email} when creating your account.`
                   )}
                 `
               }
