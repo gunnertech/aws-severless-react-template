@@ -11,14 +11,39 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-import { compose, graphql } from 'react-apollo';
+import { Query, compose, graphql } from 'react-apollo';
 
 import moment from 'moment';
 
 import withCurrentUser from '../Hocs/withCurrentUser';
 
 import UpdateResponse from "../api/Mutations/UpdateResponse"
+import GetUser from '../api/Queries/GetUser';
 
+const ResponseReview = ({response}) =>
+  <span>
+    On {moment(response.createdAt).format("M-D-YYYY")}
+    <br />
+    "{response.reason}"
+    {!!response.reviewedAt && (
+        <span>
+          <br />
+          <Query 
+            query={GetUser}
+            variables={{id: response.reviewerId}}
+          >
+            {entry => !(entry.data && entry.data.getUser) ? null :
+              <span>
+                Reviewed {moment(response.reviewedAt).format("M-D-YYYY")} by {entry.data.getUser.email}
+              </span>
+            }
+          </Query>
+          {!!response.reviewComment && (
+            <span><br />{response.reviewComment}</span>
+          )}
+        </span>
+      )}
+  </span>
 const styles = theme => ({
 
 });
@@ -72,20 +97,7 @@ class ResponseList extends React.Component {
                 <ListItem key={survey.id} button onClick={this._handleToggle(survey.responses.items.find(response => response.optionId === option.id))}>
                   <ListItemText 
                     primary={`${survey.recipientContact} ${!!survey.recipientIdentifier ? `(${survey.recipientIdentifier||''})` : ``}`}
-                    secondary={<span>
-                      On {moment(survey.responses.items.find(response => response.optionId === option.id).createdAt).format("M-D-YYYY")}
-                      <br />
-                      "{survey.responses.items.find(response => response.optionId === option.id).reason}"
-                      {!!survey.responses.items.find(response => response.optionId === option.id).reviewedAt && (
-                          <span>
-                            <br />
-                            Reviewed on {moment(survey.responses.items.find(response => response.optionId === option.id).reviewedAt).format("M-D-YYYY")}
-                            {!!survey.responses.items.find(response => response.optionId === option.id).reviewComment && (
-                              <span><br />{survey.responses.items.find(response => response.optionId === option.id).reviewComment}</span>
-                            )}
-                          </span>
-                        )}
-                    </span>} 
+                    secondary={<ResponseReview response={survey.responses.items.find(response => response.optionId === option.id)} />} 
                   />
                   <ListItemSecondaryAction>
                     <Checkbox
