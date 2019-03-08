@@ -1,9 +1,10 @@
 import React from 'react'
 
-import { ActivityIndicator, View, Alert } from 'react-native'
+import { ActivityIndicator, View, Alert, ScrollView } from 'react-native'
 import {
   Button,
-  Toolbar
+  Toolbar,
+  Checkbox
 } from 'react-native-material-ui';
 
 import SES from 'aws-sdk/clients/ses';
@@ -109,7 +110,8 @@ class Home extends React.PureComponent {
       recipientIdentifier: null,
       selectedContacts: [],
       submitting: false,
-      submitted: false
+      submitted: false,
+      isAllChecked: false
     }
 
     this._initialState = this.state;
@@ -199,7 +201,7 @@ class Home extends React.PureComponent {
         }]
       )
     ))
-    .then(contacts =>
+    .then(contacts => console.log("CONTACTS", contacts) ||
       Promise.all(contacts.map(contact => 
         Promise.resolve({
           id: uuid(),
@@ -285,9 +287,11 @@ class Home extends React.PureComponent {
 
   render() {
     const { classes, currentUser } = this.props;
-    const { submitted, submitting, selectedCampaignTemplateId, selectedCampaignId, selectedSurveyTemplateId, selectedContacts, selectedContactGroupId, recipientContact, recipientIdentifier } = this.state;
+    const { isAllChecked, submitted, submitting, selectedCampaignTemplateId, selectedCampaignId, selectedSurveyTemplateId, selectedContacts, selectedContactGroupId, recipientContact, recipientIdentifier } = this.state;
     return !currentUser ? null : (
       <Container>
+        <ScrollView>
+
         <Card style={{container: classes.cardContainer}}>
           <View>
             { ///If the signed up less than two minutes ago, show them a welcome message
@@ -391,17 +395,43 @@ class Home extends React.PureComponent {
                 variables={{first: 1000, contactGroupId: selectedContactGroupId}}
               >
                 {({loading, error, data: {queryContactsByContactGroupIdIdIndex: {items} = {items: []}} = {}}) => 
-                  <Dropdown
-                    label='Select Contact'
-                    value={
-                      ""
-                    }
-                    data={[
-                      ...[{value: "All", id: "all"}],
-                      ...items.map(contact => ({value: contact.name, id: contact.id}))
-                    ]}
-                    onChangeText={(value, index, data) => this.setState({selectedContacts: data[index].id === 'all' ? items : items.filter(contact => contact.id === data[index].id), recipientContact: null})}
-                  />
+                  items.map((contact, i) =>
+                    <View key={contact.id}>
+                      {
+                        i === 0 &&
+                        <Checkbox
+                          label={"All"}
+                          value={`all`}
+                          checked={isAllChecked}
+                          onCheck={(checked, value) => this.setState({isAllChecked: checked}, () => checked ? (
+                            this.setState({selectedContacts: items})
+                          ) : (
+                            this.setState({selectedContacts: []})
+                          ))}
+                        />
+                      }
+                      <Checkbox
+                        label={contact.name}
+                        value={contact.id}
+                        checked={!!selectedContacts.find(c => contact.id === c.id)}
+                        onCheck={(checked, value) => 
+                          checked ? (
+                            this.setState({
+                              selectedContacts:[
+                                ...items.filter(contact => contact.id === value),
+                                ...selectedContacts
+                              ],
+                              recipientContact: null
+                            }) 
+                          ) : (
+                            this.setState({
+                              selectedContacts: selectedContacts.filter(contact => contact.id !== value)
+                            }) 
+                          )
+                        }
+                      />
+                    </View>
+                  )
                 }
               </Query>
             }
@@ -423,6 +453,7 @@ class Home extends React.PureComponent {
             }
           </View>
         </Card>
+        </ScrollView>
       </Container>
     )
   }
