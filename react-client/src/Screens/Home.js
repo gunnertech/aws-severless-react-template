@@ -197,7 +197,8 @@ class Home extends React.Component {
                 </Tabs>
               </AppBar>
               {
-                sendingEmail && <AlertDialog open={true} title={`Campaign Exported`} text={`An email will be sent to your inbox when the export is complete`} />
+                !!sendingEmail && 
+                <AlertDialog open={true} title={`Campaign Exported`} text={`An email will be sent to your inbox when the export is complete`} />
               }
               {
                 currentUser.organization.campaigns.items.filter(campaign => campaign.active).map((campaign, i) =>
