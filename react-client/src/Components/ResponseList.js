@@ -78,7 +78,7 @@ class ResponseList extends React.Component {
     
 
   render() {
-    const { open, onClose, fullScreen, option, surveys } = this.props;
+    const { open, onClose, fullScreen, option, surveys, prompt } = this.props;
     return (
       <Dialog
         fullScreen={fullScreen}
@@ -86,29 +86,35 @@ class ResponseList extends React.Component {
         onClose={onClose}
         aria-labelledby="responsive-dialog-title"
       >
-        <DialogTitle id="responsive-dialog-title">{option.name}</DialogTitle>
+        <DialogTitle id="responsive-dialog-title">{!!option ? option.name : prompt.body}</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Review the responses below and tap them to note it has been handled. 
           </DialogContentText>
           <List style={{flex: 1}}>
             {
-              surveys.filter(survey => !!survey.responses.items.find(response => response.optionId === option.id).reason).map(survey => 
-                <ListItem key={survey.id} button onClick={this._handleToggle(survey.responses.items.find(response => response.optionId === option.id))}>
-                  <ListItemText 
-                    primary={`${survey.recipientContact} ${!!survey.recipientIdentifier ? `(${survey.recipientIdentifier||''})` : ``}`}
-                    secondary={<ResponseReview response={survey.responses.items.find(response => response.optionId === option.id)} />} 
-                  />
-                  <ListItemSecondaryAction>
-                    <Checkbox
-                      checked={survey.responses.items.find(response => response.optionId === option.id).reviewerId}
-                      disabled={survey.responses.items.find(response => response.optionId === option.id).reviewerId}
-                      tabIndex={-1}
-                      disableRipple
-                      onChange={this._handleToggle(survey.responses.items.find(response => response.optionId === option.id))}
+              surveys
+              .map(survey => 
+                survey.responses.items
+                .filter(response => !option ? !!prompt.options.items.find(option => option.id === response.optionId) : response.optionId === option.id)
+                .filter(response => !!response.reason)
+                .map(response =>
+                  <ListItem key={response.id} button onClick={this._handleToggle(response)}>
+                    <ListItemText 
+                      primary={`${survey.recipientContact} ${!!survey.recipientIdentifier ? `(${survey.recipientIdentifier||''})` : ``}`}
+                      secondary={<ResponseReview response={response} />} 
                     />
-                  </ListItemSecondaryAction>
-                </ListItem>
+                    <ListItemSecondaryAction>
+                      <Checkbox
+                        checked={!!response.reviewerId}
+                        disabled={!!response.reviewerId}
+                        tabIndex={-1}
+                        disableRipple
+                        onChange={this._handleToggle(response)}
+                      />
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                )
               )
             }
           </List>

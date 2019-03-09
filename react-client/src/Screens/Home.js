@@ -27,7 +27,8 @@ import ExportIcon from 'mdi-material-ui/Export';
 import Container from '../Components/Container'
 import AlertDialog from '../Components/AlertDialog'
 import SurveyDetail from '../Components/SurveyDetail';
-import UserSurveyDetail from '../Components/UserSurveyDetail';
+// import UserSurveyDetail from '../Components/UserSurveyDetail';
+import UserSurveyTable from '../Components/UserSurveyTable'
 
 import withActionMenu from '../Hocs/withActionMenu'
 import withCurrentUser from '../Hocs/withCurrentUser';
@@ -78,11 +79,49 @@ class Home extends React.Component {
   state = {
     selectedSurveyTemplate: null,
     startDate: moment().subtract(7, 'days').toDate(),
+    endDate: new Date(),
     daysAgo: 7,
     expanded: null,
     selectedCampaignId: null,
-    sendingEmail: false
+    sendingEmail: false,
+    selectedPrompt: false
   };
+
+  _surveysForOption = (optionId, startDate, endDate, userId, surveys) =>
+    this._validSurveys(startDate, endDate, userId, surveys)
+      .filter(survey => !!survey.responses.items.find( response =>response.optionId === optionId))
+
+  _responseCountForOption = (optionId, startDate, endDate, userId, surveys) =>
+    this._surveysForOption(optionId, startDate, endDate, userId, surveys)
+      .length
+
+  _validSurveys = (startDate, endDate, userId, surveys) =>
+    surveys.filter(survey =>
+      survey.createdAt > startDate.toISOString() && 
+      survey.createdAt <= endDate.toISOString() && 
+      (!userId || userId === survey.userId))
+
+  _responseCount = (options, startDate, endDate, userId, surveys, range) =>
+    options
+      .filter(option => !range || (option.value >= range[0] && option.value <= range[range.length-1]))
+      .map(option => 
+        this._responseCountForOption(option.id, startDate, endDate, userId, surveys)
+      )
+      .reduce((count, currentValue) => count + currentValue)
+
+  _newScore = (options, startDate, endDate, userId, surveys) =>
+    !!this._responseCount(options, startDate, endDate, userId, surveys) ? (
+      Math.round(
+        options
+          .reduce((accumulator, option) => 
+            accumulator + this._responseCount([option], startDate, endDate, userId, this._validSurveys(startDate, endDate, userId, surveys)) * option.value
+          , 0)
+          /
+          (this._responseCount(options, startDate, endDate, userId, surveys) * 1.0)
+      *100)/100
+    ) : (
+      0
+    )
 
   _handleMenuClick = () =>
     window.confirm("Export campaign to email?") &&
@@ -161,7 +200,7 @@ class Home extends React.Component {
 
   render() {
     const { classes, currentUser } = this.props;
-    const { selectedCampaignId, expanded, selectedSurveyTemplate, startDate, sendingEmail } = this.state;
+    const { selectedCampaignId, expanded, selectedSurveyTemplate, startDate, endDate, sendingEmail, selectedPrompt } = this.state;
     return !currentUser ? null : (
       <Container>
         {
@@ -244,7 +283,46 @@ class Home extends React.Component {
                           <MenuItem value={730}>24 Months</MenuItem>
                         </Select>
                       </FormControl>
-                      
+                      {
+                        !!selectedSurveyTemplate &&
+                        <Query
+                          query={ QueryUsersByOrganizationIdCreatedAtIndex }
+                          fetchPolicy="cache-and-network"
+                          variables={{organizationId: currentUser.organization.id, first: 1000}}
+                        >
+                          {({loading, error, data: {queryUsersByOrganizationIdCreatedAtIndex: {items: users} = {items: []}} = {}}) => loading ? null : (
+                            <Query
+                              query={ QuerySurveysByCampaignIdCreatedAtIndex }
+                              fetchPolicy="cache-and-network"
+                              variables={{campaignId: campaign.id, first: 1000}}
+                            >
+                              {({loading, error, data: {querySurveysByCampaignIdCreatedAtIndex: {items: surveys} = {items: []}} = {}}) => loading ? null : (
+                                <UserSurveyTable
+                                  selectedPrompt={selectedPrompt} 
+                                  surveys={this._validSurveys(startDate, endDate, null, surveys)}
+                                  onModalClose={() => this.setState({selectedPrompt: null})}
+                                  onHeaderCellClick={prompt => this.setState({selectedPrompt: prompt})}
+                                  startDate={startDate}
+                                  users={users.reduce((userArray, user) => ([
+                                    ...userArray,
+                                    ...[{
+                                      ...user,
+                                      responseCount: this._validSurveys(startDate, endDate, user.id, surveys).filter(survey => !!survey.responses.items.length).length,
+                                      prompts: selectedSurveyTemplate.prompts.items.reduce((promptsArray, prompt) => ([
+                                        ...promptsArray,
+                                        ...[{
+                                          ...prompt,
+                                          score: this._newScore(prompt.options.items, startDate, endDate, user.id, surveys),
+                                        }]
+                                      ]),[])
+                                    }]
+                                  ]), [])}
+                                />
+                              )}
+                            </Query>
+                          )}
+                        </Query>
+                      }
                       {
                         !!selectedSurveyTemplate && 
                         <div>
@@ -254,15 +332,16 @@ class Home extends React.Component {
                             campaignId={campaign.id}
                             startDate={startDate}
                           />
-
-                          <Typography variant="h5">By User</Typography>
+                          {
+                            /*
+                            <Typography variant="h5">By User</Typography>
                           <Query
                             query={ QueryUsersByOrganizationIdCreatedAtIndex }
                             fetchPolicy="cache-and-network"
                             variables={{organizationId: currentUser.organization.id, first: 1000}}
                           >
-                            { ({loading, error, data}) => loading ? "Loading..." : error ? JSON.stringify(error) : (!data.queryUsersByOrganizationIdCreatedAtIndex || !data.queryUsersByOrganizationIdCreatedAtIndex.items) ? "Something went wrong..." :
-                              data.queryUsersByOrganizationIdCreatedAtIndex.items.map(user => 
+                            {({loading, error, data: {queryUsersByOrganizationIdCreatedAtIndex: {items} = {items: []}} = {}}) => loading ? null : (
+                              items.map(user => 
                                 <UserSurveyDetail 
                                   expanded={expanded} 
                                   key={user.id} 
@@ -273,8 +352,10 @@ class Home extends React.Component {
                                   startDate={startDate}
                                 />
                               )
-                            }
+                            )}
                           </Query>
+                            */
+                          }
                         </div>
                       }
                     </form>
