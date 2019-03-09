@@ -233,9 +233,11 @@ const countryDialCodes = [
 
 class MySignUp extends SignUp {
   signUp() {
-    Cache.setItem('signupInputs', this.inputs)
+    Cache.setItem('signupInputs', this.inputs);
+    const inviteInputs = Cache.getItem('inviteInputs') || {};
     this.inputs.username = (this.inputs.username||"").toLowerCase()
-    this.inputs.email = (this.inputs.email||"").toLowerCase()
+    this.inputs.email = (this.inputs.email||inviteInputs.email||"").toLowerCase()
+    this.inputs.name = (this.inputs.name||inviteInputs.name||"").toLowerCase()
     if (!this.inputs.dial_code) {
         this.inputs.dial_code = this.getDefaultDialCode();
     }
@@ -269,6 +271,8 @@ class MySignUp extends SignUp {
         }
     });
 
+    Cache.removeItem('inviteInputs');
+
     Auth.signUp(signup_info).then((data) => {
         this.changeState('confirmSignUp', data.user.username)
     })
@@ -282,6 +286,7 @@ class MySignUp extends SignUp {
         this.signUpFields = this.props.signUpConfig.signUpFields;
     }
     this.sortFields();
+    const inviteInputs = Cache.getItem('inviteInputs');
     return (
         <FormSection theme={theme}>
             <SectionHeader theme={theme}>{I18n.get(this.header)}</SectionHeader>
@@ -308,6 +313,7 @@ class MySignUp extends SignUp {
                                     name={field.key}
                                     key={field.key}
                                     onChange={this.handleInputChange}
+                                    value={inviteInputs && (inviteInputs[field.key] || "")}
                                 />
                                 {field.key === 'password' && <div style={{color: 'red'}}>Must be at least 7 characters long with an upper and lower case letter, number and one special character (i.e. !$%^)</div>}
                             </FormField>

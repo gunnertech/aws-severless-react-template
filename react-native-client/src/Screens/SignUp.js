@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { TouchableWithoutFeedback, ScrollView, View, Keyboard, Text } from 'react-native'
+import { Cache } from 'aws-amplify';
 
 import { SignUp } from 'aws-amplify-react-native';
 
@@ -19,6 +20,22 @@ import {
 
 
 class MySignUp extends SignUp {
+  async componentDidMount() {
+    const inviteInputs = await Cache.getItem('inviteInputs');
+    if(inviteInputs) {
+      this.setState({
+        ...inviteInputs,
+        username: inviteInputs.email 
+      }, () => Cache.removeItem('inviteInputs'))
+    }
+    super.componentDidMount && super.componentDidMount()
+  }
+
+  signUp() {
+    Cache.setItem('signupInputs', {...this.state});
+    super.signUp()
+  }
+
   showComponent(theme) {
     if (this.checkCustomSignUpFields()) {
       this.signUpFields = this.props.signUpConfig.signUpFields;
@@ -34,6 +51,7 @@ class MySignUp extends SignUp {
                       return field.key !== 'phone_number' ?  (
                           <View key={field.key}>
                           <FormField
+                              value={this.state[field.key]||""}
                               key = {field.key}
                               theme={theme}
                               type={field.type}

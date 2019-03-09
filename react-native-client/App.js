@@ -1,5 +1,5 @@
 import React from 'react';
-import { Font } from 'expo';
+import { Font, DangerZone } from 'expo';
 import { ThemeContext, getTheme } from 'react-native-material-ui';
 import Amplify, { Auth, Hub } from 'aws-amplify';
 import { Rehydrated } from 'aws-appsync-react';
@@ -9,6 +9,7 @@ import { ApolloLink } from 'apollo-link';
 import Sentry from 'sentry-expo';
 import { withClientState } from 'apollo-link-state';
 import { ThemeProvider } from 'react-native-elements';
+import { Cache } from 'aws-amplify';
 
 import AppNavigator from './src/Navigators/App'
 import muiTheme from './src/Styles/muiTheme'
@@ -41,6 +42,12 @@ const authScreenLabels = {
         'Confirm Sign Up': 'Confirm Sign Up by entering the code that was sent to your email address'
     }
 };
+
+DangerZone.Branch.subscribe(bundle =>
+  bundle && bundle.params && !bundle.error && bundle.params.user (
+    Cache.setItem('inviteInputs', bundle.params.user)
+  )
+)
 
 I18n.setLanguage('en');
 I18n.putVocabularies(authScreenLabels);

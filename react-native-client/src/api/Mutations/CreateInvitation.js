@@ -5,6 +5,7 @@ import Invitation from '../Fragments/Invitation';
 export default gql`
   mutation CreateInvitation(
     $id: ID
+    $code: String!
     $name: String!
     $phone: String
     $email: String
@@ -16,6 +17,7 @@ export default gql`
     createInvitation(input:{
       id: $id
       name: $name
+      code: $code
       title: $title
       phone: $phone
       email: $email

@@ -78,6 +78,7 @@ type AssignedRoleConnection {
 type Invitation {
 	id: ID!
 	name: String!
+	code: String
 	phone: String
 	email: String
 	organizationId: ID!
@@ -285,6 +286,7 @@ input CreateCampaignInput {
 
 input CreateInvitationInput {
 	id: ID
+	code: String!
 	name: String!
 	phone: String
 	email: String
@@ -415,6 +417,7 @@ type Query {
 	getContactGroup(id: ID!): ContactGroup
 	getUser(id: ID!): User
 	getSurvey(id: ID!): Survey
+	getInvitationByCodeIndex(code: String!): Invitation
 }
 
 type Subscription {

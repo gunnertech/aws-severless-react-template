@@ -19,6 +19,7 @@ import AccountPlusIcon from 'mdi-material-ui/AccountPlus';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SendIcon from '@material-ui/icons/Send';
 import uuid from 'uuid-v4'
+import shortid from 'shortid'
 
 import { Query, compose, graphql, Mutation } from 'react-apollo';
 
@@ -43,6 +44,7 @@ import UpdateUser from "../api/Mutations/UpdateUser"
 import CreateInvitation from '../api/Mutations/CreateInvitation';
 import ListInvitations from '../api/Queries/ListInvitations';
 import DeleteInvitation from '../api/Mutations/DeleteInvitation'
+
 
 
 const ActionMenu = ({onClick}) => (
@@ -92,7 +94,38 @@ class UserList extends React.Component {
     submittingForm: false,
   }
 
-  _sendSms = ({phone, roleName, email}) =>
+  _invitationMessage = data =>
+    new Promise((resolve, reject) => 
+      // eslint-disable-next-line no-undef
+      branch.link({
+        campaign: 'invitation',
+        channel: 'facebook',
+        feature: 'download',
+        stage: 'new user',
+        tags: [ 'tag1', 'tag2', 'tag3' ],
+        alias: '',
+        data: {
+          '$ios_url': data.roleName === 'user' ? !!process.env.REACT_APP_bucket.match(/production/) ? 'https://itunes.apple.com/us/app/simplisurvey/id1449281606' : 'https://testflight.apple.com/join/TjLjqY9z' : `${process.env.REACT_APP_base_url}/dashboard`,
+          '$android_url': data.roleName === 'user' ? !!process.env.REACT_APP_bucket.match(/production/) ? 'https://play.google.com/store/apps/details?id=com.gunnertech.simplisurvey' : 'https://play.google.com/apps/internaltest/4700494785583836183' : `${process.env.REACT_APP_base_url}/dashboard`,
+          '$desktop_url': data.roleName === 'user' ? `${process.env.REACT_APP_base_url}/surveys/send` : `${process.env.REACT_APP_base_url}/dashboard`,
+          '$fallback_url': data.roleName == 'user' ? `${process.env.REACT_APP_base_url}/surveys/send` : `${process.env.REACT_APP_base_url}/dashboard`,
+          user: {
+            ...data,
+          },
+          'custom_bool': true,
+          'custom_int': Date.now(),
+          'custom_string': 'hello',
+          '$og_title': 'Title',
+          '$og_description': 'Description',
+          '$og_image_url':'http://lorempixel.com/400/400'
+        }
+      }, 
+      (err, link) => resolve(link)
+      )
+
+    )
+
+  _sendSms = ({phone, roleName, email, link}) =>
     Auth.currentCredentials()
       .then(credentials =>
         new SNS({
@@ -101,17 +134,13 @@ class UserList extends React.Component {
           region: "us-east-1"
         })
         .publish({
-          Message: `${roleName.toLowerCase() === 'admin' ? (
-            `${this.props.currentUser.name} invited you to join SimpliSurvey. Please follow the link to set up your account ${process.env.REACT_APP_base_url}/dashboard and use ${email} when creating your account.`
-          ) : (
-            `${this.props.currentUser.name} invited you to join SimpliSurvey. To get started, Android users click this link https://play.google.com/apps/internaltest/4700494785583836183. iOS users, click this link https://testflight.apple.com/join/TjLjqY9z and use ${email} when creating your account.`
-          )}`,
+          Message: `${this.props.currentUser.name} invited you to join SimpliSurvey. Please follow the link to set up your account ${link}  and use ${email} when creating your account.`,
           PhoneNumber: `${phone}`
         })
         .promise()
       )
 
-  _sendEmail = ({email, roleName}) =>
+  _sendEmail = ({email, roleName, link}) =>
     Auth.currentCredentials()
       .then(credentials =>
         new SES({
@@ -134,23 +163,15 @@ class UserList extends React.Component {
               Charset: "UTF-8",
               Data: `<html>
                         <body>
-                          ${roleName.toLowerCase() === 'admin' ? (
-                            `${this.props.currentUser.name} invited you to join SimpliSurvey. Please follow the link to set up your account ${process.env.REACT_APP_base_url}/dashboard  and use ${email} when creating your account.`
-                          ) : (
-                            `${this.props.currentUser.name} invited you to join SimpliSurvey. To get started, Android users click this link https://play.google.com/apps/internaltest/4700494785583836183. iOS users, click this link https://testflight.apple.com/join/TjLjqY9z  and use ${email} when creating your account.`
-                          )}
+                          <p>
+                            ${this.props.currentUser.name} invited you to join SimpliSurvey. Please follow the link to set up your account ${link}  and use ${email} when creating your account.
+                          </p>
                         </body>
                       </html>`
               },
               Text: {
                 Charset: "UTF-8",
-                Data: `
-                  ${roleName.toLowerCase() === 'admin' ? (
-                    `${this.props.currentUser.name} invited you to join SimpliSurvey. Please follow the link to set up your account ${process.env.REACT_APP_base_url}/dashboard  and use ${email} when creating your account.`
-                  ) : (
-                    `${this.props.currentUser.name} invited you to join SimpliSurvey. To get started, Android users click this link https://play.google.com/apps/internaltest/4700494785583836183. iOS users, click this link https://testflight.apple.com/join/TjLjqY9z  and use ${email} when creating your account.`
-                  )}
-                `
+                Data: `${this.props.currentUser.name} invited you to join SimpliSurvey. Please follow the link to set up your account ${link}  and use ${email} when creating your account.`
               }
             },
             Subject: {
@@ -182,6 +203,7 @@ class UserList extends React.Component {
         ) : (
           resolve({
             id: uuid(),
+            code: shortid.generate(),
             invitorId: this.props.currentUser.id,
             organizationId: this.props.currentUser.organizationId,
             roleName: data.user.role || null,
@@ -196,22 +218,26 @@ class UserList extends React.Component {
       )
     )
       .then(params => 
-        this._validEmail(params.email) && !this._validPhone(params.phone) ? (
-          this._sendEmail(params)
-            .then(() => params)
-            .catch(args => params)
-         ) : (
-           Promise.resolve(params)
-         )
-      )
-      .then(params => 
-        this._validPhone(params.phone) ? (
-          this._sendSms(params)
-            .then(() => params)
-            .catch(console.log)
-         ) : (
-           Promise.resolve(params)
-         )
+        this._invitationMessage(params)
+          .then(url => 
+            Promise.all([
+              this._validEmail(params.email) && !this._validPhone(params.phone) ? (
+                this._sendEmail({...params, link: url})
+                  .then(() => params)
+                  .catch(args => params)
+              ) : (
+                Promise.resolve(params)
+              ),
+              this._validPhone(params.phone) ? (
+                this._sendSms({...params, link: url})
+                  .then(() => params)
+                  .catch(console.log)
+              ) : (
+                Promise.resolve(params)
+              )
+            ])
+          )
+          .then(() => Promise.resolve(params))
       )
       .then(params =>
         this.props.createInvitation({ 

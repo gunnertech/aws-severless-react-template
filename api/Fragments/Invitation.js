@@ -6,6 +6,7 @@ const Invitation = {
       fragment InvitationEntry on Invitation {
         __typename
         id
+        code
         name
         title
         phone

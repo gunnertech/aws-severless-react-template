@@ -76,6 +76,11 @@ custom:
         field: queryInvitationsByOrganizationIdIdIndex
         request: "queryInvitationsByOrganizationIdIdIndex-request.vtl"
         response: "queryInvitationsByOrganizationIdIdIndex-response.vtl"
+      - dataSource: Invitations
+        type: Query
+        field: getInvitationByCodeIndex
+        request: "getInvitationByCodeIndex-request.vtl"
+        response: "generic-response.vtl"
       - dataSource: Users
         type: Query
         field: queryUsersByOrganizationIdCreatedAtIndex
@@ -506,13 +511,21 @@ resources:
             AttributeName: organizationId
             AttributeType: S
           -
+            AttributeName: code
+            AttributeType: S
+          -
             AttributeName: id
             AttributeType: S
-        # ProvisionedThroughput:
-        #   ReadCapacityUnits: 1
-        #   WriteCapacityUnits: 1
         TableName: "${self:custom.stage}-Invitations"
         GlobalSecondaryIndexes: 
+          - 
+            IndexName: "code-index"
+            KeySchema: 
+              - 
+                AttributeName: "code"
+                KeyType: "HASH"
+            Projection: 
+              ProjectionType: "ALL"
           - 
             IndexName: "organizationId-id-index"
             KeySchema: 
@@ -524,9 +537,6 @@ resources:
                 KeyType: "RANGE"
             Projection: 
               ProjectionType: "ALL"
-            # ProvisionedThroughput: 
-            #   ReadCapacityUnits: "1"
-            #   WriteCapacityUnits: "1"
     UserTable:
       DependsOn: OrganizationTable
       Type: 'AWS::DynamoDB::Table'

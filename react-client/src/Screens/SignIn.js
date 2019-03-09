@@ -34,8 +34,8 @@ class MySignIn extends SignIn {
         console.log(this.props.authState, "SIGN THEM IN!")
         this.inputs = signupInputs;
         this.inputs.username = signupInputs.email;
-        Cache.removeItem('signupInputs');
     }
+    Cache.removeItem('signupInputs');
     this.inputs.username = (this.inputs.username||"").toLowerCase()
     super.signIn()
   }
