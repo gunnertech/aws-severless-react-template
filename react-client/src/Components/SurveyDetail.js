@@ -24,7 +24,7 @@ const SimpleLineChart = props =>
       <Tooltip />
       <YAxis type="number" domain={['auto', 'auto']} />
       <XAxis dataKey="name" />
-      <Line name="NPS" type="monotone" dataKey="score" stroke="#b78df9" activeDot={{r: 8}} />
+      <Line name="Score" type="monotone" dataKey="score" stroke="#b78df9" activeDot={{r: 8}} />
 
     </LineChart>
   </ResponsiveContainer>
@@ -77,7 +77,6 @@ class SurveyDetail extends React.Component {
 
   state = {
     selectedOption: null,
-    netPromoterScoreDelta: 0
   }
 
   surveysForOption = (optionId, startDate, endDate, userId, surveys) =>
@@ -102,6 +101,20 @@ class SurveyDetail extends React.Component {
       )
       .reduce((count, currentValue) => count + currentValue)
 
+  newScore = (options, startDate, endDate, userId, surveys) =>
+    !!this.responseCount(options, startDate, endDate, userId, surveys) ? (
+      Math.round(
+        options
+          .reduce((accumulator, option) => 
+            accumulator + this.responseCount([option], startDate, endDate, userId, this.validSurveys(startDate, endDate, userId, surveys)) * option.value
+          , 0)
+          /
+          (this.responseCount(options, startDate, endDate, userId, surveys) * 1.0)
+      *100)/100
+    ) : (
+      0
+    )
+  
   netPromoterScore = (options, startDate, endDate, userId, surveys) =>
     !!this.responseCount(options, startDate, endDate, userId, surveys) ? (
       Math.round((
@@ -123,11 +136,16 @@ class SurveyDetail extends React.Component {
     this.netPromoterScore(options, moment(startDate).subtract(this.dayDiff(startDate, endDate), 'days').toDate(), moment(endDate).subtract(this.dayDiff(startDate, endDate), 'days').toDate(), userId, surveys)
   )
 
+  newScoreDelta = (options, startDate, endDate, userId, surveys) => (
+    this.newScore(options, startDate, endDate, userId, surveys) - 
+    this.newScore(options, moment(startDate).subtract(this.dayDiff(startDate, endDate), 'days').toDate(), moment(endDate).subtract(this.dayDiff(startDate, endDate), 'days').toDate(), userId, surveys)
+  )
+
   npsData = (options, startDate, endDate, userId, surveys, dayDiff, count) =>
     [...Array(count).keys()]
       .map(i => ({
         endDate: moment(endDate).endOf('day').subtract(dayDiff * i, "days").toDate(), 
-        score: this.netPromoterScore(options, moment(startDate).startOf('day').subtract(dayDiff * i, "days").toDate(), moment(endDate).endOf('day').subtract(dayDiff * i, "days").toDate(), userId, surveys)
+        score: this.newScore(options, moment(startDate).startOf('day').subtract(dayDiff * i, "days").toDate(), moment(endDate).endOf('day').subtract(dayDiff * i, "days").toDate(), userId, surveys)
       }))
 
   render() {
@@ -174,7 +192,7 @@ class SurveyDetail extends React.Component {
                             <Hidden smUp>
                               <Typography 
                                 onClick={() => option.position > 3 || true ? this.setState({selectedOption: option}) : null} 
-                                color={option.position > 3 ? 'secondary' : 'default'} 
+                                color={option.position > 3 || true ? 'secondary' : 'default'} 
                                 style={{cursor: option.position > 3 || true ? 'pointer' : 'default', fontSize: 8}} 
                                 variant="caption" 
                                 align={`center`}
@@ -200,8 +218,8 @@ class SurveyDetail extends React.Component {
                   </div>
                   <div style={{flex: 1, display: "flex", flexDirection: "row"}}>
                     <div style={{flex: 1}}>
-                      <Typography variant="h5" align={`center`}>NPS: {this.netPromoterScore(prompt.options.items, startDate, endDate, userId, data.querySurveysByCampaignIdCreatedAtIndex.items)}</Typography>
-                      <NpsDelta delta={this.netPromoterScoreDelta(prompt.options.items, startDate, endDate, userId, data.querySurveysByCampaignIdCreatedAtIndex.items)} />
+                      <Typography variant="h5" align={`center`}>Score: {this.newScore(prompt.options.items, startDate, endDate, userId, data.querySurveysByCampaignIdCreatedAtIndex.items)}</Typography>
+                      <NpsDelta delta={this.newScoreDelta(prompt.options.items, startDate, endDate, userId, data.querySurveysByCampaignIdCreatedAtIndex.items)} />
                     </div>
                     <div style={{flex: 1}}>
                       <SimpleLineChart data={this.npsData(prompt.options.items, startDate, endDate, userId, data.querySurveysByCampaignIdCreatedAtIndex.items, this.dayDiff(startDate, endDate), 7).reverse()} />
