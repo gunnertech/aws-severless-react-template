@@ -29,6 +29,8 @@
     "react-apollo": "latest",
     "react-countup": "latest",
     "react-dom": "latest",
+    "react-file-reader": "^1.1.4",
+    "react-file-reader-input": "^2.0.0",
     "react-helmet": "^5.2.0",
     "react-images": "^0.5.19",
     "react-jss": "latest",

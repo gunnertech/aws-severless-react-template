@@ -3,17 +3,30 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
-import { TextField } from '@material-ui/core';
+import { TextField, InputLabel } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 
-import DialogTitle from '@material-ui/core/DialogTitle';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 
+import DialogTitle from '@material-ui/core/DialogTitle';
+import FileReaderInput from 'react-file-reader-input';
+import normalizePhoneNumber from '../Util/normalizePhoneNumber'
 
 const styles = theme => ({
   button: {
     margin: theme.spacing.unit,
+  },
+  table: {
+    minWidth: 500,
+  },
+  label: {
+    marginBottom: theme.spacing.unit * 3,
   },
   leftIcon: {
     marginRight: theme.spacing.unit,
@@ -46,14 +59,15 @@ class ContactGroupNew extends React.Component {
         name: "",
         organizationId: props.organizationId,
       },
-      submitting: false
+      submitting: false,
+      contacts: [],
     }
 
     this._initialState = {...this.state}
   }
 
-  _handleSubmit = (data, cb) =>
-    cb(data)
+  _handleSubmit = (data, contacts, cb) =>
+    cb(data, contacts)
       .then(result => 
         result && this.setState(this._initialState)
       )
@@ -66,9 +80,26 @@ class ContactGroupNew extends React.Component {
       }
     })
   
+  _handleFiles = (e, files) =>
+    this.setState({
+      contacts: files.map(file => 
+        file[1].type === 'text/csv' ? (
+          file[0].target.result.replace( /[\n\r]/g, "^~^" ).split("^~^")
+            .map(line => line.split(","))
+            .map(([name, phone, email]) => ({name, phone: normalizePhoneNumber(phone), email: !!(email||"").match(/@/) ? email : null}))
+            .filter(contact => !!contact.name && !!contact.email)
+          ) : (
+            window.alert("You can only upload csv files.") || []
+          )
+        )
+        .flat(1)
+    })
+    
+    
+
   render() {
     const { classes, open, submitting, onSubmit, onClose, fullScreen } = this.props;
-    const { contactGroup } = this.state;
+    const { contactGroup, contacts } = this.state;
     return (
       <Dialog
         fullScreen={fullScreen}
@@ -78,6 +109,39 @@ class ContactGroupNew extends React.Component {
       >
         <DialogTitle id="responsive-dialog-title">{"Add Group"}</DialogTitle>
         <DialogContent>
+          <div className={classes.label}>
+            <InputLabel>Optionally load a csv file in the format below</InputLabel>
+          </div>
+
+          <FileReaderInput 
+            as="binary" 
+            id="my-file-input"
+            onChange={this._handleFiles}
+          >
+            <button>Select a File</button>
+          </FileReaderInput>
+
+          <Table className={classes.table}>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Phone</TableCell>
+                <TableCell>Email</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {contacts.map((contact, i) =>
+                <TableRow key={i}>
+                  <TableCell  component="th" scope="row">
+                    {contact.name}
+                  </TableCell>
+                  <TableCell key={prompt.id}>{contact.phone}</TableCell>
+                  <TableCell key={prompt.id}>{contact.email}</TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+          
           <form className={classes.container} noValidate autoComplete="off">
             <TextField
               id="standard-name"
@@ -88,6 +152,7 @@ class ContactGroupNew extends React.Component {
               margin="normal"
               fullWidth
             />
+            
             {
               submitting ? (
                 <CircularProgress className={classes.progress} color="secondary" />
@@ -96,7 +161,12 @@ class ContactGroupNew extends React.Component {
                   <Button onClick={onClose} color="primary">
                     Cancel
                   </Button>
-                  <Button variant="contained" onClick={this._handleSubmit.bind(this, contactGroup, onSubmit)} color="primary">
+                  <Button 
+                    variant="contained" 
+                    onClick={this._handleSubmit.bind(this, contactGroup, contacts, onSubmit)} 
+                    color="primary"
+                    disabled={!contactGroup.name}
+                  >
                     Submit
                   </Button>
                 </DialogActions>

@@ -23,8 +23,9 @@ import withActionMenu from '../Hocs/withActionMenu';
 import withCurrentUser from '../Hocs/withCurrentUser';
 
 import CreateContactGroup from "../api/Mutations/CreateContactGroup"
+import CreateContact from "../api/Mutations/CreateContact"
 import QueryContactGroupsByOrganizationIdIdIndex from "../api/Queries/QueryContactGroupsByOrganizationIdIdIndex"
-
+import QueryContactsByContactGroupIdIdIndex from "../api/Queries/QueryContactsByContactGroupIdIdIndex"
 
 const ActionMenu = ({onClick}) => (
   <IconButton
@@ -52,7 +53,7 @@ class ContactGroupList extends React.Component {
     submittingForm: false,
   }
 
-  _handleSubmit = contactGroupData =>
+  _handleSubmit = (contactGroupData, contacts) =>
     new Promise(resolve =>
       this.setState({submittingForm: true}, resolve)
     )
@@ -78,6 +79,22 @@ class ContactGroupList extends React.Component {
         })
       )
       .then(({data, loading, error}) =>
+        Promise.all(contacts.map(contact =>
+          this.props.createContact({ 
+            variables: {
+              ...contact,
+              id: uuid(),
+              contactGroupId: data.createContactGroup.id
+            },
+            onError: console.log,
+            refetchQueries: [{
+              query: QueryContactsByContactGroupIdIdIndex,
+              variables: { first: 1000, contactGroupId: data.createContactGroup.id }
+            }],
+          })
+        ))
+      )
+      .then(() =>
         new Promise(resolve =>
           this.setState({submittingForm: false, showFormModal: false}, resolve)
         )
@@ -157,5 +174,6 @@ export default compose(
   withMobileDialog(),
   withStyles(styles),
   withActionMenu(),
+  graphql(CreateContact, { name: "createContact" }),
   graphql(CreateContactGroup, { name: "createContactGroup" }),
 )(ContactGroupList);
