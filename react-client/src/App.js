@@ -270,7 +270,7 @@ class App extends Component {
             userId: user.id
           },
         })
-        .then(() => Promise.resolve(user))
+        .then(({data: {createAssignedRole}}) => Promise.resolve({...user, assignedRoles: {items: [createAssignedRole]}}))
       )
     )
 
@@ -347,7 +347,7 @@ class App extends Component {
           )
         )
       )
-      .then(currentUser => console.log(currentUser) ||
+      .then(currentUser =>
         !currentUser.active || /// DON'T ALLOW ACCESS IF NOT ACTIVE
         !currentUser.assignedRoles.items.find(ai => ai.role.name === 'admin') /// DON'T ALLOW NON ADMINS TO SIGN INTO THE DASHBOARD
         ? (

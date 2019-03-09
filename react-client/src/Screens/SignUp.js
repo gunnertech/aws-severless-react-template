@@ -4,6 +4,8 @@ import { I18n } from '@aws-amplify/core';
 import { SignUp } from 'aws-amplify-react';
 import Auth from '@aws-amplify/auth';
 
+import { Cache } from 'aws-amplify';
+
 import {
   FormSection,
   SelectInput,
@@ -231,6 +233,7 @@ const countryDialCodes = [
 
 class MySignUp extends SignUp {
   signUp() {
+    Cache.setItem('signupInputs', this.inputs)
     this.inputs.username = (this.inputs.username||"").toLowerCase()
     this.inputs.email = (this.inputs.email||"").toLowerCase()
     if (!this.inputs.dial_code) {
