@@ -233,11 +233,11 @@ const countryDialCodes = [
 
 class MySignUp extends SignUp {
   signUp() {
-    Cache.setItem('signupInputs', this.inputs);
     const inviteInputs = Cache.getItem('inviteInputs') || {};
     this.inputs.username = (this.inputs.username||"").toLowerCase()
     this.inputs.email = (this.inputs.email||inviteInputs.email||"").toLowerCase()
     this.inputs.name = (this.inputs.name||inviteInputs.name||"").toLowerCase()
+    Cache.setItem('signupInputs', this.inputs);
     if (!this.inputs.dial_code) {
         this.inputs.dial_code = this.getDefaultDialCode();
     }
@@ -291,7 +291,7 @@ class MySignUp extends SignUp {
         <FormSection theme={theme}>
             <SectionHeader theme={theme}>{I18n.get(this.header)}</SectionHeader>
             <SectionBody theme={theme}>
-                <p>If you were invited to join, please sign up with the email and/or phone number where you received the inivtation.</p>
+                
                 {
                     this.signUpFields.map((field) => {
                         return field.key !== 'phone_number' ? (
@@ -313,7 +313,8 @@ class MySignUp extends SignUp {
                                     name={field.key}
                                     key={field.key}
                                     onChange={this.handleInputChange}
-                                    value={inviteInputs && (inviteInputs[field.key] || "")}
+                                    disabled={!!(inviteInputs && inviteInputs[field.key])}
+                                    value={inviteInputs && (inviteInputs[field.key] || undefined)}
                                 />
                                 {field.key === 'password' && <div style={{color: 'red'}}>Must be at least 7 characters long with an upper and lower case letter, number and one special character (i.e. !$%^)</div>}
                             </FormField>
