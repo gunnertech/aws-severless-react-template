@@ -31,12 +31,10 @@ class MySignIn extends SignIn {
       this._signingIn = true;
     const signupInputs = Cache.getItem('signupInputs');
     if(!!signupInputs && this.props.authState === 'signedUp') {
-        console.log(this.props.authState, "SIGN THEM IN!", signupInputs)
         this.inputs = {...signupInputs, username: signupInputs.email};
         this.inputs.username = signupInputs.email;
     }
     this.inputs.username = (this.inputs.username||"").toLowerCase()
-    console.log("AGAIN", this.inputs)
     super.signIn();
     Cache.removeItem('signupInputs');
   }
@@ -52,7 +50,6 @@ class MySignIn extends SignIn {
   }
 
   showComponent(theme) {
-    console.log(Cache.getItem('signupInputs'))
     const { authState, federated, onStateChange, onAuthEvent } = this.props;
     // if (hide && hide.includes(SignIn)) { return null; }
     const hideSignUp = false; //!override.includes('SignUp') && hide.some(component => component === SignUp);

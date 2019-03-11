@@ -287,7 +287,6 @@ class MySignUp extends SignUp {
     }
     this.sortFields();
     const inviteInputs = Cache.getItem('inviteInputs');
-    console.log(this.state)
     return (
         <FormSection theme={theme}>
             <SectionHeader theme={theme}>{I18n.get(this.header)}</SectionHeader>
