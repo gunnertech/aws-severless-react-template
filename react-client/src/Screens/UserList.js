@@ -107,8 +107,8 @@ class UserList extends React.Component {
         data: {
           '$ios_url': data.roleName === 'user' ? !!process.env.REACT_APP_bucket.match(/production/) ? 'https://itunes.apple.com/us/app/simplisurvey/id1449281606' : 'https://testflight.apple.com/join/TjLjqY9z' : `${process.env.REACT_APP_base_url}/dashboard`,
           '$android_url': data.roleName === 'user' ? !!process.env.REACT_APP_bucket.match(/production/) ? 'https://play.google.com/store/apps/details?id=com.gunnertech.simplisurvey' : 'https://play.google.com/apps/internaltest/4700494785583836183' : `${process.env.REACT_APP_base_url}/dashboard`,
-          '$desktop_url': data.roleName === 'user' ? `${process.env.REACT_APP_base_url}/surveys/send` : `${process.env.REACT_APP_base_url}/dashboard`,
-          '$fallback_url': data.roleName == 'user' ? `${process.env.REACT_APP_base_url}/surveys/send` : `${process.env.REACT_APP_base_url}/dashboard`,
+          '$desktop_url': data.roleName === 'user' ? `${process.env.REACT_APP_base_url}/` : `${process.env.REACT_APP_base_url}/dashboard`,
+          '$fallback_url': data.roleName == 'user' ? `${process.env.REACT_APP_base_url}/` : `${process.env.REACT_APP_base_url}/dashboard`,
           user: {
             ...data,
           },

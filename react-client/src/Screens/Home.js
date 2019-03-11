@@ -183,6 +183,10 @@ class Home extends React.Component {
     })
 
   componentDidMount() {
+    if(!!this.props.currentUser && !this.props.currentUser.assignedRoles.items.find(ar => ar.role.name === "amdin")) {
+      this.props.history.push(`/surveys/send`)
+    }
+
     if(!!this.props.currentUser && !!this.props.currentUser.organization.campaigns.items.filter(campaign => campaign.active).length) {
       const selectedCampaign = this.props.match.params.campaignId ? (
           this.props.currentUser.organization.campaigns.items.find(campaign => campaign.id === this.props.match.params.campaignId)
@@ -201,7 +205,7 @@ class Home extends React.Component {
   render() {
     const { classes, currentUser } = this.props;
     const { selectedCampaignId, expanded, selectedSurveyTemplate, startDate, endDate, sendingEmail, selectedPrompt } = this.state;
-    return !currentUser ? null : (
+    return !currentUser || currentUser.assignedRoles.items.find(ar => ar.role.name === "amdin") ? null : (
       <Container>
         {
           Math.abs(moment.duration(

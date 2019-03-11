@@ -31,6 +31,7 @@ import CampaignListScreen from "./Screens/CampaignList";
 import OrganizationEditScreen from "./Screens/OrganizationEdit";
 import SurveyNewScreen from "./Screens/SurveyNew";
 import ContactGroupListScreen from "./Screens/ContactGroupList";
+import SurveySendScreen from "./Screens/SurveySend";
 
 import { CurrentUserProvider } from './Contexts/CurrentUser'
 import { NotificationsProvider } from './Contexts/Notifications'
@@ -349,8 +350,7 @@ class App extends Component {
         )
       )
       .then(currentUser =>
-        !currentUser.active || /// DON'T ALLOW ACCESS IF NOT ACTIVE
-        !currentUser.assignedRoles.items.find(ai => ai.role.name === 'admin') /// DON'T ALLOW NON ADMINS TO SIGN INTO THE DASHBOARD
+        !currentUser.active /// DON'T ALLOW ACCESS IF NOT ACTIVE
         ? (
           new Promise(resolve => this.setState({currentUser: null}, resolve.bind(null, null)))
         ) : (
@@ -407,6 +407,7 @@ class App extends Component {
                           <PrivateRoute path='/settings' exact component={OrganizationEditScreen} />
                           <Route path='/' exact component={SplashScreen} />
                           <Route path='/sign-out' exact component={SignOutScreen} />
+                          <Route path='/surveys/send' exact component={SurveySendScreen} />
                           <Route path='/surveys/:surveyId' exact component={SurveyNewScreen} />
                           <Route path='/privacy-policy' exact component={PrivacyPolicyScreen} />
                           <PrivateRoute path='/dashboard' exact component={HomeScreen} />

@@ -31,13 +31,14 @@ class MySignIn extends SignIn {
       this._signingIn = true;
     const signupInputs = Cache.getItem('signupInputs');
     if(!!signupInputs && this.props.authState === 'signedUp') {
-        console.log(this.props.authState, "SIGN THEM IN!")
-        this.inputs = signupInputs;
+        console.log(this.props.authState, "SIGN THEM IN!", signupInputs)
+        this.inputs = {...signupInputs, username: signupInputs.email};
         this.inputs.username = signupInputs.email;
     }
-    Cache.removeItem('signupInputs');
     this.inputs.username = (this.inputs.username||"").toLowerCase()
-    super.signIn()
+    console.log("AGAIN", this.inputs)
+    super.signIn();
+    Cache.removeItem('signupInputs');
   }
 
   componentDidUpdate() {
