@@ -33,6 +33,7 @@ class MySignIn extends SignIn {
     if(!!signupInputs && this.props.authState === 'signedUp') {
         this.inputs = {...signupInputs, username: signupInputs.email};
         this.inputs.username = signupInputs.email;
+        Cache.removeItem('signupInputs');
     }
     this.inputs.username = (this.inputs.username||"").toLowerCase()
     super.signIn();
@@ -50,6 +51,7 @@ class MySignIn extends SignIn {
   }
 
   showComponent(theme) {
+    console.log(Cache.getItem('signupInputs'))
     const { authState, federated, onStateChange, onAuthEvent } = this.props;
     // if (hide && hide.includes(SignIn)) { return null; }
     const hideSignUp = false; //!override.includes('SignUp') && hide.some(component => component === SignUp);
