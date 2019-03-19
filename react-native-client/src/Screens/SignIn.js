@@ -11,6 +11,7 @@ class MySignIn extends SignIn {
   async componentDidUpdate() {
       const signupInputs = await Cache.getItem('signupInputs');
       if(!!signupInputs && this.props.authState === 'signedUp') {
+          Cache.removeItem('signupInputs');
           this.signIn()          
       }
       super.componentDidUpdate && super.componentDidUpdate();
