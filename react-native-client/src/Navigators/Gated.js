@@ -70,9 +70,9 @@ const DrawerNavigator = createDrawerNavigator(screens, {
 });
 
 const GatedComponentWithAuth = withAuthenticator(GatedComponent, false, [
-  <SignIn/>,
-  <ConfirmSignIn/>,
-  <VerifyContact/>,
+  <SignIn />,
+  <ConfirmSignIn />,
+  <VerifyContact />,
   <SignUp
     signUpConfig={{
       hideAllDefaults: true,

@@ -94,7 +94,9 @@ $ git push staging %iteration-date%
 $ git checkout %dev name%
 $ git branch -D <iteration-date>
 $ ## Submit pull request:
-$ aws codecommit create-pull-request --title "20190305 Iteration Pull Request" --description "20190305 Iteration Pull Request" --client-request-token 20190305 --targets repositoryName=simplisurvey-staging,sourceReference=20190305 --profile  simplisurvey-stagingdeveloper
+$ aws codecommit create-pull-request --title "20190319 Iteration Pull Request" --description "20190319 Iteration Pull Request" --client-request-token 20190319 --targets repositoryName=simplisurvey-staging,sourceReference=20190319 --profile simplisurvey-stagingdeveloper
+$ ## ACCEPT pull request (after reviewing it):
+$ aws codecommit merge-pull-request-by-fast-forward --pull-request-id 4 --repository-name simplisurvey-staging --profile simplisurvey-stagingdeveloper
 ````
   
 ## Amplify
@@ -115,6 +117,8 @@ $ git push
 ````
 $ cd serverless
 $ sls deploy -s staging
+$ ### (snapshot for the program)
+$ sls deploy list -s staging
 ````
 ### React Native Front End
 ````
@@ -129,8 +133,14 @@ $ # Upload .apk to play store - if first time, you'll have to add the new app
 $ ###else
 $ expo publish --release-channel staging
 $ ###end if
+$ ###(snapshot output for the program)
+$ expo publish:history  --release-channel staging
 ````
 ### React Front End (automatically from the git push)
+
+````
+$ ###(snapshot output for the program)
+$ aws amplify list-jobs --app-id d2x31qlfq03ed5 --branch-name staging --profile simplisurvey-stagingdeveloper
 
 ## Deploying (Production)
 
@@ -144,6 +154,8 @@ $ git push
 ````
 $ cd serverless
 $ sls deploy -s production
+$ ### (snapshot for the program)
+$ sls deploy list -s production
 ````
 ### React Native Front End
 ````
@@ -156,7 +168,9 @@ $ # UPLOAD .ipa  USING APPLICATION LOADER - if first time, you'll have to add it
 $ expo build:android --release-channel production
 $ # Upload .apk to play store - if first time, you'll have to add the new app
 $ ###else
-$ expo publish --release-channel production
 $ ###end if 
+$ ###(snapshot output for the program)
+$ expo publish:history  --release-channel production
 ````
 ### React Front End (automatically from the git push)
+$ aws amplify list-jobs --app-id d328azc37801vs --branch-name master --profile simplisurvey-productiondeveloper
