@@ -96,7 +96,7 @@ $ git branch -D <iteration-date>
 $ ## Submit pull request:
 $ aws codecommit create-pull-request --title "20190319 Iteration Pull Request" --description "20190319 Iteration Pull Request" --client-request-token 20190319 --targets repositoryName=simplisurvey-staging,sourceReference=20190319 --profile simplisurvey-stagingdeveloper
 $ ## ACCEPT pull request (after reviewing it):
-$ aws codecommit merge-pull-request-by-fast-forward --pull-request-id 4 --repository-name simplisurvey-staging --profile simplisurvey-stagingdeveloper
+$ aws codecommit merge-pull-request-by-fast-forward --pull-request-id 5 --repository-name simplisurvey-staging --profile simplisurvey-stagingdeveloper
 ````
   
 ## Amplify
