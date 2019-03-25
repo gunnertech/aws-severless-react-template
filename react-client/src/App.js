@@ -382,7 +382,7 @@ class App extends Component {
   componentDidMount() {
     this._handleSignIn();
     // eslint-disable-next-line no-undef
-    branch.init('key_live_kcRp9dEqccHe8PyqYBkOUoahFEeh9IPj', (err, data) => console.log(data) ||
+    branch.init('key_live_kcRp9dEqccHe8PyqYBkOUoahFEeh9IPj', (err, data) =>
       data && data.data_parsed && data.data_parsed.user && Cache.setItem('inviteInputs', data.data_parsed.user)
     )
   }

@@ -14,7 +14,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import SendIcon from '@material-ui/icons/Send';
-import Divider from '@material-ui/core/Divider';
+// import Divider from '@material-ui/core/Divider';
 
 
 
@@ -229,11 +229,11 @@ class SurveySend extends React.PureComponent {
 
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    const isValid = !!(
-      this.state.selectedCampaignTemplateId &&
-      this.state.selectedSurveyTemplateId &&
-      this.state.recipientContact &&
-      !this.state.submitting);
+    // const isValid = !!(
+    //   this.state.selectedCampaignTemplateId &&
+    //   this.state.selectedSurveyTemplateId &&
+    //   this.state.recipientContact &&
+    //   !this.state.submitting);
     
 
     if(!!this.state.selectedCampaignTemplateId && !prevState.selectedCampaignTemplateId) {
@@ -256,7 +256,7 @@ class SurveySend extends React.PureComponent {
 
   render() {
     const { classes, currentUser } = this.props;
-    const { isAllChecked, submitted, submitting, selectedCampaignTemplateId, selectedCampaignId, selectedSurveyTemplateId, selectedContacts, selectedContactGroupId, recipientContact, recipientIdentifier } = this.state;
+    const { isAllChecked, submitting, selectedCampaignTemplateId, selectedSurveyTemplateId, selectedContacts, selectedContactGroupId, recipientContact, recipientIdentifier } = this.state;
     return !currentUser ? null : (
       <Container>
         <Card className={classes.cardContainer}>
@@ -320,7 +320,6 @@ class SurveySend extends React.PureComponent {
               fullWidth
               label="Enter Contact Info or Select from Below"
               placeholder='Email address or mobile number to send survey to'
-              className={classes.textField}
               value={recipientContact || ''}
               onChange={ event => this.setState({ recipientContact: event.target.value, selectedContacts: [] }) }
               margin="normal"
@@ -333,7 +332,6 @@ class SurveySend extends React.PureComponent {
               fullWidth
               label="Recipient Identifier"
               placeholder='(Optional) Name or identifier to indentify the recipient'
-              className={classes.textField}
               value={recipientIdentifier || ''}
               onChange={ event => this.setState({ recipientIdentifier: event.target.value }) }
               margin="normal"

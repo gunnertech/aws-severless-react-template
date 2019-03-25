@@ -183,7 +183,7 @@ class Home extends React.Component {
     })
 
   componentDidMount() {
-    if(!!this.props.currentUser && !this.props.currentUser.assignedRoles.items.find(ar => ar.role.name === "amdin")) {
+    if(this.props.currentUser && !this.props.currentUser.assignedRoles.items.find(ar => ar.role.name === "admin")) {
       this.props.history.push(`/surveys/send`)
     }
 
@@ -204,8 +204,8 @@ class Home extends React.Component {
 
   render() {
     const { classes, currentUser } = this.props;
-    const { selectedCampaignId, expanded, selectedSurveyTemplate, startDate, endDate, sendingEmail, selectedPrompt } = this.state;
-    return !currentUser || currentUser.assignedRoles.items.find(ar => ar.role.name === "amdin") ? null : (
+    const { selectedCampaignId, selectedSurveyTemplate, startDate, endDate, sendingEmail, selectedPrompt } = this.state;
+    return !currentUser || !currentUser.assignedRoles.items.find(ar => ar.role.name === "admin") ? null : (
       <Container>
         {
           Math.abs(moment.duration(

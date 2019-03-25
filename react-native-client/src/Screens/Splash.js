@@ -28,6 +28,12 @@ class Splash extends React.Component {
     }
   }
 
+  componentDidUpdate(prevProps) {
+    if(this.props.currentUser) {
+      this.props.navigation.navigate("Gated")
+    }
+  }
+
   render() {
     const { classes, theme } = this.props;
     return (

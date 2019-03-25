@@ -44,7 +44,7 @@ const authScreenLabels = {
 };
 
 DangerZone.Branch.subscribe(bundle =>
-  bundle && bundle.params && !bundle.error && bundle.params.user (
+  bundle && bundle.params && !bundle.error && bundle.params && bundle.params.user && (
     Cache.setItem('inviteInputs', bundle.params.user)
   )
 )

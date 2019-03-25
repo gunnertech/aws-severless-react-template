@@ -23,7 +23,6 @@ import AssessmentIcon from '@material-ui/icons/Assessment';
 
 import AccountKeyIcon from 'mdi-material-ui/AccountKey'
 import SettingsIcon from 'mdi-material-ui/Settings';
-import CellphoneIcon from 'mdi-material-ui/Cellphone';
 import AccountGroupIcon from 'mdi-material-ui/AccountGroup';
 
 import withCurrentUser from '../Hocs/withCurrentUser';
@@ -111,8 +110,8 @@ const styles = theme => ({
   }
 });
 
-const ExternalLink = ({to, children, className}) =>
-  <a href={to} className={className}>{children}</a>
+// const ExternalLink = ({to, children, className}) =>
+//   <a href={to} className={className}>{children}</a>
 
 class MainNavigation extends React.Component {
   state = {
