@@ -54,7 +54,6 @@ const ENV = {
 }
 
 function getEnvVars(env = '') {
-  return ENV.staging
   if (env === null || env === undefined || env === '') return ENV.development
   if (env.indexOf('development') !== -1) return ENV.development
   if (env.indexOf('staging') !== -1) return ENV.staging
