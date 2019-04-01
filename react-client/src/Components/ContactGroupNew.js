@@ -92,7 +92,7 @@ class ContactGroupNew extends React.Component {
             .map(([name, phone, email]) => ({name, phone: normalizePhoneNumber(phone), email: !!(email||"").match(/@/) ? email : null}))
             .filter(contact => !!contact.name && !!contact.email)
           ) : (
-            window.alert("You can only upload csv files.") || []
+            window.alert(`You can only upload csv files. You uploaded ${file[1].type}`) || []
           )
         )
         .flat(1)
