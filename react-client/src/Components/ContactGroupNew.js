@@ -83,7 +83,10 @@ class ContactGroupNew extends React.Component {
   _handleFiles = (e, files) =>
     this.setState({
       contacts: files.map(file => 
-        file[1].type === 'text/csv' ? (
+        file[1].type.toLowerCase() === 'text/csv' ||
+        file[1].type.toLowerCase() === 'text/plain' ||
+        file[1].type.toLowerCase() === 'application/vnd.ms-excel'
+        ? (
           file[0].target.result.replace( /[\n\r]/g, "^~^" ).split("^~^")
             .map(line => line.split(","))
             .map(([name, phone, email]) => ({name, phone: normalizePhoneNumber(phone), email: !!(email||"").match(/@/) ? email : null}))
