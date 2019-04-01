@@ -99,7 +99,7 @@ class SurveyDetail extends React.Component {
       .map(option => 
         this.responseCountForOption(option.id, startDate, endDate, userId, surveys)
       )
-      .reduce((count, currentValue) => count + currentValue)
+      .reduce((count, currentValue) => count + currentValue, 0)
 
   newScore = (options, startDate, endDate, userId, surveys) =>
     !!this.responseCount(options, startDate, endDate, userId, surveys) ? (
