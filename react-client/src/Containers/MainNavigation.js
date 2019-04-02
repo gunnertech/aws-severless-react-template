@@ -16,6 +16,7 @@ import { ListItem, ListItemIcon, ListItemText, ListSubheader } from '@material-u
 import MenuIcon from '@material-ui/icons/Menu';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import HomeIcon from '@material-ui/icons/Home';
+import SendIcon from '@material-ui/icons/Send';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import DescriptionIcon from '@material-ui/icons/Description';
 import AssessmentIcon from '@material-ui/icons/Assessment';
@@ -109,6 +110,9 @@ const styles = theme => ({
   }
 });
 
+// const ExternalLink = ({to, children, className}) =>
+//   <a href={to} className={className}>{children}</a>
+
 class MainNavigation extends React.Component {
   state = {
     mobileOpen: false,
@@ -138,66 +142,98 @@ class MainNavigation extends React.Component {
         <div className={classes.toolbar} />
         <Divider />
         {
-          !!currentUser && !!currentUser.organization &&
-          <List subheader={
-            <ListSubheader>{currentUser.organization.name}</ListSubheader>
-          }>
-            <ListItem 
-              component={Link} 
-              to={`/dashboard`} 
-              button  
-              onClick={this.handleDrawerToggle}
-            >
-              <ListItemIcon>
-                <AssessmentIcon />
-              </ListItemIcon>
-              <ListItemText><Typography  className={classes.link}>Dashboard</Typography></ListItemText>
-            </ListItem>
-            <ListItem 
-              component={Link} 
-              to={`/users`} 
-              button  
-              onClick={this.handleDrawerToggle}
-            >
-              <ListItemIcon>
-                <AccountCircleIcon />
-              </ListItemIcon>
-              <ListItemText><Typography  className={classes.link}>Users</Typography></ListItemText>
-            </ListItem>
-            <ListItem 
-              component={Link} 
-              to={`/campaigns`} 
-              button  
-              onClick={this.handleDrawerToggle}
-            >
-              <ListItemIcon>
-                <DescriptionIcon />
-              </ListItemIcon>
-              <ListItemText><Typography  className={classes.link}>Campaigns</Typography></ListItemText>
-            </ListItem>
-            <ListItem 
-              component={Link} 
-              to={`/contacts`} 
-              button  
-              onClick={this.handleDrawerToggle}
-            >
-              <ListItemIcon>
-                <AccountGroupIcon />
-              </ListItemIcon>
-              <ListItemText><Typography  className={classes.link}>Contacts</Typography></ListItemText>
-            </ListItem>
-            <ListItem 
-              component={Link} 
-              to={`/settings`} 
-              button  
-              onClick={this.handleDrawerToggle}
-            >
-              <ListItemIcon>
-                <SettingsIcon />
-              </ListItemIcon>
-              <ListItemText><Typography className={classes.link}>Settings</Typography></ListItemText>
-            </ListItem>
-          </List>
+          !!currentUser && 
+          !!currentUser.organization &&
+            <List subheader={
+              <ListSubheader>{currentUser.organization.name}</ListSubheader>
+            }>
+              {
+                currentUser.assignedRoles.items.find(ar => ar.role.name === 'admin') &&
+                <ListItem 
+                  component={Link} 
+                  to={`/dashboard`} 
+                  button  
+                  onClick={this.handleDrawerToggle}
+                >
+                  <ListItemIcon>
+                    <AssessmentIcon />
+                  </ListItemIcon>
+                  <ListItemText><Typography  className={classes.link}>Dashboard</Typography></ListItemText>
+                </ListItem>
+              }
+              
+              {
+                currentUser.assignedRoles.items.find(ar => ar.role.name === 'admin') &&
+                <ListItem 
+                  component={Link} 
+                  to={`/users`} 
+                  button  
+                  onClick={this.handleDrawerToggle}
+                >
+                  <ListItemIcon>
+                    <AccountCircleIcon />
+                  </ListItemIcon>
+                  <ListItemText><Typography  className={classes.link}>Users</Typography></ListItemText>
+                </ListItem>
+              }
+
+              {
+                currentUser.assignedRoles.items.find(ar => ar.role.name === 'admin') &&
+                <ListItem 
+                  component={Link} 
+                  to={`/campaigns`} 
+                  button  
+                  onClick={this.handleDrawerToggle}
+                >
+                  <ListItemIcon>
+                    <DescriptionIcon />
+                  </ListItemIcon>
+                  <ListItemText><Typography  className={classes.link}>Campaigns</Typography></ListItemText>
+                </ListItem>
+              }
+
+              {
+                currentUser.assignedRoles.items.find(ar => ar.role.name === 'admin') &&
+                <ListItem 
+                  component={Link} 
+                  to={`/contacts`} 
+                  button  
+                  onClick={this.handleDrawerToggle}
+                >
+                  <ListItemIcon>
+                    <AccountGroupIcon />
+                  </ListItemIcon>
+                  <ListItemText><Typography  className={classes.link}>Contacts</Typography></ListItemText>
+                </ListItem>
+              }
+
+              <ListItem 
+                component={Link} 
+                to={`/surveys/send`} 
+                button  
+                onClick={this.handleDrawerToggle}
+              >
+                <ListItemIcon>
+                  <SendIcon />
+                </ListItemIcon>
+                <ListItemText><Typography  className={classes.link}>Send Survey</Typography></ListItemText>
+              </ListItem>
+
+              {
+                currentUser.assignedRoles.items.find(ar => ar.role.name === 'admin') &&
+                <ListItem 
+                  component={Link} 
+                  to={`/settings`} 
+                  button  
+                  onClick={this.handleDrawerToggle}
+                >
+                  <ListItemIcon>
+                    <SettingsIcon />
+                  </ListItemIcon>
+                  <ListItemText><Typography className={classes.link}>Settings</Typography></ListItemText>
+                </ListItem>
+              }
+            </List>
         }
         <Divider />
         <List>
@@ -261,6 +297,10 @@ class MainNavigation extends React.Component {
                 className={classes.logo}
                 alt="Home"
               />
+              {
+                !!process.env.REACT_APP_bucket.match(/staging/) &&
+                <span style={{color: "white"}}>- S</span>
+              }
             </Link>
             <ActionMenuConsumer>
               {({Element}) => Element ? Element : null}

@@ -17,7 +17,7 @@ const PrivacyPolicy = props => {
 <p>Effective date: October 26, 2018</p>
 
 
-<p>Gunner Technology, Inc ("us", "we", or "our") operates the https://simplisurvey.com/ website (the "Service").</p>
+<p>Gunner Technology, Inc ("us", "we", or "our") operates the https://<project-name>.com/ website (the "Service").</p>
 
 <p>This page informs you of our policies regarding the collection, use, and disclosure of personal data when you use our Service and the choices you have associated with that data.</p>
 

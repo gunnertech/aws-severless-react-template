@@ -1,5 +1,5 @@
 import React from 'react';
-import { Font } from 'expo';
+import { Font, DangerZone } from 'expo';
 import { ThemeContext, getTheme } from 'react-native-material-ui';
 import Amplify, { Auth, Hub } from 'aws-amplify';
 import { Rehydrated } from 'aws-appsync-react';
@@ -9,6 +9,7 @@ import { ApolloLink } from 'apollo-link';
 import Sentry from 'sentry-expo';
 import { withClientState } from 'apollo-link-state';
 import { ThemeProvider } from 'react-native-elements';
+import { Cache } from 'aws-amplify';
 
 import AppNavigator from './src/Navigators/App'
 import muiTheme from './src/Styles/muiTheme'
@@ -37,6 +38,12 @@ const authScreenLabels = {
         'Confirm Sign Up': 'Confirm Sign Up by entering the code that was sent to your email address'
     }
 };
+
+DangerZone.Branch.subscribe(bundle =>
+  bundle && bundle.params && !bundle.error && bundle.params && bundle.params.user && (
+    Cache.setItem('inviteInputs', bundle.params.user)
+  )
+)
 
 I18n.setLanguage('en');
 I18n.putVocabularies(authScreenLabels);
@@ -204,8 +211,9 @@ class App extends React.Component {
       onError: e => console.log("_createNewUser", e),
       variables: {
         id: cognitoUser.username,
-        phone: cognitoUser.attributes.phone_number || "",
-        email: cognitoUser.attributes.email || "",
+        phone: cognitoUser.attributes.phone_number || undefined,
+        email: cognitoUser.attributes.email || undefined,
+        name: cognitoUser.attributes.name || undefined,
         active: true,
       },
     })
@@ -258,7 +266,13 @@ class App extends React.Component {
           )
         )
       )
-      .then(currentUser => new Promise(resolve => this.setState({currentUser}, resolve.bind(null, currentUser))))
+      .then(currentUser => 
+        !currentUser.active ? (
+          new Promise(resolve => this.setState({currentUser: null}, resolve.bind(null, null)))
+        ) : (
+          new Promise(resolve => this.setState({currentUser}, resolve.bind(null, currentUser)))
+        )
+      )
       .catch(err => console.log("ERROR", err) || this.setState({currentUser: null}));
 
   

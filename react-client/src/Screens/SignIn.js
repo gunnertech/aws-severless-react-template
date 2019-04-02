@@ -7,6 +7,8 @@ import {
   FederatedButtons,
 } from 'aws-amplify-react';
 
+import { Cache } from 'aws-amplify';
+
 import {
   FormSection,
   Hint,
@@ -25,17 +27,41 @@ import {
 
 class MySignIn extends SignIn {
   async signIn() {
-    this.inputs.username = this.inputs.username.toLowerCase()
-    super.signIn()
+      if(this._signingIn) { return false; }
+      this._signingIn = true;
+    const signupInputs = Cache.getItem('signupInputs');
+    if(!!signupInputs && this.props.authState === 'signedUp') {
+        this.inputs = {...signupInputs, username: signupInputs.email};
+        this.inputs.username = signupInputs.email;
+        Cache.removeItem('signupInputs');
+    }
+    this.inputs.username = (this.inputs.username||"").toLowerCase()
+    super.signIn();
+    Cache.removeItem('signupInputs');
+  }
+
+  componentDidUpdate() {
+      const signupInputs = Cache.getItem('signupInputs');
+      if(!!signupInputs && this.props.authState === 'signedUp') {
+          this.signIn()
+        //   .then(() => setTimeout(() => window.location.reload(), 4000))
+          
+      }
+      super.componentDidUpdate && super.componentDidUpdate();
   }
 
   showComponent(theme) {
+    console.log(Cache.getItem('signupInputs'))
     const { authState, federated, onStateChange, onAuthEvent } = this.props;
     // if (hide && hide.includes(SignIn)) { return null; }
     const hideSignUp = false; //!override.includes('SignUp') && hide.some(component => component === SignUp);
     const hideForgotPassword = false; //!override.includes('ForgotPassword') && hide.some(component => component === ForgotPassword);
     return (
         <FormSection theme={theme}>
+            {
+                !!Cache.getItem('signupInputs') &&
+                <div style={{color: 'red'}}>Code confirmed! Please sign in.</div>
+            }
             <SectionHeader theme={theme}>{I18n.get('Sign in to your account')}</SectionHeader>
             <SectionBody theme={theme}>
             <FederatedButtons
@@ -54,6 +80,7 @@ class MySignIn extends SignIn {
                         key="username"
                         name="username"
                         onChange={this.handleInputChange}
+                        value={(Cache.getItem('signupInputs')||{}).email}
                     />
                 </FormField>
                 <FormField theme={theme}>
@@ -65,6 +92,7 @@ class MySignIn extends SignIn {
                         type="password"
                         name="password"
                         onChange={this.handleInputChange}
+                        value={(Cache.getItem('signupInputs')||{}).password}
                     />
                     {
                         !hideForgotPassword && <Hint theme={theme}>

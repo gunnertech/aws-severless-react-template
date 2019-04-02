@@ -12,6 +12,8 @@ import { withMuiTheme } from '../Styles/muiTheme';
 import Container from '../Components/Container'
 import withCurrentUser from '../Hocs/withCurrentUser'
 
+import ENV from '../environment'
+
 const styles = theme => ({
   commentButtonContainer: {
     marginTop: theme.spacing.xl
@@ -21,6 +23,12 @@ const styles = theme => ({
 class Splash extends React.Component {
 
   componentDidMount() {
+    if(this.props.currentUser) {
+      this.props.navigation.navigate("Gated")
+    }
+  }
+
+  componentDidUpdate(prevProps) {
     if(this.props.currentUser) {
       this.props.navigation.navigate("Gated")
     }

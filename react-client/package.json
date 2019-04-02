@@ -29,6 +29,8 @@
     "react-apollo": "latest",
     "react-countup": "latest",
     "react-dom": "latest",
+    "react-file-reader": "^1.1.4",
+    "react-file-reader-input": "^2.0.0",
     "react-helmet": "^5.2.0",
     "react-images": "^0.5.19",
     "react-jss": "latest",
@@ -37,6 +39,7 @@
     "react-scripts": "2.1.1",
     "react-text-mask": "^5.4.3",
     "recharts": "latest",
+    "shortid": "^2.2.14",
     "uuid-v4": "^0.1.0"
   },
   "scripts": {

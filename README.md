@@ -7,18 +7,18 @@ $ ./organization add -n <project-name>-staging -e <project-name>-staging@gunnert
 $ ./organization add -n <project-name>-production -e <project-name>-production@gunnertech.com -u <your root username> -g <groupname>
 ````
 
-add helper to ~/.gitconfig (if you haven't before - you'll also need access to the simplisurveydeveloper profile)
+add helper to ~/.gitconfig (if you haven't before - you'll also need access to the <project-name>developer profile)
 ````
-[credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/simplisurvey-development/"]
+[credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-development/"]
 UseHttpPath = true
-helper = !aws --profile simplisurveydeveloper codecommit credential-helper $@
+helper = !aws --profile <project-name>developer codecommit credential-helper $@
 ````
 
 
 ## Project 
 ````
 $ cd ~/workspace/javascript/serverless
-$ git clone --single-branch -b template https://git-codecommit.us-east-1.amazonaws.com/v1/repos/simplisurvey <project-name>
+$ git clone --single-branch -b template https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name> <project-name>
 $ ##Do a global search and replace for <project-name> and replace with, well, the name of the project
 ````
 
@@ -97,7 +97,10 @@ $ git push origin released/%iteration-date%
 $ git push staging %iteration-date%
 $ git checkout %dev name%
 $ git branch -D <iteration-date>
-$ ## Submit pull request
+$ ## Submit pull request:
+$ aws codecommit create-pull-request --title "20190326 Iteration Pull Request" --description "20190326 Iteration Pull Request" --client-request-token 20190326 --targets repositoryName=<project-name>-staging,sourceReference=20190326 --profile <project-name>-stagingdeveloper
+$ ## ACCEPT pull request (after reviewing it):
+$ aws codecommit merge-pull-request-by-fast-forward --pull-request-id 6 --repository-name <project-name>-staging --profile <project-name>-stagingdeveloper
 ````
   
 ## Amplify
@@ -118,6 +121,8 @@ $ git push
 ````
 $ cd serverless
 $ sls deploy -s staging
+$ ### (snapshot for the program)
+$ sls deploy list -s staging
 ````
 ### React Native Front End
 ````
@@ -132,8 +137,14 @@ $ # Upload .apk to play store - if first time, you'll have to add the new app
 $ ###else
 $ expo publish --release-channel staging
 $ ###end if
+$ ###(snapshot output for the program)
+$ expo publish:history  --release-channel staging
 ````
 ### React Front End (automatically from the git push)
+
+````
+$ ###(snapshot output for the program)
+$ aws amplify list-jobs --app-id d2x31qlfq03ed5 --branch-name staging --profile <project-name>-stagingdeveloper
 
 ## Deploying (Production)
 
@@ -147,6 +158,8 @@ $ git push
 ````
 $ cd serverless
 $ sls deploy -s production
+$ ### (snapshot for the program)
+$ sls deploy list -s production
 ````
 ### React Native Front End
 ````
@@ -159,7 +172,9 @@ $ # UPLOAD .ipa  USING APPLICATION LOADER - if first time, you'll have to add it
 $ expo build:android --release-channel production
 $ # Upload .apk to play store - if first time, you'll have to add the new app
 $ ###else
-$ expo publish --release-channel production
 $ ###end if 
+$ ###(snapshot output for the program)
+$ expo publish:history  --release-channel production
 ````
 ### React Front End (automatically from the git push)
+$ aws amplify list-jobs --app-id d328azc37801vs --branch-name master --profile <project-name>-productiondeveloper

@@ -8,6 +8,7 @@ import { ApolloLink } from 'apollo-link';
 import { withClientState } from 'apollo-link-state';
 import * as Sentry from '@sentry/browser';
 import { ConfirmSignIn, ConfirmSignUp, ForgotPassword, RequireNewPassword, VerifyContact, withAuthenticator } from 'aws-amplify-react';
+import { Cache } from 'aws-amplify';
 
 import GetUser from "./api/Queries/GetUser"
 import CreateUser from "./api/Mutations/CreateUser"
@@ -241,6 +242,10 @@ class App extends Component {
 
   componentDidMount() {
     this._handleSignIn();
+    // eslint-disable-next-line no-undef
+    branch.init('key_live_kcRp9dEqccHe8PyqYBkOUoahFEeh9IPj', (err, data) =>
+      data && data.data_parsed && data.data_parsed.user && Cache.setItem('inviteInputs', data.data_parsed.user)
+    )
   }
 
   render() {

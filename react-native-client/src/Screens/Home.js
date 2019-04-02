@@ -49,13 +49,17 @@ class Home extends React.PureComponent {
 
   render() {
     const { classes, currentUser } = this.props;
+    const { isAllChecked, submitted, submitting, selectedCampaignTemplateId, selectedCampaignId, selectedSurveyTemplateId, selectedContacts, selectedContactGroupId, recipientContact, recipientIdentifier } = this.state;
     return !currentUser ? null : (
       <Container>
+        <ScrollView>
+
         <Card style={{container: classes.cardContainer}}>
           <View>
             <Text>Welcome to your new project, {currentUser.name}</Text>
           </View>
         </Card>
+        </ScrollView>
       </Container>
     )
   }
