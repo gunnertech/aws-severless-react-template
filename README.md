@@ -153,6 +153,7 @@ $ aws amplify list-jobs --app-id d2x31qlfq03ed5 --branch-name staging --profile 
 
 (after Client approves changes on staging)
 
+````
 $ git checkout master
 $ git merge staging
 $ git push
