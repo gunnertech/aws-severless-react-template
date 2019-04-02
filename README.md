@@ -46,7 +46,6 @@ $ cd <project-name>/react-client
 ````
 1) Modify .env.<stage> for each stage and Layout.js for meta data
 ````
-$ yarn upgrade
 $ yarn install
 $ yarn start (to make sure everything worked)
 ````
