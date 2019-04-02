@@ -24,6 +24,7 @@ $ ##Do a global search and replace for <project-name> and replace with, well, th
 
 ## Serverless
 ````
+$ yarn global add serverless
 $ code <project-name>/serverless
 $ # Global search for PRE DEPLOY TODO
 $ yarn
