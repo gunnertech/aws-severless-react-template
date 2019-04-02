@@ -7,18 +7,11 @@ $ ./organization add -o <client-name> -n <project-name>-staging -e <project-name
 $ ./organization add -o <client-name> -n <project-name>-production -e <project-name>-production@gunnertech.com -u <your root username> -g <groupname>
 ````
 
-add helper to ~/.gitconfig (if you haven't before - you'll also need access to the <project-name>developer profile)
-````
-[credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-development/"]
-UseHttpPath = true
-helper = !aws --profile <project-name>developer codecommit credential-helper $@
-````
-
 
 ## Project 
 ````
 $ cd ~/workspace/javascript/serverless
-$ git clone --single-branch -b template https://git-codecommit.us-east-1.amazonaws.com/v1/repos/simplisurvey-development <project-name>
+$ git clone --single-branch -b template git@github.com:gunnertech/aws-severless-react-template.git <project-name>
 $ ##Do a global search and replace for <project-name> and replace with, well, the name of the project
 ````
 
@@ -58,19 +51,18 @@ $ yarn install
 $ yarn start (to make sure everything worked)
 ````
 ## Git
-modify <project-name>/.git/config with [this](https://gist.github.com/CodySwannGT/ea1dcb937426d8121576b59334000d58) and replace <project-name>
+Modify project's <project-name>/.git/config with [this](https://gist.github.com/CodySwannGT/ea1dcb937426d8121576b59334000d58) and replace project-name
 
 ### Setup
 
 ````
 $ cd <project-name>
 $ git checkout -b <dev name>
-$ git add .; git commit -am "initial commit"; git push -u origin <dev name>
+$ git add .; git commit -am "initial commit"; git push
 $ git checkout -b staging
-$ git merge <dev name>; git push -u staging staging
+$ git merge <dev name>; git push
 $ git checkout -b master
-$ git merge <dev name>; git push -u production master
-$ git branch -D template
+$ git merge <dev name>; git push
 ````
 ### Workflow
 ````
