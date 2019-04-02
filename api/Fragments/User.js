@@ -7,26 +7,10 @@ const User = {
         __typename
         id
         name
-        title
         phone
         email
-        active
         createdAt
         updatedAt
-        organizationId
-        organization {
-          __typename
-          ...OrganizationEntry
-        }
-        assignedRoles {
-          items {
-            id
-            role {
-              id
-              name
-            }
-          }
-        }
       }
     `
   }
