@@ -51,12 +51,12 @@ const ENV = {
 }
 
 function getEnvVars(env = '') {
-  if (env === null || env === undefined || env === '') return ENV.<stage>
-  if (env.indexOf('<stage>') !== -1) return ENV.<stage>
+  if (env === null || env === undefined || env === '') return ENV.development
+  if (env.indexOf('development') !== -1) return ENV.development
   if (env.indexOf('staging') !== -1) return ENV.staging
   if (env.indexOf('production') !== -1) return ENV.production
 
-  return ENV.<stage>
+  return ENV.development
 }
 
 
