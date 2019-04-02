@@ -18,7 +18,7 @@ const ENV = {
     awsRegion: 'us-east-1',
     userPoolWebClientId: '1pjn5c59qk60op9vn1rq88ln6v',
     aws_appsync_graphqlEndpoint: 'https://3hx7skn62nanfnbuplwi2t5lle.appsync-api.us-east-1.amazonaws.com/graphql',
-    bucket: 'com-gunnertech-<project-name>-<stage>',
+    bucket: 'com-gunnertech-<project-name>-development',
     pinpoint_app_id: "67be524b1e9f4f9cb49a11e40e370a01",
     cdn: 'dtfsbcv3jr02i.cloudfront.net',
     base_url: "http://localhost:3000",

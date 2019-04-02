@@ -42,11 +42,10 @@ $ sls deploy -s production
 $ yarn global add expo-cli
 $ cd <project-name>/react-native-client
 ````
-1) Modify app.json (replace <project-name>) and environment.js (set up variables) to fit your project
+Modify environment.js variables
 ````
-$ yarn upgrade
 $ yarn install
-$ yarn ios (to make sure everything worked)
+$ yarn ios # Load the emulator to make sure everything worked
 ````
 ## [React Client](https://github.com/facebook/create-react-app)
   ````
