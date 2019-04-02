@@ -130,11 +130,11 @@ class Home extends React.Component {
         Promise.all([
           this.props.client.query({
             query: QuerySurveysByCampaignIdCreatedAtIndex,
-            variables: { campaignId: this.state.selectedCampaignId },
+            variables: { campaignId: this.state.selectedCampaignId, first: 10000 },
           }),
           this.props.client.query({
             query: QueryUsersByOrganizationIdCreatedAtIndex,
-            variables: { organizationId: this.props.currentUser.organizationId },
+            variables: { organizationId: this.props.currentUser.organizationId, first: 10000 },
           })
         ])
       )

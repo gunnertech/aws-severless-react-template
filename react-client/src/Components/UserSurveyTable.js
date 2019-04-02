@@ -23,7 +23,7 @@ const styles = theme => ({
   },
 });
 
-const UserSurveyTable = ({classes, users, selectedPrompt, surveys, onModalClose, onHeaderCellClick}) =>
+const UserSurveyTable = ({classes, users, selectedPrompt, surveys, onModalClose, onHeaderCellClick}) => 
   <Paper className={classes.root}>
     {
       !!selectedPrompt &&

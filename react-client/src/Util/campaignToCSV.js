@@ -36,7 +36,7 @@ if (!Array.prototype.flat) {
 	});
 }
 
-const campaignToCSV = (campaign, surveys, users) =>
+const campaignToCSV = (campaign, surveys, users) => 
   Promise.resolve(["Campaign", "Survey", "Prompt", "Response", "Comments", 'Reviewer Name', 'Reviewer Email', 'Reviewed At (UTC -5)', 'Reviewer Comments', "Sender's Name", "Sender's Email", "Respondent", "Date (UTC -5)"])
     .then(header => ({
       header,
@@ -50,7 +50,7 @@ const campaignToCSV = (campaign, surveys, users) =>
                   !!survey.responses.items.find(response => option.id === response.optionId)
                 )
             }))
-            .map(({prompt, selectedOption={}}) => console.log({prompt, selectedOption}) || ({
+            .map(({prompt, selectedOption={}}) => ({
               survey, 
               prompt,
               selectedOption,
@@ -58,7 +58,7 @@ const campaignToCSV = (campaign, surveys, users) =>
                 response.optionId === selectedOption.id
               )
             }))
-            .map(({survey, prompt, selectedOption={}, response={}}) => console.log(survey, prompt, selectedOption, response) || ([
+            .map(({survey, prompt, selectedOption={}, response={}}) => ([
               campaign.campaignTemplate.name, ///Campaign
               survey.surveyTemplate.name,  //Survey
               prompt.body, //Prompt
