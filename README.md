@@ -118,12 +118,14 @@ $ git push
 ````
 
 ### Backend
+
 ````
 $ cd serverless
 $ sls deploy -s staging
 $ ### (snapshot for the program)
 $ sls deploy list -s staging
 ````
+
 ### React Native Front End
 ````
 $ cd react-native-client
@@ -145,11 +147,12 @@ $ expo publish:history  --release-channel staging
 ````
 $ ###(snapshot output for the program)
 $ aws amplify list-jobs --app-id d2x31qlfq03ed5 --branch-name staging --profile <project-name>-stagingdeveloper
-
-## Deploying (Production)
-
-### Client approves iteration
 ````
+
+## Deploying (Production) 
+
+(after Client approves changes on staging)
+
 $ git checkout master
 $ git merge staging
 $ git push
