@@ -2,9 +2,9 @@
 ## AWS account
 ````
 $ cd ~/workspace/aws
-$ ./organization add -n <project-name>-development -e <project-name>-development@gunnertech.com -u <your root username> -g <groupname>
-$ ./organization add -n <project-name>-staging -e <project-name>-staging@gunnertech.com -u <your root username> -g <groupname>
-$ ./organization add -n <project-name>-production -e <project-name>-production@gunnertech.com -u <your root username> -g <groupname>
+$ ./organization add -o <client-name> -n <project-name>-development -e <project-name>-development@gunnertech.com -u <your root username> -g <groupname>
+$ ./organization add -o <client-name> -n <project-name>-staging -e <project-name>-staging@gunnertech.com -u <your root username> -g <groupname>
+$ ./organization add -o <client-name> -n <project-name>-production -e <project-name>-production@gunnertech.com -u <your root username> -g <groupname>
 ````
 
 add helper to ~/.gitconfig (if you haven't before - you'll also need access to the <project-name>developer profile)
@@ -18,7 +18,7 @@ helper = !aws --profile <project-name>developer codecommit credential-helper $@
 ## Project 
 ````
 $ cd ~/workspace/javascript/serverless
-$ git clone --single-branch -b template https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name> <project-name>
+$ git clone --single-branch -b template https://git-codecommit.us-east-1.amazonaws.com/v1/repos/simplisurvey-development <project-name>
 $ ##Do a global search and replace for <project-name> and replace with, well, the name of the project
 ````
 
