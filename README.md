@@ -181,4 +181,6 @@ $ ###(snapshot output for the program)
 $ expo publish:history  --release-channel production
 ````
 ### React Front End (automatically from the git push)
+````
 $ aws amplify list-jobs --app-id d328azc37801vs --branch-name master --profile <project-name>-productiondeveloper
+````
