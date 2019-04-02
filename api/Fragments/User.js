@@ -1,5 +1,4 @@
 import gql from 'graphql-tag';
-import Organization from './Organization';
 
 const User = {
   fragments: {
@@ -29,7 +28,6 @@ const User = {
           }
         }
       }
-      ${Organization.fragments.global}
     `
   }
 }
