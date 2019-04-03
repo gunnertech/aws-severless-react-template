@@ -274,7 +274,7 @@ class MainNavigation extends React.Component {
             */}
 
             <Typography paragraph>
-              © {(new Date()).getFullYear()} AZ Tech <br />
+              © {(new Date()).getFullYear()} &gt;Company Name&lt; <br />
               <Link to={`/privacy-policy`}>Privacy Policy</Link>
             </Typography>
           </footer>

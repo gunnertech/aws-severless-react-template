@@ -96,8 +96,38 @@ $ aws codecommit merge-pull-request-by-fast-forward --pull-request-id 6 --reposi
   
 ## Amplify
 
-Log into the console and setup the deploy as seen in [this video](https://youtu.be/iql6pRyof20)
+The below create-app snippet should work, but it doesn't because of a bug with AWS not supporting CodeCommit from the cli, so log into the console and setup the deploy as seen in [this video](https://youtu.be/iql6pRyof20).
 
+All you have to do is connect the app. The update-app command WILL work once you connect the app.
+
+Note, you'll have to copy the environment variables from the respective .env files and update them below and do this for EACH environment
+
+````
+$ # THIS SHOULD WORK BUT IT WON'T
+$ aws amplify create-app --name <project-name>-<stage> \
+  --profile <project-name>-<stage>developer \
+  --repository https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-<stage>/ \
+  --oauth-token na \
+  --platform WEB \
+  --environment-variables REACT_APP_userPoolId='us-east-1_KVlHazoic',REACT_APP_identityPoolId='us-east-1:f5bf62cd-bdcf-4bcd-b728-3183a586482c',REACT_APP_awsRegion='us-east-1',REACT_APP_userPoolWebClientId='1tkd50s16cgbqq7lqi9oakvvvm',REACT_APP_aws_appsync_graphqlEndpoint='https://qhwg2bxxvvctrh6hb6xnb2rhmu.appsync-api.us-east-1.amazonaws.com/graphql',REACT_APP_bucket='com-gunnertech-<project-name>-<stage>',REACT_APP_pinpoint_app_id="26e2d1c5094b43109e3ffa350f09246a",REACT_APP_cdn='d2qjgmi918y4cs.cloudfront.net',REACT_APP_base_url="http://localhost:3000",REACT_APP_sentry_url='https://95faca7deff040e5a8336345cbef8e94@sentry.io/1429804' \
+  --enable-branch-auto-build \
+  --environment-variables REACT_APP_userPoolId='us-east-1_KVlHazoic',REACT_APP_identityPoolId='us-east-1:f5bf62cd-bdcf-4bcd-b728-3183a586482c',REACT_APP_awsRegion='us-east-1',REACT_APP_userPoolWebClientId='1tkd50s16cgbqq7lqi9oakvvvm',REACT_APP_aws_appsync_graphqlEndpoint='https://qhwg2bxxvvctrh6hb6xnb2rhmu.appsync-api.us-east-1.amazonaws.com/graphql',REACT_APP_bucket='com-gunnertech-<project-name>-<stage>',REACT_APP_pinpoint_app_id="26e2d1c5094b43109e3ffa350f09246a",REACT_APP_cdn='d2qjgmi918y4cs.cloudfront.net',REACT_APP_base_url="http://localhost:3000",REACT_APP_sentry_url='https://95faca7deff040e5a8336345cbef8e94@sentry.io/1429804' \
+  --enable-branch-auto-build \
+  --custom-rules '[{"source":"</^[^.]+$|\\.(?!(css|json|gif|ico|jpg|js|png|txt|svg|woff|ttf)$)([^.]+$)/>","target":"/index.html","status":"200"},{"source":"/<*>","target":"/index.html","status":"404"}]'
+````
+
+
+````
+$ # THIS WILL WORK
+$ aws amplify list-apps --profile <project-name>-<stage>developer ## get the app-id
+$ aws amplify update-app --app-id d3vxt2imvts5g3 \
+  --name <project-name>-<stage> \
+  --profile <project-name>-<stage>developer \
+  --platform WEB \
+  --environment-variables REACT_APP_userPoolId='us-east-1_KVlHazoic',REACT_APP_identityPoolId='us-east-1:f5bf62cd-bdcf-4bcd-b728-3183a586482c',REACT_APP_awsRegion='us-east-1',REACT_APP_userPoolWebClientId='1tkd50s16cgbqq7lqi9oakvvvm',REACT_APP_aws_appsync_graphqlEndpoint='https://qhwg2bxxvvctrh6hb6xnb2rhmu.appsync-api.us-east-1.amazonaws.com/graphql',REACT_APP_bucket='com-gunnertech-<project-name>-<stage>',REACT_APP_pinpoint_app_id="26e2d1c5094b43109e3ffa350f09246a",REACT_APP_cdn='d2qjgmi918y4cs.cloudfront.net',REACT_APP_base_url="http://localhost:3000",REACT_APP_sentry_url='https://95faca7deff040e5a8336345cbef8e94@sentry.io/1429804' \
+  --enable-branch-auto-build \
+  --custom-rules '[{"source":"</^[^.]+$|\\.(?!(css|json|gif|ico|jpg|js|png|txt|svg|woff|ttf)$)([^.]+$)/>","target":"/index.html","status":"200"},{"source":"/<*>","target":"/index.html","status":"404"}]'
+````
 
 ## Deploying (Staging)
 
