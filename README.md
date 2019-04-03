@@ -57,7 +57,7 @@ $ yarn ios # Load the emulator to make sure everything worked
   ````
 $ cd <project-name>/react-client
 ````
-1) Modify .env.<stage> for each stage and Layout.js for meta data
+Modify the environment variables inside the .env.&lt;stage&gt; files for each stage (development, staging, production)
 ````
 $ yarn install
 $ yarn start (to make sure everything worked)
