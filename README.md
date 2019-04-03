@@ -1,4 +1,17 @@
 # Setup
+
+## Prerequisites
+
+Install the following
+
+1. AWS CLI (https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html#install-tool-pip)
+2. Git (https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+3. NVM (https://github.com/creationix/nvm#installation-and-update)
+4. Node ($ nvm install)
+5. Serverless framework config (npm install -g serverless)
+6. Expo (npm install -g expo-cli)
+7. Our AWS scripts (https://github.com/gunnertech/aws-scripts)
+
 ## AWS account
 ````
 $ cd ~/workspace/aws
