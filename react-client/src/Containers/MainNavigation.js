@@ -140,102 +140,6 @@ class MainNavigation extends React.Component {
     const drawer = (
       <div>
         <div className={classes.toolbar} />
-        <Divider />
-        {
-          !!currentUser && 
-          !!currentUser.organization &&
-            <List subheader={
-              <ListSubheader>{currentUser.organization.name}</ListSubheader>
-            }>
-              {
-                currentUser.assignedRoles.items.find(ar => ar.role.name === 'admin') &&
-                <ListItem 
-                  component={Link} 
-                  to={`/dashboard`} 
-                  button  
-                  onClick={this.handleDrawerToggle}
-                >
-                  <ListItemIcon>
-                    <AssessmentIcon />
-                  </ListItemIcon>
-                  <ListItemText><Typography  className={classes.link}>Dashboard</Typography></ListItemText>
-                </ListItem>
-              }
-              
-              {
-                currentUser.assignedRoles.items.find(ar => ar.role.name === 'admin') &&
-                <ListItem 
-                  component={Link} 
-                  to={`/users`} 
-                  button  
-                  onClick={this.handleDrawerToggle}
-                >
-                  <ListItemIcon>
-                    <AccountCircleIcon />
-                  </ListItemIcon>
-                  <ListItemText><Typography  className={classes.link}>Users</Typography></ListItemText>
-                </ListItem>
-              }
-
-              {
-                currentUser.assignedRoles.items.find(ar => ar.role.name === 'admin') &&
-                <ListItem 
-                  component={Link} 
-                  to={`/campaigns`} 
-                  button  
-                  onClick={this.handleDrawerToggle}
-                >
-                  <ListItemIcon>
-                    <DescriptionIcon />
-                  </ListItemIcon>
-                  <ListItemText><Typography  className={classes.link}>Campaigns</Typography></ListItemText>
-                </ListItem>
-              }
-
-              {
-                currentUser.assignedRoles.items.find(ar => ar.role.name === 'admin') &&
-                <ListItem 
-                  component={Link} 
-                  to={`/contacts`} 
-                  button  
-                  onClick={this.handleDrawerToggle}
-                >
-                  <ListItemIcon>
-                    <AccountGroupIcon />
-                  </ListItemIcon>
-                  <ListItemText><Typography  className={classes.link}>Contacts</Typography></ListItemText>
-                </ListItem>
-              }
-
-              <ListItem 
-                component={Link} 
-                to={`/surveys/send`} 
-                button  
-                onClick={this.handleDrawerToggle}
-              >
-                <ListItemIcon>
-                  <SendIcon />
-                </ListItemIcon>
-                <ListItemText><Typography  className={classes.link}>Send Survey</Typography></ListItemText>
-              </ListItem>
-
-              {
-                currentUser.assignedRoles.items.find(ar => ar.role.name === 'admin') &&
-                <ListItem 
-                  component={Link} 
-                  to={`/settings`} 
-                  button  
-                  onClick={this.handleDrawerToggle}
-                >
-                  <ListItemIcon>
-                    <SettingsIcon />
-                  </ListItemIcon>
-                  <ListItemText><Typography className={classes.link}>Settings</Typography></ListItemText>
-                </ListItem>
-              }
-            </List>
-        }
-        <Divider />
         <List>
           <ListItem 
             component={Link} 
@@ -264,7 +168,7 @@ class MainNavigation extends React.Component {
             ) : (
               <ListItem 
                 component={Link} 
-                to={`/dashboard/`} 
+                to={`/home/`} 
                 button  
                 onClick={this.handleDrawerToggle}
               >
