@@ -49,7 +49,6 @@ class Home extends React.PureComponent {
 
   render() {
     const { classes, currentUser } = this.props;
-    const { isAllChecked, submitted, submitting, selectedCampaignTemplateId, selectedCampaignId, selectedSurveyTemplateId, selectedContacts, selectedContactGroupId, recipientContact, recipientIdentifier } = this.state;
     return !currentUser ? null : (
       <Container>
         <ScrollView>
