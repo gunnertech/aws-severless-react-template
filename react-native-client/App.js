@@ -238,40 +238,8 @@ class App extends React.Component {
           this._createNewUser(cognitoUser)
         )
       )
-      .then(user => Promise.all([
-        user, this._findInvitation(user)
-      ]))
-      .then(([user, invitation]) => ([user, invitation]))
-      .then(([user, invitation]) => // && !user.organization
-        !!invitation ? (
-          this._addUserToOrganization(user, invitation.organizationId)
-            .then(user => !user.assignedRoles.items.length ? (
-                this._acceptInvitationForUser(invitation, user)
-              ) : (
-                Promise.resolve(user)  
-              )
-            )
-        ) : (
-          user.organization ? (
-            Promise.resolve(user)
-          ) : (
-            null
-          )
-        )
-        .then(user =>
-          !user.assignedRoles.items.length ? (
-            this._addRoleToUser("admin", user)
-          ) : (
-            Promise.resolve(user)
-          )
-        )
-      )
       .then(currentUser => 
-        !currentUser.active ? (
-          new Promise(resolve => this.setState({currentUser: null}, resolve.bind(null, null)))
-        ) : (
-          new Promise(resolve => this.setState({currentUser}, resolve.bind(null, currentUser)))
-        )
+        new Promise(resolve => this.setState({currentUser}, resolve.bind(null, currentUser)))
       )
       .catch(err => console.log("ERROR", err) || this.setState({currentUser: null}));
 
