@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Serverless webpack example using ecma script",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "updateApi": "rm -rf ./api && mkdir -p ./api && cp -R ../api/ api"
   },
   "devDependencies": {
     "aws-sdk": "^2.399.0",
@@ -12,12 +13,19 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-polyfill": "^6.23.0",
     "babel-preset-env": "^1.6.0",
+    "serverless": "latest",
     "serverless-webpack": "^5.2.0",
     "webpack": "^4.25.1"
   },
   "author": "The serverless webpack authors (https://github.com/elastic-coders/serverless-webpack)",
   "license": "MIT",
   "dependencies": {
+    "amazon-cognito-identity-js": "latest",
+    "aws-appsync": "latest",
+    "cross-fetch": "^3.0.2",
+    "graphql": "latest",
+    "graphql-tag": "latest",
+    "node-fetch": "^2.2.0",
     "serverless-appsync-plugin": "^1.0.7"
   }
 }
