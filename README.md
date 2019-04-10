@@ -25,7 +25,14 @@ $ ./organization add -o <client-name> -n <project-name>-production -e <project-n
 ````
 $ cd ~/workspace/javascript/serverless
 $ git clone --single-branch -b template git@github.com:gunnertech/aws-severless-react-template.git <project-name>
+````
+
+## Git
+Modify project's <project-name>/.git/config with [this](https://gist.github.com/CodySwannGT/ea1dcb937426d8121576b59334000d58) and replace project-name
+
+````
 $ ##Do a global search and replace for <project-name> and replace with, well, the name of the project
+$ git checkout <developer-name>
 ````
 
 ## Serverless
@@ -62,8 +69,6 @@ Modify the environment variables inside the .env.&lt;stage&gt; files for each st
 $ yarn install
 $ yarn start (to make sure everything worked)
 ````
-## Git
-Modify project's <project-name>/.git/config with [this](https://gist.github.com/CodySwannGT/ea1dcb937426d8121576b59334000d58) and replace project-name
 
 ### Setup
 
