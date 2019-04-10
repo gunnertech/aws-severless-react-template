@@ -82,38 +82,8 @@ $ git merge <dev name>; git push
 $ git checkout -b master
 $ git merge <dev name>; git push
 ````
-### Workflow
-````
-$ ## Start of iteration
-$ git checkout master; git pull production master
-$ git checkout staging; git pull staging staging
-$ git checkout %dev-name i.e. ‘cody’%
-$ git merge master
-$ git merge staging
-$ ### start repetition process
-$ git checkout -b %issue-number%
-$ #work work work
-$ git add .; git commit -am “closes #%issue-number%”
-$ git checkout %dev name%
-$ git merge %issue-number%
-$ git push
-$ git branch -D %issue-number%
-$ ## repeat on more issues throughout the iteration
-$ git checkout -b %iteration-date (format: YYYYMMDD) %
-$ git merge %dev name%
-$ git push origin %iteration-date%
-$ git tag released/%iteration-date%
-$ git push origin released/%iteration-date%
-$ git push staging %iteration-date%
-$ git checkout %dev name%
-$ git branch -D <iteration-date>
-$ ## Submit pull request:
-$ aws codecommit create-pull-request --title "20190326 Iteration Pull Request" --description "20190326 Iteration Pull Request" --client-request-token 20190326 --targets repositoryName=<project-name>-staging,sourceReference=20190326 --profile <project-name>-stagingdeveloper
-$ ## ACCEPT pull request (after reviewing it):
-$ aws codecommit merge-pull-request-by-fast-forward --pull-request-id 6 --repository-name <project-name>-staging --profile <project-name>-stagingdeveloper
-````
-  
-## Amplify
+
+### Amplify
 
 The below create-app snippet should work, but it doesn't because of a bug with AWS not supporting CodeCommit from the cli, so log into the console and setup the deploy as seen in [this video](https://youtu.be/iql6pRyof20).
 
@@ -147,6 +117,39 @@ $ aws amplify update-app --app-id d3vxt2imvts5g3 \
   --enable-branch-auto-build \
   --custom-rules '[{"source":"</^[^.]+$|\\.(?!(css|json|gif|ico|jpg|js|png|txt|svg|woff|ttf)$)([^.]+$)/>","target":"/index.html","status":"200"},{"source":"/<*>","target":"/index.html","status":"404"}]'
 ````
+
+### Workflow
+````
+$ ## Start of iteration
+$ git checkout master; git pull production master
+$ git checkout staging; git pull staging staging
+$ git checkout %dev-name i.e. ‘cody’%
+$ git merge master
+$ git merge staging
+$ ### start repetition process
+$ git checkout -b %issue-number%
+$ #work work work
+$ git add .; git commit -am “closes #%issue-number%”
+$ git checkout %dev name%
+$ git merge %issue-number%
+$ git push
+$ git branch -D %issue-number%
+$ ## repeat on more issues throughout the iteration
+$ git checkout -b %iteration-date (format: YYYYMMDD) %
+$ git merge %dev name%
+$ git push origin %iteration-date%
+$ git tag released/%iteration-date%
+$ git push origin released/%iteration-date%
+$ git push staging %iteration-date%
+$ git checkout %dev name%
+$ git branch -D <iteration-date>
+$ ## Submit pull request:
+$ aws codecommit create-pull-request --title "20190326 Iteration Pull Request" --description "20190326 Iteration Pull Request" --client-request-token 20190326 --targets repositoryName=<project-name>-staging,sourceReference=20190326 --profile <project-name>-stagingdeveloper
+$ ## ACCEPT pull request (after reviewing it):
+$ aws codecommit merge-pull-request-by-fast-forward --pull-request-id 6 --repository-name <project-name>-staging --profile <project-name>-stagingdeveloper
+````
+  
+
 
 ## Deploying (Staging)
 
