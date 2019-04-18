@@ -2,79 +2,79 @@
 # yarn lockfile v1
 
 
-"@aws-amplify/analytics@^1.2.10":
-  version "1.2.10"
-  resolved "https://registry.yarnpkg.com/@aws-amplify/analytics/-/analytics-1.2.10.tgz#f499068a31a17788554158228f8fd85346838779"
+"@aws-amplify/analytics@^1.2.14":
+  version "1.2.14"
+  resolved "https://registry.yarnpkg.com/@aws-amplify/analytics/-/analytics-1.2.14.tgz#6a815bda069f0844923f833ac4e5df1f7ef1c569"
   dependencies:
-    "@aws-amplify/cache" "^1.0.22"
-    "@aws-amplify/core" "^1.0.22"
+    "@aws-amplify/cache" "^1.0.25"
+    "@aws-amplify/core" "^1.0.25"
     uuid "^3.2.1"
 
-"@aws-amplify/api@^1.0.26":
-  version "1.0.26"
-  resolved "https://registry.yarnpkg.com/@aws-amplify/api/-/api-1.0.26.tgz#f9b5347fc7204954772adf95b9ca25096bafb0f2"
+"@aws-amplify/api@^1.0.33":
+  version "1.0.33"
+  resolved "https://registry.yarnpkg.com/@aws-amplify/api/-/api-1.0.33.tgz#e1d4837c2abc38aa939358ed3ee003b6875be2a4"
   dependencies:
-    "@aws-amplify/auth" "^1.2.15"
-    "@aws-amplify/cache" "^1.0.22"
-    "@aws-amplify/core" "^1.0.22"
+    "@aws-amplify/auth" "^1.2.22"
+    "@aws-amplify/cache" "^1.0.25"
+    "@aws-amplify/core" "^1.0.25"
     "@types/zen-observable" "^0.5.3"
     axios "^0.17.0"
     graphql "0.13.0"
     uuid "^3.2.1"
     zen-observable "^0.8.6"
 
-"@aws-amplify/auth@^1.2.15":
-  version "1.2.15"
-  resolved "https://registry.yarnpkg.com/@aws-amplify/auth/-/auth-1.2.15.tgz#c9546f7ac6675c0c3ae3132e68229835bffa18c5"
+"@aws-amplify/auth@^1.2.22":
+  version "1.2.22"
+  resolved "https://registry.yarnpkg.com/@aws-amplify/auth/-/auth-1.2.22.tgz#18b137afd85f22ab59bad05ca8d464192b722b67"
   dependencies:
-    "@aws-amplify/cache" "^1.0.22"
-    "@aws-amplify/core" "^1.0.22"
-    amazon-cognito-auth-js "^1.1.9"
-    amazon-cognito-identity-js "^3.0.7"
+    "@aws-amplify/cache" "^1.0.25"
+    "@aws-amplify/core" "^1.0.25"
+    amazon-cognito-identity-js "^3.0.10"
+    crypto-js "^3.1.9-1"
 
-"@aws-amplify/cache@^1.0.22":
-  version "1.0.22"
-  resolved "https://registry.yarnpkg.com/@aws-amplify/cache/-/cache-1.0.22.tgz#f9ce353b9e414ccb636092efe2bf8210c1595b42"
+"@aws-amplify/cache@^1.0.25":
+  version "1.0.25"
+  resolved "https://registry.yarnpkg.com/@aws-amplify/cache/-/cache-1.0.25.tgz#c3c92bd117139975372e233330e251c10e4fe8de"
   dependencies:
-    "@aws-amplify/core" "^1.0.22"
+    "@aws-amplify/core" "^1.0.25"
 
-"@aws-amplify/core@^1.0.22":
-  version "1.0.22"
-  resolved "https://registry.yarnpkg.com/@aws-amplify/core/-/core-1.0.22.tgz#52327d34d55c1bc64973c8bcbda9a299ab0c8b68"
+"@aws-amplify/core@^1.0.25":
+  version "1.0.25"
+  resolved "https://registry.yarnpkg.com/@aws-amplify/core/-/core-1.0.25.tgz#d330fefe7119fc6e0254a7c39e0d1525fa039e4b"
   dependencies:
     aws-sdk "2.329.0"
     url "^0.11.0"
 
-"@aws-amplify/interactions@^1.0.25":
-  version "1.0.25"
-  resolved "https://registry.yarnpkg.com/@aws-amplify/interactions/-/interactions-1.0.25.tgz#1424b81f0d06949ce3228f2e71fd9d412b040f35"
+"@aws-amplify/interactions@^1.0.28":
+  version "1.0.28"
+  resolved "https://registry.yarnpkg.com/@aws-amplify/interactions/-/interactions-1.0.28.tgz#74e887a6f1a493c383acbaadc1e3c6361f336600"
   dependencies:
-    "@aws-amplify/core" "^1.0.22"
+    "@aws-amplify/core" "^1.0.25"
 
-"@aws-amplify/pubsub@^1.0.22":
-  version "1.0.22"
-  resolved "https://registry.yarnpkg.com/@aws-amplify/pubsub/-/pubsub-1.0.22.tgz#7c8481d5a3df57cd0a80eba3da04cbd0c8ed2971"
+"@aws-amplify/pubsub@^1.0.26":
+  version "1.0.26"
+  resolved "https://registry.yarnpkg.com/@aws-amplify/pubsub/-/pubsub-1.0.26.tgz#354d2aef2c5b7822c2158f66f925cbfa91c65644"
   dependencies:
-    "@aws-amplify/core" "^1.0.22"
+    "@aws-amplify/core" "^1.0.25"
     "@types/zen-observable" "^0.5.3"
     uuid "^3.2.1"
     zen-observable "^0.8.6"
 
-"@aws-amplify/storage@^1.0.25":
-  version "1.0.25"
-  resolved "https://registry.yarnpkg.com/@aws-amplify/storage/-/storage-1.0.25.tgz#27925bb882fd7b3f09e1c0936cf8cafc77c51d87"
+"@aws-amplify/storage@^1.0.28":
+  version "1.0.28"
+  resolved "https://registry.yarnpkg.com/@aws-amplify/storage/-/storage-1.0.28.tgz#4d3ce2f9433444f22faea51eb22799ff3d0304fd"
   dependencies:
-    "@aws-amplify/core" "^1.0.22"
+    "@aws-amplify/core" "^1.0.25"
 
-"@aws-amplify/ui@^1.0.15":
-  version "1.0.15"
-  resolved "https://registry.yarnpkg.com/@aws-amplify/ui/-/ui-1.0.15.tgz#ed2775edca867b7c9e3d3fa229c9acc1a8bf1fba"
+"@aws-amplify/ui@^1.0.18":
+  version "1.0.18"
+  resolved "https://registry.yarnpkg.com/@aws-amplify/ui/-/ui-1.0.18.tgz#bfded97e69008afb529ec9d0e3e7a1ba4338e795"
 
-"@aws-amplify/xr@^0.1.12":
-  version "0.1.12"
-  resolved "https://registry.yarnpkg.com/@aws-amplify/xr/-/xr-0.1.12.tgz#86771d3bd851fcc001f47dac1ee1eee595b66908"
+"@aws-amplify/xr@^0.1.15":
+  version "0.1.15"
+  resolved "https://registry.yarnpkg.com/@aws-amplify/xr/-/xr-0.1.15.tgz#5a2e01a784ae3f3c39e6cbde1b2a5025e70aff7c"
   dependencies:
-    "@aws-amplify/core" "^1.0.22"
+    "@aws-amplify/core" "^1.0.25"
 
 "@babel/code-frame@7.0.0", "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.0.0-beta.35":
   version "7.0.0"
@@ -1255,15 +1255,9 @@ alphanum-sort@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/alphanum-sort/-/alphanum-sort-1.0.2.tgz#97a1119649b211ad33691d9f9f486a8ec9fbe0a3"
 
-amazon-cognito-auth-js@^1.1.9:
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/amazon-cognito-auth-js/-/amazon-cognito-auth-js-1.2.4.tgz#40d82f0ed389905fd0751693ba46a5386ac6864a"
-  dependencies:
-    js-cookie "^2.1.4"
-
-amazon-cognito-identity-js@^3.0.7:
-  version "3.0.7"
-  resolved "https://registry.yarnpkg.com/amazon-cognito-identity-js/-/amazon-cognito-identity-js-3.0.7.tgz#bed444e867e3f7fb9e40e7a0cf5f667cddc9f48b"
+amazon-cognito-identity-js@^3.0.10:
+  version "3.0.11"
+  resolved "https://registry.yarnpkg.com/amazon-cognito-identity-js/-/amazon-cognito-identity-js-3.0.11.tgz#bf966216bb300db64a7ffbee2a3035fedaff401c"
   dependencies:
     buffer "4.9.1"
     crypto-js "^3.1.9-1"
@@ -1602,27 +1596,27 @@ autoprefixer@^9.1.5:
     postcss "^7.0.14"
     postcss-value-parser "^3.3.1"
 
-aws-amplify-react@latest:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/aws-amplify-react/-/aws-amplify-react-2.3.0.tgz#fbf8bca6951af357091f8fcb7a54b387978b231f"
+aws-amplify-react@^2.3.6:
+  version "2.3.6"
+  resolved "https://registry.yarnpkg.com/aws-amplify-react/-/aws-amplify-react-2.3.6.tgz#723cdffbb2dbf13b084ce0657ae293e603de6270"
   dependencies:
     qrcode.react "^0.8.0"
     regenerator-runtime "^0.11.1"
 
-aws-amplify@latest:
-  version "1.1.19"
-  resolved "https://registry.yarnpkg.com/aws-amplify/-/aws-amplify-1.1.19.tgz#0db2ac68204df15693b33a09373953c3c9f060bd"
+aws-amplify@^1.1.26:
+  version "1.1.26"
+  resolved "https://registry.yarnpkg.com/aws-amplify/-/aws-amplify-1.1.26.tgz#fc87e9a0ec842cc11d88c16dbfb3967d3edf0c71"
   dependencies:
-    "@aws-amplify/analytics" "^1.2.10"
-    "@aws-amplify/api" "^1.0.26"
-    "@aws-amplify/auth" "^1.2.15"
-    "@aws-amplify/cache" "^1.0.22"
-    "@aws-amplify/core" "^1.0.22"
-    "@aws-amplify/interactions" "^1.0.25"
-    "@aws-amplify/pubsub" "^1.0.22"
-    "@aws-amplify/storage" "^1.0.25"
-    "@aws-amplify/ui" "^1.0.15"
-    "@aws-amplify/xr" "^0.1.12"
+    "@aws-amplify/analytics" "^1.2.14"
+    "@aws-amplify/api" "^1.0.33"
+    "@aws-amplify/auth" "^1.2.22"
+    "@aws-amplify/cache" "^1.0.25"
+    "@aws-amplify/core" "^1.0.25"
+    "@aws-amplify/interactions" "^1.0.28"
+    "@aws-amplify/pubsub" "^1.0.26"
+    "@aws-amplify/storage" "^1.0.28"
+    "@aws-amplify/ui" "^1.0.18"
+    "@aws-amplify/xr" "^0.1.15"
 
 aws-appsync-react@latest:
   version "1.2.6"
@@ -3013,7 +3007,7 @@ debug@=3.1.0:
   dependencies:
     ms "2.0.0"
 
-debug@^3.1.0:
+debug@^3.1.0, debug@^3.2.6:
   version "3.2.6"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.2.6.tgz#e83d17de16d8a7efb7717edbe5fb10135eee629b"
   dependencies:
@@ -4000,11 +3994,17 @@ flush-write-stream@^1.0.0:
     inherits "^2.0.3"
     readable-stream "^2.3.6"
 
-follow-redirects@^1.0.0, follow-redirects@^1.2.5:
+follow-redirects@^1.0.0:
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.6.1.tgz#514973c44b5757368bad8bddfe52f81f015c94cb"
   dependencies:
     debug "=3.1.0"
+
+follow-redirects@^1.2.5:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.7.0.tgz#489ebc198dc0e7f64167bd23b03c4c19b5784c76"
+  dependencies:
+    debug "^3.2.6"
 
 for-in@^0.1.3:
   version "0.1.8"
@@ -4648,8 +4648,8 @@ ieee754@1.1.8:
   resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.1.8.tgz#be33d40ac10ef1926701f6f08a2d86fbfd1ad3e4"
 
 ieee754@^1.1.4:
-  version "1.1.12"
-  resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.1.12.tgz#50bf24e5b9c8bb98af4964c941cdb0918da7b60b"
+  version "1.1.13"
+  resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.1.13.tgz#ec168558e95aa181fd87d37f55c32bbcb6708b84"
 
 iferr@^0.1.5:
   version "0.1.5"
@@ -7557,7 +7557,7 @@ prompts@^0.1.9:
     kleur "^2.0.1"
     sisteransi "^0.1.1"
 
-prop-types@^15.5.0:
+prop-types@^15.5.0, prop-types@^15.6.0:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   dependencies:
@@ -7565,7 +7565,7 @@ prop-types@^15.5.0:
     object-assign "^4.1.1"
     react-is "^16.8.1"
 
-prop-types@^15.5.4, prop-types@^15.5.6, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@~15.6.0:
+prop-types@^15.5.4, prop-types@^15.5.6, prop-types@^15.5.8, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@~15.6.0:
   version "15.6.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.2.tgz#05d5ca77b4453e985d60fc7ff8c859094a497102"
   dependencies:
@@ -9997,6 +9997,10 @@ zen-observable-ts@^0.8.15, zen-observable-ts@^0.8.9:
   dependencies:
     zen-observable "^0.8.0"
 
-zen-observable@^0.8.0, zen-observable@^0.8.6:
+zen-observable@^0.8.0:
   version "0.8.13"
   resolved "https://registry.yarnpkg.com/zen-observable/-/zen-observable-0.8.13.tgz#a9f1b9dbdfd2d60a08761ceac6a861427d44ae2e"
+
+zen-observable@^0.8.6:
+  version "0.8.14"
+  resolved "https://registry.yarnpkg.com/zen-observable/-/zen-observable-0.8.14.tgz#d33058359d335bc0db1f0af66158b32872af3bf7"

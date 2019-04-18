@@ -10,20 +10,16 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
-import Divider from '@material-ui/core/Divider';
-import { ListItem, ListItemIcon, ListItemText, ListSubheader } from '@material-ui/core';
+// import Divider from '@material-ui/core/Divider';
+import { ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+// import { ListSubheader } from '@material-ui/core';
 
 import MenuIcon from '@material-ui/icons/Menu';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import HomeIcon from '@material-ui/icons/Home';
-import SendIcon from '@material-ui/icons/Send';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import DescriptionIcon from '@material-ui/icons/Description';
-import AssessmentIcon from '@material-ui/icons/Assessment';
 
 import AccountKeyIcon from 'mdi-material-ui/AccountKey'
-import SettingsIcon from 'mdi-material-ui/Settings';
-import AccountGroupIcon from 'mdi-material-ui/AccountGroup';
+
 
 import withCurrentUser from '../Hocs/withCurrentUser';
 import { ActionMenuConsumer } from '../Contexts/ActionMenu';
@@ -201,10 +197,6 @@ class MainNavigation extends React.Component {
                 className={classes.logo}
                 alt="Home"
               />
-              {
-                !!process.env.REACT_APP_bucket.match(/staging/) &&
-                <span style={{color: "white"}}>- S</span>
-              }
             </Link>
             <ActionMenuConsumer>
               {({Element}) => Element ? Element : null}

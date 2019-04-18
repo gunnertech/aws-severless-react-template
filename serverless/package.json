@@ -1,10 +1,14 @@
 {
-  "name": "<project-name>",
+  "name": "shudi",
   "version": "1.0.0",
   "description": "Serverless webpack example using ecma script",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "updateApi": "rm -rf ./api && mkdir -p ./api && cp -R ../api/ api"
+    "amplify:build": "rm -rf ../react-client/src/aws-exports.js && cp ./amplify/aws-exports.js ../react-client/src/aws-exports.js &&  rm -rf ../react-client/src/graphql && cp -R  ./src/graphql ../react-client/src && rm -rf ../react-native-client/aws-exports.js && cp ./amplify/aws-exports.js ../react-native-client/aws-exports.js &&  rm -rf ../react-native-client/src/graphql && cp -R ./src/graphql ../react-native-client/src",
+    "amplify:deploy": "../scripts/amplify/deploy.sh",
+    "amplify:init": "../scripts/amplify/init.sh",
+    "amplify:hosting": "../scripts/amplify/hosting.sh",
+    "watch": "watch 'yarn run amplify:build' ./"
   },
   "devDependencies": {
     "aws-sdk": "^2.399.0",
@@ -21,11 +25,14 @@
   "license": "MIT",
   "dependencies": {
     "amazon-cognito-identity-js": "latest",
+    "aws-amplify-serverless-plugin": "^1.4.1",
     "aws-appsync": "latest",
     "cross-fetch": "^3.0.2",
     "graphql": "latest",
     "graphql-tag": "latest",
     "node-fetch": "^2.2.0",
-    "serverless-appsync-plugin": "^1.0.7"
+    "serverless-appsync-plugin": "^1.0.7",
+    "serverless-stack-output": "^0.2.3",
+    "watch": "^1.0.2"
   }
 }

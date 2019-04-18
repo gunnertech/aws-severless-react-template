@@ -18,8 +18,7 @@ class Home extends React.Component {
   state = {};
 
   render() {
-    const { classes, currentUser } = this.props;
-    // const { selectedCampaignId, expanded, selectedSurveyTemplate, startDate, sendingEmail } = this.state;
+    const { currentUser } = this.props;
     return !currentUser ? null : (
       <Container>
         <div>

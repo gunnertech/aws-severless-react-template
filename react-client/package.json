@@ -1,5 +1,5 @@
 {
-  "name": "<project-name>",
+  "name": "shudi",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -9,8 +9,8 @@
     "apollo-client": "latest",
     "apollo-link": "^1.2.8",
     "apollo-link-state": "latest",
-    "aws-amplify": "latest",
-    "aws-amplify-react": "latest",
+    "aws-amplify": "^1.1.26",
+    "aws-amplify-react": "^2.3.6",
     "aws-appsync": "latest",
     "aws-appsync-react": "latest",
     "aws-sdk": "^2.399.0",

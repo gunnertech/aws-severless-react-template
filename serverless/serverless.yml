@@ -1,57 +1,33 @@
 service:
-  name: <project-name>
+  name: ${self:custom.environment.SERVICE}
 
 custom:
-  environment: ${file(env.yml):${self:custom.stage}, file(env.yml):development}
-  pinpointAppId: ${self:custom.environment.PINPOINT_APP_ID, 'NONE'}
+  accountId: { Ref: AWS::AccountId }
+  environment: ${file(env.yml):${self:custom.stage}, file(env.yml):dev}
   domainName: ${self:custom.environment.DOMAIN_NAME}
+  output:
+    handler: scripts/output.handler
+    file: .build/stack.yml
   stage: ${opt:stage, self:provider.stage}
-  developmentAccountId: "658832833553" #PRE DEPLOY TODO: REPLACE THIS $ aws organizations list-accounts
-  stagingAccountId: "658832833553" #PRE DEPLOY TODO: REPLACE THIS $ aws organizations list-accounts
-  productionAccountId: "658832833553" #PRE DEPLOY TODO: REPLACE THIS $ aws organizations list-accounts
-  accountId: ${self:custom.${self:custom.stage}AccountId}
   region: ${opt:region, self:provider.region}
   uploadBucketName: "com-gunnertech-${self:service.name}-${self:custom.stage}"
-  appSync:
-    name:  "${self:custom.stage}-api"
-    authenticationType: API_KEY #POST DEPLOY TODO: replace authenticationType with AMAZON_COGNITO_USER_POOLS and uncomment out userPoolConfig
-    # authenticationType: AMAZON_COGNITO_USER_POOLS
-    # userPoolConfig:
-    #   awsRegion: ${self:custom.region}
-    #   defaultAction: ALLOW
-    #   userPoolId: { Ref: UserPool }
-    mappingTemplates:
-      - dataSource: Users
-        type: Mutation
-        field: createUser
-        request: "genericCreate-request.vtl"
-        response: "generic-response.vtl"
-      - dataSource: Users
-        type: Mutation
-        field: updateUser
-        request: "genericUpdate-request.vtl"
-        response: "generic-response.vtl"
-      - dataSource: Users
-        type: Query
-        field: getUser
-        request: "genericGet-request.vtl"
-        response: "generic-response.vtl"
-    dataSources:
-      - type: AMAZON_DYNAMODB
-        name: Users
-        description: 'Users table'
-        config:
-          tableName: { Ref: UserTable }
+  amplify:
+    - filename: ../react-native-client/aws-exports.js
+      type: javascript
+    - filename: ../react-client/aws-exports.js
+      type: javascript
+  
 
 plugins:
   - serverless-webpack
-  - serverless-appsync-plugin
+  - aws-amplify-serverless-plugin
+  - serverless-stack-output
 provider:
   name: aws
   runtime: nodejs8.10
-  stage: ${opt:stage, 'development'}
-  region: 'us-east-1'  #PRE DEPLOY TODO: REPLACE THIS if project is in another region (Optional)
-  profile: "<project-name>-${opt:stage, 'development'}developer"
+  stage: ${opt:stage, 'dev'}
+  region: ${self:custom.environment.REGION, 'us-east-1'}
+  profile: "${self:service.name}-${opt:stage, 'dev'}developer"
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -63,632 +39,28 @@ provider:
 
 resources:
   Parameters:
-####BEGIN STANDARD PARAMS
-    s3BucketName: 
+    domainName:
       Type: String
-      Default: "${self:custom.uploadBucketName}"
-    identityPoolName: 
-      Type: String
-      Default: "cognito${self:custom.stage}_identitypool_${self:custom.stage}"
-    allowUnauthenticatedIdentities: 
-      Type: String
-      Default: false
-    thirdPartyAuth: 
-      Type: String
-      Default: false
-    lambdaLogPolicy: 
-      Type: String
-      Default: "cognito${self:custom.stage}_lambda_log_policy"
-    openIdLambdaRoleName: 
-      Type: String
-      Default: "cognito${self:custom.stage}_openid_lambda_role"
-    openIdRolePolicy: 
-      Type: String
-      Default: "cognito${self:custom.stage}_openid_pass_role_policy"
-    openIdLambdaIAMPolicy: 
-      Type: String
-      Default: "cognito${self:custom.stage}_openid_lambda_iam_policy"
-    openIdLogPolicy: 
-      Type: String
-      Default: "cognito${self:custom.stage}_openid_lambda_log_policy"
-    userPoolName: 
-      Type: String
-      Default: "cognito${self:custom.stage}_userpool_${self:custom.stage}"
-    autoVerifiedAttributes:
-      Type: CommaDelimitedList
-      Default: phone_number,email
-    mfaConfiguration: 
-      Type: String
-      Default: 'OFF'
-    mfaTypes:
-      Type: CommaDelimitedList
-      Default: "SMS Text Message"
-    roleName: 
-      Type: String
-      Default: "cognito${self:custom.stage}_sns-role"
-    roleExternalId: 
-      Type: String
-      Default: "cognito${self:custom.stage}_role_external_id"
-    policyName: 
-      Type: String
-      Default: "cognito${self:custom.stage}-sns-policy"
-    smsAuthenticationMessage: 
-      Type: String
-      Default: "Your authentication code is {####}"
-    smsVerificationMessage: 
-      Type: String
-      Default: "Your verification code is {####}"
-    emailVerificationSubject: 
-      Type: String
-      Default: "Your verification code"
-    emailVerificationMessage: 
-      Type: String
-      Default: "Your verification code is {####}"
-    defaultPasswordPolicy: 
-      Type: String
-      Default: false
-    passwordPolicyMinLength: 
-      Type: Number
-      Default: 8
-    passwordPolicyCharacters:
-      Type: CommaDelimitedList
-      Default: "Requires Lowercase,Requires Uppercase,Requires Numbers,Requires Symbols"
-    requiredAttributes:
-      Type: CommaDelimitedList
-      Default: email,name
-    userpoolClientName: 
-      Type: String
-      Default: "cognito${self:custom.stage}_app_client"
-    userpoolClientGenerateSecret: 
-      Type: String
-      Default: true
-    userpoolClientRefreshTokenValidity: 
-      Type: Number
-      Default: 30
-    userpoolClientReadAttributes:
-      Type: CommaDelimitedList
-      Default: email
-    mfaLambdaRole:
-      Type: String 
-      Default: "cognito${self:custom.stage}_totp_lambda_role"
-    mfaLambdaLogPolicy: 
-      Type: String
-      Default: "cognito${self:custom.stage}_totp_lambda_log_policy"
-    mfaPassRolePolicy: 
-      Type: String
-      Default: "cognito${self:custom.stage}_totp_pass_role_policy"
-    mfaLambdaIAMPolicy: 
-      Type: String
-      Default: "cognito${self:custom.stage}_totp_lambda_iam_policy"
-    userpoolClientLambdaRole: 
-      Type: String
-      Default: "cognito${self:custom.stage}_userpoolclient_lambda_role"
-    userpoolClientLogPolicy: 
-      Type: String
-      Default: "cognito${self:custom.stage}_userpoolclient_lambda_log_policy"
-    userpoolClientLambdaPolicy: 
-      Type: String
-      Default: "cognito${self:custom.stage}_userpoolclient_lambda_iam_policy"
-    userpoolClientSetAttributes: 
-      Type: String
-      Default: false
-    useDefault: 
-      Type: String
-      Default: default
-    unAuthRoleName: 
-      Type: String
-      Default: "client-${self:custom.stage}-${self:custom.accountId}-unauthRole"
-    authRoleName: 
-      Type: String
-      Default: "client-${self:custom.stage}-${self:custom.accountId}-authRole"
-    unAuthRoleArn:
-      Type: String 
-      Default: "arn:aws:iam::${self:custom.accountId}:role/client-${self:custom.stage}-${self:custom.accountId}-unauthRole"
-    authRoleArn: 
-      Type: String
-      Default: "arn:aws:iam::${self:custom.accountId}:role/client-${self:custom.stage}-${self:custom.accountId}-authRole"
-    resourceName: 
-      Type: String
-      Default: "cognito${self:custom.stage}"
-    authSelections: 
-      Type: String
-      Default: identityPoolAndUserPool
-    appId:
-      Type: String
-      Default: ${self:custom.pinpointAppId}
-    appName:
-      Type: String
-      Default: "${self:service.name}-${self:custom.stage}"
+      Default: ${self:custom.domainName}
 
-####END STANDARD PARAMS
-
-####BEGIN STANDARD CONDITIONS
   Conditions:
-    ShouldCreatePinpointApp:
-      Fn::Equals:
-        - Ref: appId
-        - "NONE"
-####END STANDARD CONDITIONS
+    ShouldCreateHostedZone:
+      Fn::Not:
+        - Fn::Equals:
+          - Ref: domainName
+          - "NONE"
+      
+  Outputs:
+    CdnDomainName:
+      Description: The domain name of the cloudfront distribution
+      Value: 
+        "Fn::GetAtt": [ CDN, DomainName ]
 
   Resources:
-    DNS: 
-      Type: "AWS::Route53::HostedZone"
-      Properties: 
-        HostedZoneConfig: 
-          Comment: "My hosted zone for ${self:custom.domainName}"
-        Name: ${self:custom.domainName}
-
-    SMSTopic:
-      Type: AWS::SNS::Topic
-      Properties: 
-        DisplayName: "sms${self:custom.stage}"
-        TopicName: "sms${self:custom.stage}"
-
-    UserTable:
-      # DependsOn: OrganizationTable
-      Type: 'AWS::DynamoDB::Table'
-      Properties:
-        BillingMode: PAY_PER_REQUEST
-        KeySchema:
-          -
-            AttributeName: id
-            KeyType: HASH
-        AttributeDefinitions:
-          -
-            AttributeName: id
-            AttributeType: S
-        TableName: "${self:custom.stage}-Users"
-
-####BEGIN STANDARD RESOURCES
-    LambdaExecutionRole:
-      Condition: ShouldCreatePinpointApp
-      Type: AWS::IAM::Role
-      Properties:
-        RoleName: "${self:service.name}-${self:custom.stage}-PinpointRole"
-        AssumeRolePolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-              - lambda.amazonaws.com
-            Action:
-            - sts:AssumeRole
-        Policies:
-        - PolicyName: "${self:service.name}-${self:custom.stage}-PinpointCloudWatchPolicy"
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-            - Effect: Allow
-              Action:
-              - logs:CreateLogGroup
-              - logs:CreateLogStream
-              - logs:PutLogEvents
-              Resource: arn:aws:logs:*:*:*
-        - PolicyName: "${self:service.name}-${self:custom.stage}-PinpointPolicy"
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-            - Effect: Allow
-              Action:
-              - mobileanalytics:*
-              - mobiletargeting:*
-              Resource: "*"
-
-    PinpointFunction:
-      Type: AWS::Lambda::Function
-      Condition: ShouldCreatePinpointApp
-      Properties:
-        Code:
-          ZipFile:
-            Fn::Join:
-            - "\n"
-            - - const response = require('cfn-response');
-              - const aws = require('aws-sdk');
-              - 'const pinpoint = new aws.Pinpoint({ apiVersion: ''2016-12-01'', region:
-                ''us-east-1'' });'
-              - exports.handler = function(event, context) {
-              - "    if (event.RequestType == 'Delete') {"
-              - "        response.send(event, context, response.SUCCESS);"
-              - "        return;"
-              - "    }"
-              - "    if (event.RequestType == 'Update') {"
-              - "        response.send(event, context, response.SUCCESS);"
-              - "        return;"
-              - "    }"
-              - "    if (event.RequestType == 'Create') {"
-              - "       const appName = event.ResourceProperties.appName;"
-              - "       let responseData = {};"
-              - "       const params = {"
-              - "           CreateApplicationRequest: {"
-              - "               Name: appName"
-              - "           }"
-              - "       };"
-              - "       return pinpoint.createApp(params).promise()"
-              - "           .then((res) => {"
-              - "               responseData = res.ApplicationResponse;"
-              - "               response.send(event, context, response.SUCCESS, responseData);"
-              - "           }).catch((err) => {"
-              - "               console.log(err.stack);"
-              - "               responseData = {Error: err};"
-              - "               response.send(event, context, response.FAILED, responseData);"
-              - "               throw err;"
-              - "           });"
-              - "    }"
-              - "};"
-        Handler: index.handler
-        Runtime: nodejs6.10
-        Timeout: '300'
-        Role:
-          Fn::GetAtt:
-          - LambdaExecutionRole
-          - Arn
-
-    PinpointFunctionOutputs:
-      Type: Custom::LambdaCallout
-      Condition: ShouldCreatePinpointApp
-      Properties:
-        ServiceToken:
-          Fn::GetAtt:
-          - PinpointFunction
-          - Arn
-        appName:
-          Ref: appName
-          
-    authRole:
-      Type: AWS::IAM::Role
-      Properties:
-        Path: "/"
-        Policies:
-          -
-            PolicyName: authPolicy
-            PolicyDocument:
-              Version: "2012-10-17"
-              Statement:
-                -
-                  Effect: "Allow"
-                  Action:
-                    - "ses:SendRawEmail"
-                    - "ses:SendEmail"
-                    - "sns:Publish"
-                    - "cloudformation:CreateStack"
-                    - "cloudformation:UpdateStack"
-                    - "cloudformation:DeleteStack"
-                    - "cloudformation:CreateUploadBucket"
-                    - "cloudformation:DescribeStacks"
-                    - "cloudformation:DescribeStackEvents"
-                    - "cloudformation:GetTemplateSummary"
-                    - "cloudformation:ListStacks"
-                    - "cloudformation:ListStackResources"
-                    - "s3:CreateBucket"
-                    - "s3:GetObject"
-                    - "s3:PutObject"
-                    - "mobiletargeting:UpdateEndpoint"
-                    - "mobiletargeting:PutEvents"
-                    - "mobiletargeting:GetUserEndpoints"
-                    - "cognito-sync:*"
-                    - "cognito-identity:*"
-                  Resource: "*" 
-        AssumeRolePolicyDocument:
-          Version: "2012-10-17"
-          Statement:
-            -
-              Effect: "Allow"
-              Action:
-                - "sts:AssumeRoleWithWebIdentity"
-              Condition: { "ForAnyValue:StringLike": {"cognito-identity.amazonaws.com:amr": "authenticated" }}
-              Principal:
-                Federated:
-                  - "cognito-identity.amazonaws.com"
-        RoleName: 
-          Ref: authRoleName
-
-    UnAuthRole:
-      Type: AWS::IAM::Role
-      Properties:
-        Path: "/"
-        Policies:
-          -
-            PolicyName: unAuthPolicy
-            PolicyDocument:
-              Version: "2012-10-17"
-              Statement:
-                -
-                  Effect: "Allow"
-                  Action:
-                    - "ses:SendRawEmail"
-                    - "ses:SendEmail"
-                    - "cloudformation:CreateStack"
-                    - "cloudformation:UpdateStack"
-                    - "cloudformation:DeleteStack"
-                    - "cloudformation:CreateUploadBucket"
-                    - "cloudformation:DescribeStacks"
-                    - "cloudformation:DescribeStackEvents"
-                    - "cloudformation:GetTemplateSummary"
-                    - "cloudformation:ListStacks"
-                    - "cloudformation:ListStackResources"
-                    - "s3:CreateBucket"
-                    - "s3:GetObject"
-                    - "s3:PutObject"
-                    - "mobiletargeting:UpdateEndpoint"
-                    - "mobiletargeting:PutEvents"
-                    - "mobiletargeting:GetUserEndpoints"
-                    - "cognito-sync:*"
-                    - "cognito-identity:*"
-                  Resource: "*" 
-        AssumeRolePolicyDocument:
-          Version: "2012-10-17"
-          Statement:
-            -
-              Effect: "Allow"
-              Action:
-                - "sts:AssumeRoleWithWebIdentity"
-              Condition: { "ForAnyValue:StringLike": {"cognito-identity.amazonaws.com:amr": "unauthenticated" }}
-              Principal:
-                Federated:
-                  - "cognito-identity.amazonaws.com"
-        RoleName: 
-          Ref: unAuthRoleName
-    
-    SNSRole: 
-      Type: AWS::IAM::Role
-      Properties:
-        RoleName: 
-          Ref: roleName
-        AssumeRolePolicyDocument: 
-          Version: "2012-10-17"
-          Statement: 
-            - Sid: ""
-              Effect: "Allow"
-              Principal: 
-                Service: "cognito-idp.amazonaws.com"
-              Action: 
-                - "sts:AssumeRole"
-              Condition: 
-                StringEquals:
-                  sts:ExternalId: 
-                    Ref: roleExternalId
-        Policies: 
-          - 
-            PolicyName: 
-              Ref: policyName
-            PolicyDocument: 
-              Version: "2012-10-17"
-              Statement: 
-                - 
-                  Effect: "Allow"
-                  Action: 
-                    - "sns:Publish"
-                  Resource: "*"
-    
-    UserPool:
-      Type: AWS::Cognito::UserPool
-      Properties:
-        UsernameAttributes: [phone_number,email]
-        UserPoolName: 
-          Ref: userPoolName
-        Schema: 
-          
-          -
-            Name: email
-            Required: true
-            Mutable: true
-          -
-            Name: name
-            Required: true
-            Mutable: true
-        
-        AutoVerifiedAttributes: 
-          Ref: autoVerifiedAttributes
-        
-        
-        EmailVerificationMessage: 
-          Ref: emailVerificationMessage
-        EmailVerificationSubject: 
-          Ref: emailVerificationSubject
-              
-        Policies:
-          PasswordPolicy:
-            MinimumLength: 
-              Ref: passwordPolicyMinLength
-            RequireLowercase: true
-            RequireNumbers: true
-            RequireSymbols: true
-            RequireUppercase: true
-        MfaConfiguration: 
-          Ref: mfaConfiguration
-        SmsVerificationMessage: 
-          Ref: smsVerificationMessage
-        SmsConfiguration: 
-          SnsCallerArn: 
-             "Fn::GetAtt": [ SNSRole, Arn ]
-          ExternalId: 
-            Ref: roleExternalId 
-      
-    UserPoolClientWeb:
-      Type: "AWS::Cognito::UserPoolClient"
-      Properties:
-        ClientName: cognito${self:custom.stage}_app_clientWeb
-        
-        RefreshTokenValidity: 
-          Ref: userpoolClientRefreshTokenValidity
-        UserPoolId: 
-          Ref: UserPool
-      DependsOn: UserPool
-
-    UserPoolClient:
-      Type: "AWS::Cognito::UserPoolClient"
-      Properties:
-        ClientName: 
-          Ref: userpoolClientName
-        
-        GenerateSecret: 
-          Ref: userpoolClientGenerateSecret
-        RefreshTokenValidity: 
-          Ref: userpoolClientRefreshTokenValidity
-        UserPoolId: 
-          Ref: UserPool
-      DependsOn: UserPool
-
-    UserPoolClientRole:
-      Type: 'AWS::IAM::Role'
-      Properties:
-        RoleName: 
-          Ref: userpoolClientLambdaRole     
-        AssumeRolePolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-            - Effect: Allow
-              Principal:
-                Service:
-                  - lambda.amazonaws.com
-              Action:
-                - 'sts:AssumeRole'
-      DependsOn: UserPoolClient
-    
-    UserPoolClientLambda:
-      Type: 'AWS::Lambda::Function'
-      Properties:
-        Code:
-          ZipFile: 
-            Fn::Join:
-              - |+
-              - - 'const response = require(''cfn-response'');'
-                - 'const aws = require(''aws-sdk'');'
-                - 'const identity = new aws.CognitoIdentityServiceProvider();'
-                - 'exports.handler = (event, context, callback) => {'
-                - ' if (event.RequestType == ''Delete'') { '
-                - '   response.send(event, context, response.SUCCESS, {})'
-                - ' }'
-                - ' if (event.RequestType == ''Update'' || event.RequestType == ''Create'') {'
-                - '   const params = {'
-                - '     ClientId: event.ResourceProperties.clientId,'
-                - '     UserPoolId: event.ResourceProperties.userpoolId'
-                - '   };'
-                - '   identity.describeUserPoolClient(params).promise()'
-                - '     .then((res) => {'
-                - '       response.send(event, context, response.SUCCESS, {''appSecret'': res.UserPoolClient.ClientSecret});'   
-                - '     })'
-                - '     .catch((err) => {'
-                - '       response.send(event, context, response.FAILURE, {err});'
-                - '     });'
-                - ' }'
-                - '};'
-        Handler: index.handler
-        Runtime: nodejs6.10
-        Timeout: '300'
-        Role: 
-           "Fn::GetAtt": [ UserPoolClientRole, Arn ]
-      DependsOn: UserPoolClientRole
-
-    UserPoolClientLambdaPolicy:
-      Type: 'AWS::IAM::Policy'
-      Properties:
-        PolicyName: 
-          Ref: userpoolClientLambdaPolicy
-        Roles: 
-          - 
-            Ref: userpoolClientLambdaRole
-        PolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-            - Effect: Allow
-              Action:
-                - 'cognito-idp:DescribeUserPoolClient'
-              Resource:
-                Fn::GetAtt: [ UserPool, Arn ]
-      DependsOn: UserPoolClientLambda
-    UserPoolClientLogPolicy:
-    # Sets log policy for the role that executes the Userpool Client Lambda
-    # Depends on UserPool for Arn
-    # Marked as depending on UserPoolClientLambdaPolicy for easier to understand CFN sequencing
-      Type: 'AWS::IAM::Policy'
-      Properties:
-        PolicyName: #"cognito${self:custom.stage}_userpoolclient_lambda_log_policy"
-          Ref: userpoolClientLogPolicy
-        Roles: 
-          # - "cognito${self:custom.stage}_userpoolclient_lambda_role"
-          - Ref: userpoolClientLambdaRole
-        PolicyDocument:
-          Version: "2012-10-17"
-          Statement:
-            - Effect: Allow
-              Action:
-                - 'logs:CreateLogGroup'
-                - 'logs:CreateLogStream'
-                - 'logs:PutLogEvents'
-              Resource: "*" 
-                
-      DependsOn: UserPoolClientLambdaPolicy  
-    UserPoolClientInputs:
-    # Values passed to Userpool client Lambda
-    # Depends on UserPool for Id
-    # Depends on UserPoolClient for Id
-    # Marked as depending on UserPoolClientLambdaPolicy for easier to understand CFN sequencing
-      Type: 'Custom::LambdaCallout'
-      Properties:
-        ServiceToken: 
-          "Fn::GetAtt": [ UserPoolClientLambda, Arn ]
-        clientId: 
-          Ref: UserPoolClient
-        userpoolId: 
-          Ref: UserPool
-      DependsOn: UserPoolClientLogPolicy
-    
-      
-    # BEGIN IDENTITY POOL RESOURCES
-    
-    
-    IdentityPool:
-    # Always created
-      Type: AWS::Cognito::IdentityPool
-      Properties: 
-        IdentityPoolName: cognito${self:custom.stage}_identitypool_${self:custom.stage}
-        
-        CognitoIdentityProviders:
-          - ClientId:  
-              Ref: UserPoolClient
-            ProviderName: 
-              'Fn::Join':
-                - '/'
-                - 
-                  - "cognito-idp.${self:custom.region}.amazonaws.com"
-                  - Ref: UserPool
-          - ClientId:  
-              Ref: UserPoolClientWeb
-            ProviderName: 
-              'Fn::Join':
-                - '/'
-                - 
-                  - "cognito-idp.${self:custom.region}.amazonaws.com"
-                  - Ref: UserPool
-              
-        AllowUnauthenticatedIdentities: 
-          Ref: allowUnauthenticatedIdentities
-        
-        
-      DependsOn: UserPoolClientInputs 
-      
-    
-    IdentityPoolRoleMap:
-    # Created to map Auth and Unauth roles to the identity pool
-    # Depends on Identity Pool for ID ref
-      Type: AWS::Cognito::IdentityPoolRoleAttachment
-      Properties: 
-        IdentityPoolId: 
-          Ref: IdentityPool
-        Roles:
-            unauthenticated: 
-              Ref: unAuthRoleArn
-            authenticated: 
-              Ref: authRoleArn
-      DependsOn: IdentityPool    
     UploadBucketPolicy: 
-      DependsOn: S3BucketUploads
       Type: AWS::S3::BucketPolicy
       Properties: 
-        Bucket: 
-          Ref: S3BucketUploads
+        Bucket: ${self:custom.uploadBucketName}
         PolicyDocument: 
           Statement: 
             - 
@@ -721,13 +93,7 @@ resources:
       Properties:
          CloudFrontOriginAccessIdentityConfig:
           Comment: "AccessFor"
-    S3BucketUploads:
-      Type: AWS::S3::Bucket
-      Properties:
-        BucketName: 
-          Ref: s3BucketName
     CDN:
-      DependsOn: S3BucketUploads
       Type: "AWS::CloudFront::Distribution"
       Properties:
         DistributionConfig:
@@ -768,8 +134,19 @@ resources:
             Ref: RepoSNSTopic
           Events:
           - all
-####END STANDARD RESOURCES
-    
+    DNS: 
+      Condition: ShouldCreateHostedZone
+      Type: "AWS::Route53::HostedZone"
+      Properties: 
+        HostedZoneConfig: 
+          Comment: "My hosted zone fore ${self:custom.domainName}"
+        Name: ${self:custom.domainName}
+
+    SMSTopic:
+      Type: AWS::SNS::Topic
+      Properties: 
+        DisplayName: "sms${self:custom.stage}"
+        TopicName: "sms${self:custom.stage}"    
 
 functions:
   dummy: # NEED AT LEAST ONE FUNCTION OR WON'T DEPLOY

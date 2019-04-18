@@ -5,13 +5,10 @@ import Typography from '@material-ui/core/Typography';
 import Container from '../Components/Container'
 
 const styles = theme => ({
-  root: {
-    flexGrow: 1,
-  },
+  
 });
 
 const Splash = props => {
-  const { classes } = props;
   return (
     <Container>
       <Typography paragraph>Welcome. Doesn't look you have access, so why don't you create an account?</Typography>

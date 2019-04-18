@@ -68,14 +68,14 @@ const styles = theme => ({
   
 
 
-const Template = ({ navigate, location, data, children, showNav, notifications }) => console.log(notifications) ||
+const Template = ({ navigate, location, data, children, showNav, notifications }) =>
   <Container>
     <Helmet
       encodeSpecialCharacters={true}
-      title="<project-name>"
+      title="shudi"
       meta={[
-        { name: `description`, content: `<project-name>` },
-        { name: `keywords`, content: `<project-name>` },
+        { name: `description`, content: `shudi` },
+        { name: `keywords`, content: `shudi` },
         { name: 'og:url', content: `${process.env.REACT_APP_base_url}${location.pathname}` }
       ]}
       link={[

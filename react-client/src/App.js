@@ -7,15 +7,10 @@ import AWSAppSyncClient, { createAppSyncLink, createLinkWithCache } from "aws-ap
 import { ApolloLink } from 'apollo-link';
 import { withClientState } from 'apollo-link-state';
 import * as Sentry from '@sentry/browser';
-import { ConfirmSignIn, ConfirmSignUp, ForgotPassword, RequireNewPassword, VerifyContact, withAuthenticator } from 'aws-amplify-react';
-import { Cache } from 'aws-amplify';
+import { SignIn, SignUp, ConfirmSignIn, ConfirmSignUp, ForgotPassword, RequireNewPassword, VerifyContact, withAuthenticator } from 'aws-amplify-react';
 
-import GetUser from "./api/Queries/GetUser"
-import CreateUser from "./api/Mutations/CreateUser"
-import UpdateUser from "./api/Mutations/UpdateUser"
-
-import SignUp from "./Screens/SignUp";
-import SignIn from "./Screens/SignIn";
+// import SignUp from "./Screens/SignUp";
+// import SignIn from "./Screens/SignIn";
 import HomeScreen from "./Screens/Home";
 import SplashScreen from "./Screens/Splash";
 import PrivacyPolicyScreen from "./Screens/PrivacyPolicy";
@@ -28,6 +23,9 @@ import { LayoutProvider } from './Contexts/Layout'
 
 
 import { I18n } from 'aws-amplify';
+
+import awsmobile from './aws-exports';
+
 
 const authScreenLabels = {
     en: {
@@ -54,27 +52,28 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
           hideAllDefaults: true,
           signUpFields: [
             {
-              key: 'email',
+              key: 'name',
+              type: 'text',
+              required: true,
+              label: 'Name',
+              displayOrder: 1,
+              placeholder: "Name (as you want others to see it)"
+            },
+            {
+              key: 'username',
               type: 'email',
               required: true,
               label: 'Email',
               displayOrder: 2,
               placeholder: "Enter your email (used to sign in)"
             },
-            {
-              key: 'name',
-              type: 'text',
-              required: true,
-              label: 'Name',
-              displayOrder: 1,
-              placeholder: "Enter the name you want others to see"
-            },
+            
             {
               key: 'phone_number',
               type: 'tel',
               required: false,
               label: 'Mobile',
-              displayOrder: 4,
+              displayOrder: 3,
               placeholder: "Enter your mobile number"
             },
             {
@@ -112,8 +111,8 @@ const stateLink = createLinkWithCache(cache => withClientState({
 
 
 const appSyncLink = createAppSyncLink({
-  url: process.env.REACT_APP_aws_appsync_graphqlEndpoint,
-  region: process.env.REACT_APP_awsRegion,
+  url: awsmobile.aws_appsync_graphqlEndpoint,
+  region: awsmobile.aws_appsync_region,
   auth: {
     type: "AMAZON_COGNITO_USER_POOLS",
     jwtToken: async () => {
@@ -121,9 +120,10 @@ const appSyncLink = createAppSyncLink({
         const session = await Auth.currentSession();
         return session.getIdToken().getJwtToken();
       } catch(e) {
-        await Auth.signIn('<project-name>guest@gunnertech.com', 'Sim2010!!'); //TODO: For new environments, you'll have to create this guest account if you need guest access to the graphql API
-        const session = await Auth.currentSession();
-        return session.getIdToken().getJwtToken();
+        // await Auth.signIn('shudiguest@gunnertech.com', 'Sim2010!!'); //TODO: For new environments, you'll have to create this guest account if you need guest access to the graphql API
+        // const session = await Auth.currentSession();
+        // return session.getIdToken().getJwtToken();
+        return null;
 
       }
     },
@@ -137,45 +137,16 @@ Sentry.init({
   dsn: process.env.REACT_APP_sentry_url
 });
 
-Amplify.configure({
-  Auth: {
-    // REQUIRED - Amazon Cognito Identity Pool ID
-    identityPoolId: process.env.REACT_APP_identityPoolId, 
-    // REQUIRED - Amazon Cognito Region
-    region: process.env.REACT_APP_awsRegion, 
-    // OPTIONAL - Amazon Cognito User Pool ID
-    userPoolId: process.env.REACT_APP_userPoolId,
-    identityPoolRegion: 'us-east-1',
-    // OPTIONAL - Amazon Cognito Web Client ID
-    userPoolWebClientId: process.env.REACT_APP_userPoolWebClientId, 
-  },
-  Storage: {
-    AWSS3: {
-      bucket: process.env.REACT_APP_bucket,
-      region: process.env.REACT_APP_awsRegion
-    }
-  },
-  Analytics: {
-    disabled: false,
-    autoSessionRecord: true,
-
-    AWSPinpoint: {
-      appId: process.env.REACT_APP_pinpoint_app_id,
-      region: process.env.REACT_APP_awsRegion,
-      bufferSize: 1000,
-      flushInterval: 5000,
-      flushSize: 100,
-      resendLimit: 5
-    }
-  }
-});
-
+Amplify.configure(awsmobile);
 
 
 class App extends Component {
   constructor(props) {
     super(props);
-    Hub.listen('auth', this, 'AppListener');
+    Hub.listen('auth', data => 
+      console.log('A new auth event has happened: ', data.payload.data.username + ' has ' + data.payload.event) ||
+      this.onAuthEvent(data)             
+    )
   }
 
   state = {
@@ -184,43 +155,43 @@ class App extends Component {
     notifications: []
   }
 
-  _createNewUser = cognitoUser =>
-    client.mutate({
-      mutation: CreateUser,
-      onError: e => console.log("_createNewUser", e),
-      variables: {
-        id: cognitoUser.username,
-        phone: cognitoUser.attributes.phone_number || undefined,
-        email: cognitoUser.attributes.email || undefined,
-        name: cognitoUser.attributes.name || undefined,
-        active: true,
-      },
-    })
-    .then(({data: {createUser}}) => Promise.resolve(createUser))
+  // _createNewUser = cognitoUser =>
+  //   client.mutate({
+  //     mutation: CreateUser,
+  //     onError: e => console.log("_createNewUser", e),
+  //     variables: {
+  //       id: cognitoUser.username,
+  //       phone: cognitoUser.attributes.phone_number || undefined,
+  //       email: cognitoUser.attributes.email || undefined,
+  //       name: cognitoUser.attributes.name || undefined,
+  //       active: true,
+  //     },
+  //   })
+  //   .then(({data: {createUser}}) => Promise.resolve(createUser))
 
   _handleSignIn = () =>
     new Promise(resolve => this.setState({currentUser: undefined}, resolve))
       .then(() =>
         Auth.currentAuthenticatedUser()
       )
-      .then(cognitoUser => Promise.all([
-        client.query({
-          query: GetUser,
-          variables: {id: cognitoUser.username},
-          fetchPolicy: "network-only"
-        }),
-        cognitoUser
-      ]))
-      .then(([{data: { getUser }, loading}, cognitoUser]) => !!getUser ? (
-          Promise.resolve(getUser)
-        ) : (
-          this._createNewUser(cognitoUser)
-        )
-      )
+      // .then(cognitoUser => Promise.all([
+      //   client.query({
+      //     query: GetUser,
+      //     variables: {id: cognitoUser.username},
+      //     fetchPolicy: "network-only"
+      //   }),
+      //   cognitoUser
+      // ]))
+      // .then(([{data: { getUser }, loading}, cognitoUser]) => !!getUser ? (
+      //     Promise.resolve(getUser)
+      //   ) : (
+      //     this._createNewUser(cognitoUser)
+      //   )
+      // )
       .then(currentUser => new Promise(resolve => this.setState({currentUser}, resolve.bind(null, currentUser))))
       .catch(err => console.log("ERROR", err) || this.setState({currentUser: null}));
 
-  onHubCapsule = capsule => {
+  onAuthEvent = capsule => {
     switch (capsule.payload.event) {
       case 'signOut':
         this.setState({currentUser: null})
@@ -242,10 +213,6 @@ class App extends Component {
 
   componentDidMount() {
     this._handleSignIn();
-    // eslint-disable-next-line no-undef
-    branch.init('key_live_kcRp9dEqccHe8PyqYBkOUoahFEeh9IPj', (err, data) =>
-      data && data.data_parsed && data.data_parsed.user && Cache.setItem('inviteInputs', data.data_parsed.user)
-    )
   }
 
   render() {

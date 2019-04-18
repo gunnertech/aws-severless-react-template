@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "<project-name>",
-    "scheme": "<project-name>",
+    "name": "shudi",
+    "scheme": "shudi",
     "description": "This project is really great.",
-    "slug": "<project-name>",
+    "slug": "shudi",
     "privacy": "public",
     "sdkVersion": "32.0.0",
     "platforms": ["ios", "android"],
@@ -21,7 +21,7 @@
           "file": "sentry-expo/upload-sourcemaps",
           "config": {
             "organization": "gunner-technology",
-            "project": "<project-name>",
+            "project": "shudi",
             "authToken": "eaf415b826c5424496d5262df653cb357011cc7549004b40921445ca66b49876"
           }
         }
@@ -34,8 +34,8 @@
       "**/*"
     ],
     "android": {
-      "package": "com.gunnertech.<project-name>",
-      "playStoreUrl": "https://play.google.com/store/apps/details?id=com.gunnertech.<project-name>",
+      "package": "com.gunnertech.shudi",
+      "playStoreUrl": "https://play.google.com/store/apps/details?id=com.gunnertech.shudi",
       "versionCode": 7,
       "permissions": [
         "CAMERA",
@@ -52,7 +52,7 @@
       }
     },
     "ios": {
-      "bundleIdentifier": "com.gunnertech.<project-name>",
+      "bundleIdentifier": "com.gunnertech.shudi",
       "supportsTablet": true,
       "buildNumber": "8",
       "config": {

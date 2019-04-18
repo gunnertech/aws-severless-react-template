@@ -18,16 +18,8 @@ import ENV from './src/environment'
 
 import { CurrentUserProvider } from './src/Contexts/CurrentUser'
 
-
-
-import GetUser from "./src/api/Queries/GetUser"
-import CreateUser from "./src/api/Mutations/CreateUser"
-import UpdateUser from "./src/api/Mutations/UpdateUser"
-
-
-// import normalizePhoneNumber from './src/Util/normalizePhoneNumber'
-
 import { I18n } from 'aws-amplify';
+import awsmobile from './aws-exports';
 
 const authScreenLabels = {
     en: {
@@ -49,48 +41,13 @@ I18n.setLanguage('en');
 I18n.putVocabularies(authScreenLabels);
 
 
-
-
-// Remove this once Sentry is correctly setup.
-Sentry.enableInExpoDevelopment = true;
-
+Sentry.enableInExpoDevelopment = false;
 Sentry.config(ENV.sentry_url).install();
 
 
 console.disableYellowBox = true;
 
-Amplify.configure({
-  Auth: {
-    // REQUIRED - Amazon Cognito Identity Pool ID
-    identityPoolId: ENV.identityPoolId, 
-    // REQUIRED - Amazon Cognito Region
-    region: ENV.awsRegion, 
-    // OPTIONAL - Amazon Cognito User Pool ID
-    userPoolId: ENV.userPoolId,
-    identityPoolRegion: 'us-east-1',
-    // OPTIONAL - Amazon Cognito Web Client ID
-    userPoolWebClientId: ENV.userPoolWebClientId, 
-  },
-  Storage: {
-    AWSS3: {
-      bucket: ENV.bucket,
-      region: ENV.awsRegion
-    }
-  },
-  Analytics: {
-    disabled: false,
-    autoSessionRecord: true,
-
-    AWSPinpoint: {
-      appId: ENV.pinpoint_app_id,
-      region: ENV.awsRegion,
-      bufferSize: 1000,
-      flushInterval: 5000,
-      flushSize: 100,
-      resendLimit: 5
-    }
-  }
-});
+Amplify.configure(awsmobile);
 
 
 const defaults = {};
@@ -106,8 +63,8 @@ const stateLink = createLinkWithCache(cache => withClientState({
 
 
 const appSyncLink = createAppSyncLink({
-  url: ENV.aws_appsync_graphqlEndpoint,
-  region: ENV.awsRegion,
+  url: awsmobile.aws_appsync_graphqlEndpoint,
+  region: awsmobile.aws_appsync_region,
   auth: {
     type: "AMAZON_COGNITO_USER_POOLS",
     jwtToken: async () => {
@@ -127,7 +84,10 @@ const client = new AWSAppSyncClient({disableOffline: true}, { link });
 class App extends React.Component {
   constructor(props) {
     super(props);
-    Hub.listen('auth', this, 'AppListener');
+    Hub.listen('auth', data => 
+      console.log('A new auth event has happened: ', data.payload.data.username + ' has ' + data.payload.event) ||
+      this.onAuthEvent(data)             
+    )
   }
 
   state = {
@@ -135,108 +95,10 @@ class App extends React.Component {
     currentUser: undefined
   };
 
-
-  _findInvitation = user =>
-    client.query({
-      query: ListInvitations,
-      variables: {first: 10000},
-      fetchPolicy: "network-only"
-    })
-      .then(({data: {listInvitations: {items}}}) => items)
-      .then(invitations => invitations.filter(invitation => !invitation.accepted).find(
-        invitation => 
-          (!!invitation.email && !!user.email && (invitation.email||"").toLowerCase() === (user.email||"").toLowerCase())
-      ))
-
-  
-  _addUserToOrganization = (user, organizationId) =>
-    client.mutate({
-      mutation: UpdateUser,
-      onError: e => console.log("_addUserToOrganization", e),
-      variables: {
-        id: user.id,
-        organizationId: organizationId
-      },
-    })
-      .then(({data: {updateUser}}) => Promise.resolve(updateUser))
-
-  _acceptInvitationForUser = (invitation, user) =>
-    client.mutate({
-      mutation: UpdateInvitation,
-      onError: e => console.log("_acceptInvitationForUser", e),
-      variables: {
-        id: invitation.id,
-        accepted: true
-      },
-    })
-      .then(({data: {updateInvitation}}) => this._addRoleToUser(invitation.roleName, user))
-
-  _addRoleToUser = (roleName, user) =>
-    client.query({
-      query: QueryRolesByNameIdIndex,
-      variables: {name: roleName},
-      fetchPolicy: "network-only"
-    })
-    .then(({data: { queryRolesByNameIdIndex }}) =>
-      (
-        !queryRolesByNameIdIndex || !queryRolesByNameIdIndex.items.length ? (
-          client.mutate({
-            mutation: CreateRole,
-            onError: e => console.log("CreateRole", e),
-            variables: {
-              name: roleName,
-            },
-          })
-          .then(({data: {createRole}}) => Promise.resolve(createRole))
-        ) : (
-          Promise.resolve(queryRolesByNameIdIndex.items[0])
-        )
-      )
-      .then(role =>
-        client.mutate({
-          mutation: CreateAssignedRole,
-          onError: e => console.log("CreateAssignedRole", e),
-          variables: {
-            roleId: role.id,
-            userId: user.id
-          },
-        })
-        .then(() => Promise.resolve(user))
-      )
-    )
-
-  _createNewUser = cognitoUser =>
-    client.mutate({
-      mutation: CreateUser,
-      onError: e => console.log("_createNewUser", e),
-      variables: {
-        id: cognitoUser.username,
-        phone: cognitoUser.attributes.phone_number || undefined,
-        email: cognitoUser.attributes.email || undefined,
-        name: cognitoUser.attributes.name || undefined,
-        active: true,
-      },
-    })
-    .then(({data: {createUser}}) => Promise.resolve(createUser))
-
   _handleSignIn = () =>
     new Promise(resolve => this.setState({currentUser: undefined}, resolve))
       .then(() =>
         Auth.currentAuthenticatedUser()
-      )
-      .then(cognitoUser => Promise.all([
-        client.query({
-          query: GetUser,
-          variables: {id: cognitoUser.username},
-          fetchPolicy: "network-only"
-        }),
-        cognitoUser
-      ]))
-      .then(([{data: { getUser }, loading}, cognitoUser]) => !!getUser ? (
-          Promise.resolve(getUser)
-        ) : (
-          this._createNewUser(cognitoUser)
-        )
       )
       .then(currentUser => 
         new Promise(resolve => this.setState({currentUser}, resolve.bind(null, currentUser)))
@@ -244,7 +106,7 @@ class App extends React.Component {
       .catch(err => console.log("ERROR", err) || this.setState({currentUser: null}));
 
   
-  onHubCapsule = capsule => {
+  onAuthEvent = capsule => {
     switch (capsule.payload.event) {
       case 'signOut':
         this.setState({currentUser: null})
