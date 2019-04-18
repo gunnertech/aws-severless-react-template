@@ -10,27 +10,9 @@ Install the following
 4. Node ``nvm install``
 5. Serverless framework config ``npm install -g serverless --latest``
 6. Expo ``npm install -g expo-cli --latest``
-7. Our AWS scripts (https://github.com/gunnertech/aws-scripts)
-8. Amplify ``npm install -g @aws-amplify/cli --latest``
+7. Amplify ``npm install -g @aws-amplify/cli --latest``
+8. Run the AWS scripts (https://github.com/gunnertech/aws-scripts)
 
-## AWS Accounts
-````
-$ cd ~/workspace/aws
-$ ./organization add -o <client-name> -n <project-name>-dev -e <project-name>-dev@gunnertech.com
-$ ./organization add -o <client-name> -n <project-name>-staging -e <project-name>-staging@gunnertech.com
-$ ./organization add -o <client-name> -n <project-name>-prod -e <project-name>-prod@gunnertech.com
-````
-
-
-## Project 
-````
-$ cd ~/workspace/aws
-$ ./project.sh <project-name> <client-name> <developer-name> (destination)
-````
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-At this point, you should be looking at the README.md inside the newly created project, NOT the generic README from the template
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ## Git
 
