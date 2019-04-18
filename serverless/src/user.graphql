@@ -1,0 +1,16 @@
+
+type User 
+  @model 
+{
+  id: ID!
+  createdAt: String!
+  updatedAt: String!
+  name: String!
+}
+
+input CreateUserInput {
+  id: ID
+  createdAt: String
+  updatedAt: String
+  name: String!
+}
