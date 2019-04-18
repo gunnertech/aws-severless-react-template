@@ -1,6 +1,6 @@
 {
-  "short_name": "shudi",
-  "name": "shudi",
+  "short_name": "<project-name>",
+  "name": "<project-name>",
   "icons": [
     {
       "src": "android-chrome-192x192.png",

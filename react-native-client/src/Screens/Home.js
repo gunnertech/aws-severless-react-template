@@ -36,7 +36,7 @@ class Home extends React.PureComponent {
         "menu"
       }
       centerElement={
-        "shudi"
+        "<project-name>"
       }
       onLeftElementPress={() => navigationProps.navigation.toggleDrawer() }
     />

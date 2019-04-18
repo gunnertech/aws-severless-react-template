@@ -1,5 +1,5 @@
 {
-  "name": "shudi",
+  "name": "<project-name>",
   "version": "1.0.0",
   "description": "Serverless webpack example using ecma script",
   "scripts": {
