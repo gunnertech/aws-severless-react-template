@@ -3,7 +3,7 @@ import { Constants } from 'expo'
 // sentry_url will be the same for every env. 
 // You have to add the project to the gunner tech account to get the sentry_url 
 // (https://sentry.io/organizations/gunner-technology/projects/new/)
-const sentry_url = 'https://b9af8b89206f42c48c69bc4274a427ac@sentry.io/1323219'
+const sentry_url = ''
 
 const ENV = {
   dev: {

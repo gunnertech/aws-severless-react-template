@@ -13,7 +13,7 @@ Install the following
 7. Our AWS scripts (https://github.com/gunnertech/aws-scripts)
 8. Amplify ``npm install -g @aws-amplify/cli --latest``
 
-## AWS account
+## AWS Accounts
 ````
 $ cd ~/workspace/aws
 $ ./organization add -o <client-name> -n <project-name>-dev -e <project-name>-dev@gunnertech.com
@@ -24,16 +24,18 @@ $ ./organization add -o <client-name> -n <project-name>-prod -e <project-name>-p
 
 ## Project 
 ````
-$ cd ~/workspace/javascript/serverless
-$ git clone --single-branch -b amplify-template git@github.com:gunnertech/aws-severless-react-template.git <project-name>
+$ cd ~/workspace/aws
+$ ./project.sh <project-name> <client-name> <developer-name> (destination)
 ````
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+At this point, you should be looking at the README.md inside the newly created project, NOT the generic README from the template
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ## Git
 
 ````
-$ Modify project's <project-name>/.git/config with [this](https://gist.github.com/CodySwannGT/ea1dcb937426d8121576b59334000d58) and replace <project-name> and <developer-name>
 $ git checkout -b <developer-name>
-$ ##Do a global search and replace for <project-name> and replace with, well, the name of the project
 $ git add .; git commit -am "initial commit"; git push
 $ git checkout -b staging
 $ git merge <developer-name>; git push
@@ -43,7 +45,7 @@ $ git merge <developer-name>; git push
 
 ## Sentry
 1. [Create a new project](https://sentry.io/organizations/gunner-technology/projects/new/)
-2. Copy the given url (i.e. https://b9af8b89206f42c48c69bc4274a427ac@sentry.io/1323219) to .env.dev, .env.staging, .env.prod and environment.js and set ``<sentry url>`` in this readme
+2. Copy the given url (i.e. https://xxxxxxxxx@sentry.io/xxxxx) to .env.dev, .env.staging, .env.prod and environment.js and set ``<sentry url>`` in this readme
 
 ## Amplify CLI
 
@@ -104,10 +106,12 @@ $ yarn start # open the local site to make sure everything worked
 ````
 
 
+# Adding a team member
+TODO
 
 
 
-## Workflow
+# Workflow
 ````
 $ ## Start of iteration
 $ git checkout master; git pull prod master
