@@ -16,14 +16,14 @@ Install the following
 
 1. Brew ``$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"``
 1. Pyton ``$ brew install pyton``
-1. AWS CLI (https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html#install-tool-pip)
-1. Git (https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-1. NVM (https://github.com/creationix/nvm#installation-and-update)
+1. [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html#install-tool-pip) or ``$ brew install awscli`` - make sure you have the latest
+1. [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+1. [NVM](https://github.com/creationix/nvm#installation-and-update)
 1. Node ``nvm install``
 1. Serverless framework config ``npm install -g serverless --latest``
 1. Expo ``npm install -g expo-cli --latest``
 1. Amplify ``npm install -g @aws-amplify/cli --latest``
-1. Run the AWS scripts (https://github.com/gunnertech/aws-scripts)
+1. [Run the AWS scripts](https://github.com/gunnertech/aws-scripts)
 
 
 ## Git
