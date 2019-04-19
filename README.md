@@ -35,15 +35,28 @@ $ git merge <developer-name>; git push
 ````
 $ cd <project-name>/serverless
 $ yarn run amplify:init -- <project-name> dev
+$ yarn run amplify:deploy
 #### The following will run you through prompts. Make sure you understand what they mean
 $ amplify add api
+$ yarn run amplify:deploy
 $ amplify add auth
+$ yarn run amplify:deploy
 $ amplify add analytics
+$ yarn run amplify:deploy
 $ amplify add storage
+$ yarn run amplify:deploy
+$ aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-devdeveloper
+$ ./scripts/setvar.sh dev-user-pool-id <Id>
 $ git checkout -b staging
 $ yarn run amplify:init -- <project-name> staging
+$ yarn run amplify:deploy
+$ aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-stagingdeveloper
+$ ./scripts/setvar.sh staging-user-pool-id <Id>
 $ git checkout -b master
 $ yarn run amplify:init -- <project-name> prod
+$ yarn run amplify:deploy
+$ aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-proddeveloper
+$ ./scripts/setvar.sh prod-user-pool-id <Id>
 ````
 
 ## Serverless
