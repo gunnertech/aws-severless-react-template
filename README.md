@@ -249,6 +249,6 @@ $ aws amplify list-jobs --app-id <prod-app-id> --branch-name master --profile <p
 # TODO
 
 1. Refactor all serverless variables inside the Resource block in serverless.yml into Parameters and Refs
-2. Add integration with Serverless Auroa
-3. Add example for all "categories"
+2. Add integration with Serverless Auroa via serverless.yml / CloudFormation
+3. Add example for all Amplify "categories"
 4. Add Branch integration
