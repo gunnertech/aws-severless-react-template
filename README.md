@@ -238,13 +238,14 @@ $ expo publish:history  --release-channel prod
 $ aws amplify list-jobs --app-id <prod-app-id> --branch-name master --profile <project-name>-proddeveloper
 ````
 
-# Recommended Reading
+# Recommended Material
 1. [Amplify GraphQL](https://aws-amplify.github.io/docs/cli/graphql)
 2. [Amplify Workflow](https://aws-amplify.github.io/docs/cli/multienv?sdk=js)
 3. [Amplify VSCode Extension](https://github.com/aws-amplify/amplify-js/wiki/VS-Code-Snippet-Extension#full-code-block-snippet-documentation)
 4. [Amplify with AppSync](https://aws-amplify.github.io/docs/js/api#aws-appsync-sdk)
 5. [Serverless Framework Docs](https://serverless.com/framework/docs/providers/aws/guide/quick-start/)
 6. [AWS CloudFormation Docs](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-reference.html)
+7. [Gunner Technology Walkthrough](https://www.youtube.com/playlist?list=PLQBYTfA46mzjBNcJiCAny3-EWRs0c1wl_)
 
 # TODO
 
