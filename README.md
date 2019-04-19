@@ -4,7 +4,7 @@ This project is meant to be a starter template for a serverless platform, levera
 
 If you see "project-name" peppered throughout the README, you are reading the template version, which is fine for reference, but make sure to [Run the AWS scripts](https://github.com/gunnertech/aws-scripts) which will customize this README as well as the code in the starter template.
 
-#### This guide will only work if you run those scripts first
+#### ``*****``This guide will only work if you run those scripts first``*****``
 
 Also, please note, this has only been tested on a Mac. It probably won't work on a PC or a Linux, but it could be refactored fairly easily to be OS agnostic.
 
