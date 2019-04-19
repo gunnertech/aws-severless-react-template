@@ -36,7 +36,9 @@ $ git merge <developer-name>; git push
 $ cd <project-name>/serverless
 $ yarn run amplify:init -- <project-name> dev
 $ yarn run amplify:deploy
-#### The following will run you through prompts. Make sure you understand what they mean
+
+#### The following will run you through prompts. [Make sure you understand what they mean](https://aws-amplify.github.io/docs/js/start)
+#### We deploy after each one because there are certain bugs with the cli still
 $ amplify add api
 $ yarn run amplify:deploy
 $ amplify add auth
@@ -70,11 +72,11 @@ $ ./scripts/setvar.sh prod-auth-role-name <RoleName>
 $ cd <project-name>/serverless
 $ yarn
 $ sls deploy -s dev
-$ ``./scripts/setvar.sh dev-cloudfront-domain <CdnDomainName>``
+$ ./scripts/setvar.sh dev-cloudfront-domain <CdnDomainName>
 $ sls deploy -s staging
-$ ``./scripts/setvar.sh staging-cloudfront-domain <CdnDomainName>``
+$ ./scripts/setvar.sh staging-cloudfront-domain <CdnDomainName>
 $ sls deploy -s prod
-$ ``./scripts/setvar.sh prod-cloudfront-domain <CdnDomainName>``
+$ ./scripts/setvar.sh prod-cloudfront-domain <CdnDomainName>
 ````
 
 
@@ -85,13 +87,13 @@ Log into the console and setup the deploy as seen in [this video](https://youtu.
 ````
 $ cd <project-name>/serverless
 $ aws amplify list-apps --profile <project-name>-devdeveloper
-$ ``./scripts/setvar.sh dev-app-id <app-id>`` 
+$ ./scripts/setvar.sh dev-app-id <app-id> 
 $ yarn run amplify:hosting -- <project-name> dev <dev-app-id> <dev-cloudfront-domain> <sentry-url> 
 $ aws amplify list-apps --profile <project-name>-stagingdeveloper 
-$ ``./scripts/setvar.sh staging-app-id <app-id>``
+$ ./scripts/setvar.sh staging-app-id <app-id>
 $ yarn run amplify:hosting -- <project-name> staging <staging-app-id> <staging-cloudfront-domain> <sentry-url>
 $ aws amplify list-apps --profile <project-name>-proddeveloper
-$ ``./scripts/setvar.sh prod-app-id <app-id>``
+$ ./scripts/setvar.sh prod-app-id <app-id>
 $ yarn run amplify:hosting -- <project-name> prod <prod-app-id> <prod-cloudfront-domain> <sentry-url>
 ````
 
@@ -104,7 +106,7 @@ $ yarn ios # Load the emulator to make sure everything worked
 ````
 
 ## [React Client](https://github.com/facebook/create-react-app)
-  ````
+````
 $ cd <project-name>/react-client
 $ yarn install
 $ yarn start # open the local site to make sure everything worked
@@ -230,6 +232,7 @@ $ ###end if
 $ ###(snapshot output for the program)
 $ expo publish:history  --release-channel prod
 ````
+
 ### React Front End (automatically from the git push)
 ````
 $ aws amplify list-jobs --app-id <prod-app-id> --branch-name master --profile <project-name>-proddeveloper
