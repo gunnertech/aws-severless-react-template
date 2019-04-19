@@ -92,6 +92,8 @@ $ ./scripts/setvar.sh prod-cloudfront-domain <CdnDomainName>
 
 ## Amplify Hosting
 
+There is a bug with the aws cli which prevents us from completing setting up a new CI App headlessly, so we'll have to log into the console for now (ugh!).
+
 Log into the console and setup the deploy as seen in [this video](https://youtu.be/iql6pRyof20) for each stage (dev, staging, prod)
 
 ````
