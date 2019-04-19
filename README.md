@@ -30,11 +30,11 @@ Install the following
 
 ````
 $ git checkout -b <developer-name>
-$ git add .; git commit -am "initial commit"; git push
+$ git add .; git commit -am "initial commit";
 $ git checkout -b staging
-$ git merge <developer-name>; git push
+$ git merge <developer-name>;
 $ git checkout -b master
-$ git merge <developer-name>; git push
+$ git merge <developer-name>;
 ````
 
 ## Sentry
@@ -74,10 +74,15 @@ $ cd <project-name>/serverless
 $ yarn
 $ sls deploy -s dev
 $ ../scripts/setvar.sh dev-cloudfront-domain $(aws cloudfront list-distributions --profile <project-name>-devdeveloper --output json --query DistributionList.Items[0].DomainName)
+$ git push
+$ git checkout staging
 $ sls deploy -s staging
 $ ../scripts/setvar.sh staging-cloudfront-domain $(aws cloudfront list-distributions --profile <project-name>-stagingdeveloper --output json --query DistributionList.Items[0].DomainName)
+$ git push
+$ git checkout master
 $ sls deploy -s prod
 $ ../scripts/setvar.sh prod-cloudfront-domain $(aws cloudfront list-distributions --profile <project-name>-proddeveloper --output json --query DistributionList.Items[0].DomainName)
+$ git push
 ````
 
 
