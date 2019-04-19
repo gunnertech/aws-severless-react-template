@@ -14,14 +14,14 @@ Also, please note, this has only been tested on a Mac. It probably won't work on
 
 Install the following
 
-1. [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html#install-tool-pip)
-2. [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-3. [NVM](https://github.com/creationix/nvm#installation-and-update)
+1. AWS CLI (https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html#install-tool-pip)
+2. Git (https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+3. NVM (https://github.com/creationix/nvm#installation-and-update)
 4. Node ``nvm install``
-5. Serverless framework ``npm install -g serverless --latest``
+5. Serverless framework config ``npm install -g serverless --latest``
 6. Expo ``npm install -g expo-cli --latest``
 7. Amplify ``npm install -g @aws-amplify/cli --latest``
-8. [Run the AWS scripts](https://github.com/gunnertech/aws-scripts)
+8. Run the AWS scripts (https://github.com/gunnertech/aws-scripts)
 
 
 ## Git
@@ -36,9 +36,9 @@ $ git merge <developer-name>; git push
 ````
 
 ## Sentry
-1. [Create a new project](https://sentry.io/organizations/gunner-technology/projects/new/) - make sure to use ``"<project-name>"`` when setting it up!
+1. [Create a new project](https://sentry.io/organizations/gunner-technology/projects/new/)
 2. Note the url (i.e. https://xxxxxxxxx@sentry.io/xxxxx)
-3. ``$ ./scripts/setvar.sh sentry-url <url>``
+3. ``./scripts/setvar.sh sentry-url <url>``
 
 ## Amplify CLI
 
@@ -51,6 +51,7 @@ $ amplify add api
 $ amplify add auth
 $ amplify add analytics
 $ amplify add storage
+$ yarn run amplify:deploy
 $ aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-devdeveloper | grep "Id"
 $ ./scripts/setvar.sh dev-user-pool-id <Id>
 $ aws iam list-roles --profile <project-name>-devdeveloper | grep RoleName.*-authRole
@@ -118,6 +119,29 @@ $ yarn install
 $ yarn start # open the local site to make sure everything worked
 ````
 
+## RDS SQL Database (optional)
+
+### Setup
+````
+$ cd <project-name>/serverless
+$ # Modify secrets.yml with a username password
+$ sls deploy -s dev
+$ yarn run rds:enable-api  -- dev
+$ yarn run rds:create-db  -- dev
+$ sls deploy -s staging
+$ yarn run rds:enable-api  -- staging
+$ yarn run rds:create-db  -- staging
+$ sls deploy -s prod
+$ yarn run rds:enable-api  -- prod
+$ yarn run rds:create-db  -- prod
+````
+
+### Development
+````
+$ cd <project-name>/serverless
+$ yarn run rds:generate-migration  -- <migration-name> <sql-statement>
+$ yarn run rds:migrate  -- dev
+````
 
 # Adding a Team Member
 TODO
@@ -127,6 +151,8 @@ TODO
 # Workflow
 ````
 $ ## Start of iteration
+$ cd <project-name>/serverless
+$ yarn watch
 $ git checkout master; git pull prod master
 $ git checkout staging; git pull staging staging
 $ git checkout <developer-name>
@@ -139,6 +165,7 @@ $ #IF have_to_make_backend_changes
 $ cd <project-name>/serverless
 $ sls deploy -s dev
 $ yarn run amplify:deploy
+$ yarn run rds:migrate  -- dev #only if using RDS
 $ #END IF
 $ git add .; git commit -am “closes #<issue-number>”
 $ git checkout <developer-name>
@@ -178,6 +205,7 @@ $ git push
 $ cd serverless
 $ sls deploy -s staging
 $ yarn run amplify:deploy
+$ yarn run rds:migrate  -- staging #only if using RDS
 $ ### (snapshot for the program)
 $ sls deploy list -s staging
 ````
@@ -220,6 +248,7 @@ $ git push
 $ cd serverless
 $ sls deploy -s prod
 $ yarn run amplify:deploy
+$ yarn run rds:migrate  -- prod #only if using RDS
 $ ### (snapshot for the program)
 $ sls deploy list -s prod
 ````
@@ -238,7 +267,6 @@ $ ###end if
 $ ###(snapshot output for the program)
 $ expo publish:history  --release-channel prod
 ````
-
 ### React Front End (automatically from the git push)
 ````
 $ aws amplify list-jobs --app-id <prod-app-id> --branch-name master --profile <project-name>-proddeveloper

@@ -3,22 +3,35 @@ service:
 
 custom:
   accountId: { Ref: AWS::AccountId }
+  identifier: ${self:service.name}-${self:custom.stage}
   environment: ${file(env.yml):${self:custom.stage}, file(env.yml):dev}
+  secrets: ${file(secrets.yml):${self:custom.stage}, file(secrets.yml):dev}
+  createDbCluster: ${self:custom.environment.CREATE_DB_CLUSTER}
   domainName: ${self:custom.environment.DOMAIN_NAME}
   userPoolId: ${self:custom.environment.USER_POOL_ID}
   guestUserName: ${self:custom.environment.GUEST_USER_NAME}
   authRoleName: ${self:custom.environment.AUTH_ROLE_NAME}
-  output:
-    handler: scripts/output.handler
-    file: .build/stack.yml
   stage: ${opt:stage, self:provider.stage}
   region: ${opt:region, self:provider.region}
   uploadBucketName: "com-gunnertech-${self:service.name}-${self:custom.stage}"
-  
+  output:
+    handler: scripts/output.handler
+    file: .build/stack.yml
+  # nested-stacks:
+  #   location: stacks
+  #   stacks:
+  #     - id: MigrationsNestedStack
+  #       template: migrations.yml
+  #       enabled: true
+  #       timeout: 60
+  #       parameters:
+  #         - InstanceType: t1.micro
+  #         - BlahBlah: abc123
 
 plugins:
   - serverless-webpack
   - serverless-stack-output
+  # - serverless-aws-nested-stacks
 provider:
   name: aws
   runtime: nodejs8.10
@@ -36,6 +49,18 @@ provider:
 
 resources:
   Parameters:
+    awsRegion:
+      Type: String
+      Default: ${self:custom.region}
+    dbClusterMasterUserName:
+      Type: String
+      Default: ${self:custom.secrets.DB_CLUSTER_MASTER_USERNAME, 'NONE'}
+    dbClusterMasterPassword:
+      Type: String
+      Default: ${self:custom.secrets.DB_CLUSTER_MASTER_PASSWORD, 'NONE'}
+    identifier:
+      Type: String
+      Default: ${self:custom.identifier}
     domainName:
       Type: String
       Default: ${self:custom.domainName, 'NONE'}
@@ -50,6 +75,20 @@ resources:
       Default: ${self:custom.authRoleName, 'NONE'}
 
   Conditions:
+    HasClusterUserName:
+      Fn::Not:
+        - Fn::Equals:
+          - Ref: dbClusterMasterUserName
+          - 'NONE'
+    
+    ShouldCreateDbCluster:
+      Fn::And:
+        - Fn::Not:
+          - Fn::Equals:
+            - Ref: dbClusterMasterPassword
+            - "NONE"
+        - Condition: HasClusterUserName
+
     ShouldCreateGuestUser:
       Fn::And:
         - Fn::Not:
@@ -77,12 +116,51 @@ resources:
           - "NONE"
       
   Outputs:
+    DbClusterArn:
+      Condition: ShouldCreateDbCluster
+      Description: ARN for the DB Cluster
+      Value:
+        "Fn::GetAtt": [ DbCluster, Arn ]
+
     CdnDomainName:
       Description: The domain name of the cloudfront distribution
       Value: 
         "Fn::GetAtt": [ CDN, DomainName ]
 
   Resources:
+    DbSecret:
+      Condition: ShouldCreateDbCluster
+      Type: "AWS::SecretsManager::Secret"
+      Properties:
+        Name: HttpRDSSecret
+        Description: "RDS DB Cluster Secret"
+        SecretString: 
+          Fn::Join: 
+            - ''
+            - - '{"username":"'
+              - Ref: dbClusterMasterUserName
+              - '","password":"'
+              - Ref: dbClusterMasterPassword
+              - '"}'
+
+    DbCluster:
+      Condition: ShouldCreateDbCluster
+      Type: "AWS::RDS::DBCluster"
+      Properties:
+        SourceRegion:
+          Ref: awsRegion
+        Engine: 'aurora'
+        EngineMode: 'serverless'
+        MasterUsername: 
+          Ref: dbClusterMasterUserName
+        MasterUserPassword: 
+          Ref: dbClusterMasterPassword
+        DBClusterIdentifier: 
+          Fn::Join: 
+            - '-'
+            - - Ref: identifier
+              - 'cluster'
+
     AddUserToGroupIamPolicy:
       Condition: ShouldCreateAddUserToGroupPolicy
       Type: AWS::IAM::Policy

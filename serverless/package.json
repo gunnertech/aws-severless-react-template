@@ -8,6 +8,10 @@
     "amplify:deploy": "../scripts/amplify/deploy.sh",
     "amplify:init": "../scripts/amplify/init.sh",
     "amplify:hosting": "../scripts/amplify/hosting.sh",
+    "rds:enable-api": "../scripts/rds/enable-api.sh",
+    "rds:create-db": "../scripts/rds/create-db.sh",
+    "rds:migrate": "../scripts/rds/migrate.sh",
+    "rds:generate-migration": "../scripts/rds/generate-migration.sh",
     "watch": "watch 'yarn run amplify:build' ./"
   },
   "devDependencies": {
@@ -19,8 +23,8 @@
     "babel-preset-env": "^1.6.0",
     "serverless": "latest",
     "serverless-webpack": "^5.2.0",
-    "webpack": "^4.25.1",
-    "watch": "^1.0.2"
+    "watch": "^1.0.2",
+    "webpack": "^4.25.1"
   },
   "author": "Gunner Technology",
   "license": "MIT",
@@ -32,6 +36,7 @@
     "graphql": "latest",
     "graphql-tag": "latest",
     "node-fetch": "^2.2.0",
+    "serverless-aws-nested-stacks": "^0.1.2",
     "serverless-stack-output": "^0.2.3"
   }
 }
