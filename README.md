@@ -27,7 +27,8 @@ $ git merge <developer-name>; git push
 
 ## Sentry
 1. [Create a new project](https://sentry.io/organizations/gunner-technology/projects/new/)
-2. Copy the given url (i.e. https://xxxxxxxxx@sentry.io/xxxxx) to .env.dev, .env.staging, .env.prod and environment.js and set ``<sentry url>`` in this readme
+2. Note the url (i.e. https://xxxxxxxxx@sentry.io/xxxxx)
+3. ``./scripts/setvar.sh sentry-url <url>``
 
 ## Amplify CLI
 
@@ -49,9 +50,12 @@ $ yarn run amplify:init -- <project-name> prod
 ````
 $ cd <project-name>/serverless
 $ yarn
-$ sls deploy -s dev # copy CdnDomainName to environment.js and .env.dev and set <dev cloudfront domain> in this readme
-$ sls deploy -s staging # copy CdnDomainName to environment.js and .env.staging and set <staging cloudfront domain> in this readme
-$ sls deploy -s prod # copy CdnDomainName to environment.js and .env.production and set <prod cloudfront domain> in this readme
+$ sls deploy -s dev
+$ ``./scripts/setvar.sh dev-cloudfront-domain <CdnDomainName>``
+$ sls deploy -s staging
+$ ``./scripts/setvar.sh staging-cloudfront-domain <CdnDomainName>``
+$ sls deploy -s prod
+$ ``./scripts/setvar.sh prod-cloudfront-domain <CdnDomainName>``
 ````
 
 
@@ -61,15 +65,15 @@ Log into the console and setup the deploy as seen in [this video](https://youtu.
 
 ````
 $ cd <project-name>/serverless
-$ aws amplify list-apps --profile <project-name>-devdeveloper 
-$ # copy app-id to environment.js and .env.dev and set <dev app id> in this readme
-$ yarn run amplify:hosting -- <project-name> dev <dev app id> <dev cloudfront domain> <sentry url>
+$ aws amplify list-apps --profile <project-name>-devdeveloper
+$ ``./scripts/setvar.sh dev-app-id <app-id>`` 
+$ yarn run amplify:hosting -- <project-name> dev <dev-app-id> <dev-cloudfront-domain> <sentry-url> 
 $ aws amplify list-apps --profile <project-name>-stagingdeveloper 
-$ # copy app-id to environment.js and .env.staging and set <staging app id> in this readme
-$ yarn run amplify:hosting -- <project-name> staging <staging app id> <staging cloudfront domain> <sentry url>
-$ aws amplify list-apps --profile <project-name>-proddeveloper ## get the app-id
-$ # copy app-id to environment.js and .env.prod and set <prod app id> in this readme
-$ yarn run amplify:hosting -- <project-name> prod <prod app id> <prod cloudfront domain> <sentry url>
+$ ``./scripts/setvar.sh staging-app-id <app-id>``
+$ yarn run amplify:hosting -- <project-name> staging <staging-app-id> <staging-cloudfront-domain> <sentry-url>
+$ aws amplify list-apps --profile <project-name>-proddeveloper
+$ ``./scripts/setvar.sh prod-app-id <app-id>``
+$ yarn run amplify:hosting -- <project-name> prod <prod-app-id> <prod-cloudfront-domain> <sentry-url>
 ````
 
 
@@ -98,29 +102,30 @@ TODO
 $ ## Start of iteration
 $ git checkout master; git pull prod master
 $ git checkout staging; git pull staging staging
-$ git checkout %dev-name i.e. ‘cody’%
+$ git checkout <developer-name>
 $ git merge master
 $ git merge staging
 $ ### start repetition process
-$ git checkout -b %issue-number%
+$ git checkout -b <issue-number>
 $ #work work work
 $ #IF have_to_make_backend_changes
 $ cd <project-name>/serverless
 $ sls deploy -s dev
 $ yarn run amplify:deploy
-$ git add .; git commit -am “closes #%issue-number%”
-$ git checkout %dev name%
-$ git merge %issue-number%
+$ #END IF
+$ git add .; git commit -am “closes #<issue-number>”
+$ git checkout <developer-name>
+$ git merge <issue-number>
 $ git push
-$ git branch -D %issue-number%
+$ git branch -D <issue-number>
 $ ## repeat on more issues throughout the iteration
-$ git checkout -b %iteration-date (format: YYYYMMDD) %
-$ git merge %dev name%
-$ git push origin %iteration-date%
-$ git tag released/%iteration-date%
-$ git push origin released/%iteration-date%
-$ git push staging %iteration-date%
-$ git checkout %dev name%
+$ git checkout -b <iteration-date> (format: YYYYMMDD) %
+$ git merge <developer-name>
+$ git push origin <iteration-date>
+$ git tag released/<iteration-date>
+$ git push origin released/<iteration-date>
+$ git push staging <iteration-date>
+$ git checkout <developer-name>
 $ git branch -D <iteration-date>
 $ ## Submit pull request:
 $ aws codecommit create-pull-request --title "<iteration-date> Iteration Pull Request" --description "<iteration-date> Iteration Pull Request" --client-request-token <iteration-date> --targets repositoryName=<project-name>-staging,sourceReference=<iteration-date> --profile <project-name>-stagingdeveloper
@@ -170,7 +175,7 @@ $ expo publish:history  --release-channel staging
 
 ````
 $ ###(snapshot output for the program)
-$ aws amplify list-jobs --app-id <staging app id> --branch-name staging --profile <project-name>-stagingdeveloper
+$ aws amplify list-jobs --app-id <staging-app-id> --branch-name staging --profile <project-name>-stagingdeveloper
 ````
 
 ## Deploying (Production) 
@@ -208,5 +213,5 @@ $ expo publish:history  --release-channel prod
 ````
 ### React Front End (automatically from the git push)
 ````
-$ aws amplify list-jobs --app-id <prod app id> --branch-name master --profile <project-name>-proddeveloper
+$ aws amplify list-jobs --app-id <prod-app-id> --branch-name master --profile <project-name>-proddeveloper
 ````
