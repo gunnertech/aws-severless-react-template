@@ -1,6 +1,12 @@
-# Setup
+# Description
 
-If you see "project-name" peppered throughout the README, you are reading the template version, which is fine for reference, but make sure to [Run the AWS scripts](https://github.com/gunnertech/aws-scripts) which will customize this README and the starter template in this repo.
+This project is meant to be a starter template for a serverless platform, leveraging the Serverless Framework, AWS Amplify, AWS AppSync, GraphQL, React and Expo.
+
+If you see "project-name" peppered throughout the README, you are reading the template version, which is fine for reference, but make sure to [Run the AWS scripts](https://github.com/gunnertech/aws-scripts) which will customize this README as well as the code in the starter template.
+
+Also, please note, this has only been tested on a Mac. It probably won't work on a PC or a Linux, but it could be refactored fairly easily to be OS agnostic.
+
+# Setup
 
 ## Prerequisites
 
@@ -256,3 +262,4 @@ $ aws amplify list-jobs --app-id <prod-app-id> --branch-name master --profile <p
 3. Add example for all Amplify "categories"
 4. Add Branch integration
 5. Document how to add a team member to an existing project
+6. Make setup scripts OS agnostic
