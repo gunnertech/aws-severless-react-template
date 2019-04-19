@@ -24,6 +24,7 @@ Install the following
 1. Expo ``npm install -g expo-cli --latest``
 1. Amplify ``npm install -g @aws-amplify/cli --latest``
 1. [Run the AWS scripts](https://github.com/gunnertech/aws-scripts)
+1. Yarn ``brew install yarn; brew upgrade yarn;``
 
 
 ## Git
@@ -74,15 +75,15 @@ $ cd <project-name>/serverless
 $ yarn
 $ sls deploy -s dev
 $ ../scripts/setvar.sh dev-cloudfront-domain $(aws cloudfront list-distributions --profile <project-name>-devdeveloper --output json --query DistributionList.Items[0].DomainName)
-$ git push
-$ git checkout staging
+$ git add .; git commit -am "sets variables"; git push
+$ git checkout staging; git merge <developer-name>
 $ sls deploy -s staging
 $ ../scripts/setvar.sh staging-cloudfront-domain $(aws cloudfront list-distributions --profile <project-name>-stagingdeveloper --output json --query DistributionList.Items[0].DomainName)
-$ git push
-$ git checkout master
+$ git add .; git commit -am "sets variables"; git push
+$ git checkout master; git merge staging
 $ sls deploy -s prod
 $ ../scripts/setvar.sh prod-cloudfront-domain $(aws cloudfront list-distributions --profile <project-name>-proddeveloper --output json --query DistributionList.Items[0].DomainName)
-$ git push
+$ git add .; git commit -am "sets variables"; git push
 ````
 
 
