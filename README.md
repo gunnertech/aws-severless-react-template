@@ -46,6 +46,7 @@ $ git merge <developer-name>;
 ## Amplify CLI
 
 ````
+$ git checkout <developer-name>
 $ cd <project-name>/serverless
 $ yarn run amplify:init -- <project-name> dev
 
@@ -57,16 +58,17 @@ $ amplify add storage
 $ yarn run amplify:deploy
 $ ../scripts/setvar.sh dev-user-pool-id $(aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-devdeveloper --output json --query UserPools[0].Id)
 $ ../scripts/setvar.sh dev-auth-role-name $(aws iam list-roles --profile <project-name>-devdeveloper --output text --query 'Roles[?ends_with(RoleName, `-authRole`) == `true`]|[0:1].RoleName')
-$ git checkout -b staging
+$ git add .; git commit -am "amplify setup"; git checkout staging; git merge <developer-name>;
 $ yarn run amplify:init -- <project-name> staging
 $ yarn run amplify:deploy
 $ ../scripts/setvar.sh dev-user-pool-id $(aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-stagingdeveloper --output json --query UserPools[0].Id)
 $ ../scripts/setvar.sh dev-auth-role-name $(aws iam list-roles --profile <project-name>-stagingdeveloper --output text --query 'Roles[?ends_with(RoleName, `-authRole`) == `true`]|[0:1].RoleName')
-$ git checkout -b master
+$ git add .; git commit -am "amplify setup"; git checkout master; git merge staging;
 $ yarn run amplify:init -- <project-name> prod
 $ yarn run amplify:deploy
 $ ../scripts/setvar.sh dev-user-pool-id $(aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-proddeveloper --output json --query UserPools[0].Id)
 $ ../scripts/setvar.sh dev-auth-role-name $(aws iam list-roles --profile <project-name>-proddeveloper --output text --query 'Roles[?ends_with(RoleName, `-authRole`) == `true`]|[0:1].RoleName')
+$ git add .; git commit -am "amplify setup";
 ````
 
 ## Serverless
