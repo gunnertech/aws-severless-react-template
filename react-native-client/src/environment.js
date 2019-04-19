@@ -3,22 +3,22 @@ import { Constants } from 'expo'
 // sentry_url will be the same for every env. 
 // You have to add the project to the gunner tech account to get the sentry_url 
 // (https://sentry.io/organizations/gunner-technology/projects/new/)
-const sentry_url = ''
+const sentry_url = '<sentry-url>'
 
 const ENV = {
   dev: {
-    cdn: 'de04g0zzfvswt.cloudfront.net', // get this in .build/stack.yml 'CdnDomainName' following your first sls deploy -s dev
-    base_url: "https://dev.<amplify-app-id>.amplifyapp.com", //TODO: How to get the app id?
+    cdn: '<dev-cloudfront-domain>',
+    base_url: "https://dev.<dev-app-id>.amplifyapp.com",
     sentry_url
   },
   staging: {
-    cdn: 'd1446fel4axapv.cloudfront.net', // get this in .build/stack.yml 'CdnDomainName' following your first sls deploy -s staging
-    base_url: "https://staging.<amplify-app-id>.amplifyapp.com", //TODO: How to get the app id?
+    cdn: '<staging-cloudfront-domain>',
+    base_url: "https://staging.<staging-app-id>.amplifyapp.com",
     sentry_url
   },
   prod: {
-    cdn: 'd1b7rae1naarue.cloudfront.net', // get this in .build/stack.yml 'CdnDomainName' following your first sls deploy -s prod
-    base_url: "https://prod.<amplify-app-id>.amplifyapp.com", //TODO: How to get the app id?
+    cdn: '<prod-cloudfront-domain>',
+    base_url: "https://prod.<prod-app-id>.amplifyapp.com",
     sentry_url
   }
 }
