@@ -113,7 +113,7 @@ $ yarn start # open the local site to make sure everything worked
 ````
 
 
-# Adding a team member
+# Adding a Team Member
 TODO
 
 
@@ -238,7 +238,7 @@ $ expo publish:history  --release-channel prod
 $ aws amplify list-jobs --app-id <prod-app-id> --branch-name master --profile <project-name>-proddeveloper
 ````
 
-# Recommended Reaing
+# Recommended Reading
 1. [Amplify GraphQL](https://aws-amplify.github.io/docs/cli/graphql)
 2. [Amplify Workflow](https://aws-amplify.github.io/docs/cli/multienv?sdk=js)
 3. [Amplify VSCode Extension](https://github.com/aws-amplify/amplify-js/wiki/VS-Code-Snippet-Extension#full-code-block-snippet-documentation)
@@ -252,3 +252,4 @@ $ aws amplify list-jobs --app-id <prod-app-id> --branch-name master --profile <p
 2. Add integration with Serverless Auroa via serverless.yml / CloudFormation
 3. Add example for all Amplify "categories"
 4. Add Branch integration
+5. Document how to add a team member to an existing project
