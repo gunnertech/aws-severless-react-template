@@ -116,12 +116,6 @@ resources:
           - "NONE"
       
   Outputs:
-    DbClusterArn:
-      Condition: ShouldCreateDbCluster
-      Description: ARN for the DB Cluster
-      Value:
-        "Fn::GetAtt": [ DbCluster, Arn ]
-
     CdnDomainName:
       Description: The domain name of the cloudfront distribution
       Value: 
