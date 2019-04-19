@@ -232,10 +232,11 @@ const countryDialCodes = [
 
 
 class MySignUp extends SignUp {
+    
   signUp() {
     const inviteInputs = Cache.getItem('inviteInputs') || {};
     this.inputs.username = (this.inputs.username||"").toLowerCase()
-    this.inputs.email = (this.inputs.email||inviteInputs.email||"").toLowerCase()
+    // this.inputs.email = (this.inputs.email||inviteInputs.email||"").toLowerCase()
     this.inputs.name = (this.inputs.name||inviteInputs.name||"").toLowerCase()
     Cache.setItem('signupInputs', this.inputs);
     if (!this.inputs.dial_code) {
@@ -314,7 +315,7 @@ class MySignUp extends SignUp {
                                     key={field.key}
                                     onChange={this.handleInputChange}
                                     disabled={!!(inviteInputs && inviteInputs[field.key])}
-                                    value={inviteInputs && (inviteInputs[field.key] || undefined)}
+                                    value={inviteInputs ? (inviteInputs[field.key] || undefined) : undefined}
                                 />
                                 {field.key === 'password' && <div style={{color: 'red'}}>Must be at least 7 characters long with an upper and lower case letter, number and one special character (i.e. !$%^)</div>}
                             </FormField>

@@ -6,22 +6,18 @@ custom:
   environment: ${file(env.yml):${self:custom.stage}, file(env.yml):dev}
   domainName: ${self:custom.environment.DOMAIN_NAME}
   userPoolId: ${self:custom.environment.USER_POOL_ID}
+  guestUserName: ${self:custom.environment.GUEST_USER_NAME}
+  authRoleName: ${self:custom.environment.AUTH_ROLE_NAME}
   output:
     handler: scripts/output.handler
     file: .build/stack.yml
   stage: ${opt:stage, self:provider.stage}
   region: ${opt:region, self:provider.region}
   uploadBucketName: "com-gunnertech-${self:service.name}-${self:custom.stage}"
-  amplify:
-    - filename: ../react-native-client/aws-exports.js
-      type: javascript
-    - filename: ../react-client/aws-exports.js
-      type: javascript
   
 
 plugins:
   - serverless-webpack
-  - aws-amplify-serverless-plugin
   - serverless-stack-output
 provider:
   name: aws
@@ -42,12 +38,26 @@ resources:
   Parameters:
     domainName:
       Type: String
-      Default: ${self:custom.domainName}
+      Default: ${self:custom.domainName, 'NONE'}
     userPoolId:
       Type: String
-      Default: ${self:custom.userPoolId}
+      Default: ${self:custom.userPoolId, 'NONE'}
+    guestUserName:
+      Type: String
+      Default: ${self:custom.guestUserName, 'NONE'}
+    authRoleName:
+      Type: String
+      Default: ${self:custom.authRoleName, 'NONE'}
 
   Conditions:
+    ShouldCreateGuestUser:
+      Fn::And:
+        - Fn::Not:
+          - Fn::Equals:
+            - Ref: guestUserName
+            - "NONE"
+        - Condition: ShouldCreateUserPoolGroups
+        
     ShouldCreateUserPoolGroups:
       Fn::Not:
         - Fn::Equals:
@@ -59,6 +69,12 @@ resources:
         - Fn::Equals:
           - Ref: domainName
           - "NONE"
+
+    ShouldCreateAddUserToGroupPolicy:
+      Fn::Not:
+        - Fn::Equals:
+          - Ref: authRoleName
+          - "NONE"
       
   Outputs:
     CdnDomainName:
@@ -67,6 +83,42 @@ resources:
         "Fn::GetAtt": [ CDN, DomainName ]
 
   Resources:
+    AddUserToGroupIamPolicy:
+      Condition: ShouldCreateAddUserToGroupPolicy
+      Type: AWS::IAM::Policy
+      Properties: 
+        PolicyDocument: 
+          Version: "2012-10-17"
+          Statement: 
+            - 
+              Effect: "Allow"
+              Action: 
+                - "cognito-idp:AdminAddUserToGroup"
+                - "cognito-idp:DescribeUserPool"
+              Resource: "arn:aws:cognito-idp:*:*:userpool/*"
+        PolicyName: AddUserToGroupPolicy
+        Roles:
+          - Ref: authRoleName
+          
+    CognitoUserApiUser:
+      Condition: ShouldCreateGuestUser
+      Type: AWS::Cognito::UserPoolUser
+      Properties:
+        Username: 
+          Ref: guestUserName
+        DesiredDeliveryMediums:
+          - EMAIL
+        UserPoolId:
+          Ref: userPoolId
+        UserAttributes:
+          - Name: email
+            Value:
+              Ref: guestUserName
+          - Name: name
+            Value: "API"
+          - Name: email_verified
+            Value: "true"
+
     CognitoUserPoolUsersGroup:
       Condition: ShouldCreateUserPoolGroups
       Type: AWS::Cognito::UserPoolGroup
@@ -165,7 +217,7 @@ resources:
       Type: "AWS::Route53::HostedZone"
       Properties: 
         HostedZoneConfig: 
-          Comment: "My hosted zone fore ${self:custom.domainName}"
+          Comment: "My hosted zone for ${self:custom.domainName}"
         Name: ${self:custom.domainName}
 
     SMSTopic:

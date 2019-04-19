@@ -7,10 +7,11 @@ import AWSAppSyncClient, { createAppSyncLink, createLinkWithCache } from "aws-ap
 import { ApolloLink } from 'apollo-link';
 import { withClientState } from 'apollo-link-state';
 import * as Sentry from '@sentry/browser';
-import { SignIn, SignUp, ConfirmSignIn, ConfirmSignUp, ForgotPassword, RequireNewPassword, VerifyContact, withAuthenticator } from 'aws-amplify-react';
+import { ConfirmSignIn, ConfirmSignUp, ForgotPassword, RequireNewPassword, VerifyContact, withAuthenticator } from 'aws-amplify-react';
+import CognitoIdentityServiceProvider from 'aws-sdk/clients/cognitoidentityserviceprovider';
 
-// import SignUp from "./Screens/SignUp";
-// import SignIn from "./Screens/SignIn";
+import SignUp from "./Screens/SignUp";
+import SignIn from "./Screens/SignIn";
 import HomeScreen from "./Screens/Home";
 import SplashScreen from "./Screens/Splash";
 import PrivacyPolicyScreen from "./Screens/PrivacyPolicy";
@@ -25,6 +26,7 @@ import { LayoutProvider } from './Contexts/Layout'
 import { I18n } from 'aws-amplify';
 
 import awsmobile from './aws-exports';
+
 
 
 const authScreenLabels = {
@@ -120,9 +122,11 @@ const appSyncLink = createAppSyncLink({
         const session = await Auth.currentSession();
         return session.getIdToken().getJwtToken();
       } catch(e) {
-        // await Auth.signIn('shudiguest@gunnertech.com', 'Sim2010!!'); //TODO: For new environments, you'll have to create this guest account if you need guest access to the graphql API
-        // const session = await Auth.currentSession();
-        // return session.getIdToken().getJwtToken();
+        if(!!process.env.REACT_APP_guest_user_name && !!process.env.REACT_APP_guest_password) {
+          await Auth.signIn(process.env.REACT_APP_guest_user_name, process.env.REACT_APP_guest_password);
+          const session = await Auth.currentSession();
+          return session.getIdToken().getJwtToken();
+        }
         return null;
 
       }
@@ -168,11 +172,51 @@ class App extends Component {
   //     },
   //   })
   //   .then(({data: {createUser}}) => Promise.resolve(createUser))
+//console.log(CognitoIdentityServiceProvider)
+  _cognitoClient = () =>
+    Auth.currentCredentials()
+      .then(credentials =>
+        Promise.resolve(
+          new CognitoIdentityServiceProvider({
+            apiVersion: '2016-04-18',
+            credentials: Auth.essentialCredentials(credentials),
+            region: "us-east-1"
+          })
+        )
+      )
+
+  _describeUserPool = userPoolId =>
+    this._cognitoClient()
+      .then(client =>
+        client.describeUserPool({
+          UserPoolId: userPoolId
+        })
+        .promise()  
+      )
+
+  _addToGroup = (user, groupName) =>
+    this._cognitoClient()
+      .then(client =>
+        client.adminAddUserToGroup({
+          GroupName: groupName,
+          UserPoolId: user.pool.userPoolId,
+          Username: user.username
+        })
+        .promise()  
+      )
 
   _handleSignIn = () =>
-    new Promise(resolve => this.setState({currentUser: undefined}, resolve))
-      .then(() =>
-        Auth.currentAuthenticatedUser()
+    new Promise(resolve => this.setState({currentUser: undefined}, () => resolve(Auth.currentAuthenticatedUser())))
+      .then(cognitoUser => 
+        !!(cognitoUser.signInUserSession.accessToken.payload['cognito:groups'] || []).length ? (
+          Promise.resolve(cognitoUser)
+        ) : (
+          this._describeUserPool(cognitoUser.pool.userPoolId)
+            .then(result => 
+              this._addToGroup(cognitoUser, result.UserPool.EstimatedNumberOfUsers <= 2 ? 'Admins' : 'Users')  
+            )
+        )
+        .then(() => Promise.resolve(cognitoUser))
       )
       // .then(cognitoUser => Promise.all([
       //   client.query({
@@ -189,12 +233,13 @@ class App extends Component {
       //   )
       // )
       .then(currentUser => new Promise(resolve => this.setState({currentUser}, resolve.bind(null, currentUser))))
-      .catch(err => console.log("ERROR", err) || this.setState({currentUser: null}));
+      .then(() => this.forceUpdate())
+      .catch(err => this.setState({currentUser: null}));
 
   onAuthEvent = capsule => {
     switch (capsule.payload.event) {
       case 'signOut':
-        this.setState({currentUser: null})
+        this.setState({currentUser: null});
         break;
       case 'signIn_failure':
       case 'signUp_failure':
@@ -204,12 +249,12 @@ class App extends Component {
         )
         break;
       case 'signIn':
-        this._handleSignIn()
+        setTimeout(this._handleSignIn.bind(this), 200);
         break;
       default:
         break;
     }
-}
+  }
 
   componentDidMount() {
     this._handleSignIn();

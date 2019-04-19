@@ -9,17 +9,23 @@ const ENV = {
   dev: {
     cdn: '<dev-cloudfront-domain>',
     base_url: "https://dev.<dev-app-id>.amplifyapp.com",
-    sentry_url
+    sentry_url,
+    guest_user_name: null,
+    guest_password: null
   },
   staging: {
     cdn: '<staging-cloudfront-domain>',
     base_url: "https://staging.<staging-app-id>.amplifyapp.com",
-    sentry_url
+    sentry_url,
+    guest_user_name: null,
+    guest_password: null
   },
   prod: {
     cdn: '<prod-cloudfront-domain>',
     base_url: "https://prod.<prod-app-id>.amplifyapp.com",
-    sentry_url
+    sentry_url,
+    guest_user_name: null,
+    guest_password: null
   }
 }
 

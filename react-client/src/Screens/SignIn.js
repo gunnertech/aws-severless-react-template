@@ -26,24 +26,23 @@ import {
 
 
 class MySignIn extends SignIn {
-  async signIn() {
+  async signIn(event) {
       if(this._signingIn) { return false; }
       this._signingIn = true;
     const signupInputs = Cache.getItem('signupInputs');
     if(!!signupInputs && this.props.authState === 'signedUp') {
-        this.inputs = {...signupInputs, username: signupInputs.email};
-        this.inputs.username = signupInputs.email;
+        this.inputs = {...signupInputs, username: signupInputs.username || signupInputs.email};
         Cache.removeItem('signupInputs');
     }
     this.inputs.username = (this.inputs.username||"").toLowerCase()
-    super.signIn();
+    super.signIn(event);
     Cache.removeItem('signupInputs');
   }
 
   componentDidUpdate() {
       const signupInputs = Cache.getItem('signupInputs');
       if(!!signupInputs && this.props.authState === 'signedUp') {
-          this.signIn()
+          this.signIn({preventDefault: () => null})
         //   .then(() => setTimeout(() => window.location.reload(), 4000))
           
       }
@@ -51,7 +50,6 @@ class MySignIn extends SignIn {
   }
 
   showComponent(theme) {
-    console.log(Cache.getItem('signupInputs'))
     const { authState, federated, onStateChange, onAuthEvent } = this.props;
     // if (hide && hide.includes(SignIn)) { return null; }
     const hideSignUp = false; //!override.includes('SignUp') && hide.some(component => component === SignUp);
@@ -80,7 +78,7 @@ class MySignIn extends SignIn {
                         key="username"
                         name="username"
                         onChange={this.handleInputChange}
-                        value={(Cache.getItem('signupInputs')||{}).email}
+                        value={(Cache.getItem('signupInputs')||{}).username || (Cache.getItem('signupInputs')||{}).email}
                     />
                 </FormField>
                 <FormField theme={theme}>

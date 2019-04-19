@@ -10,6 +10,7 @@ import Sentry from 'sentry-expo';
 import { withClientState } from 'apollo-link-state';
 import { ThemeProvider } from 'react-native-elements';
 import { Cache } from 'aws-amplify';
+import CognitoIdentityServiceProvider from 'aws-sdk/clients/cognitoidentityserviceprovider';
 
 import AppNavigator from './src/Navigators/App'
 import muiTheme from './src/Styles/muiTheme'
@@ -72,6 +73,11 @@ const appSyncLink = createAppSyncLink({
         const session = await Auth.currentSession();
         return session.getIdToken().getJwtToken();
       } catch(e) {
+        if(!!ENV.guest_user_name && !!ENV.guest_password) {
+          await Auth.signIn(ENV.guest_user_name, ENV.guest_password);
+          const session = await Auth.currentSession();
+          return session.getIdToken().getJwtToken();
+        }
         return null;
       }
     },
@@ -95,24 +101,77 @@ class App extends React.Component {
     currentUser: undefined
   };
 
+  _cognitoClient = () =>
+    Auth.currentCredentials()
+      .then(credentials =>
+        Promise.resolve(
+          new CognitoIdentityServiceProvider({
+            apiVersion: '2016-04-18',
+            credentials: Auth.essentialCredentials(credentials),
+            region: "us-east-1"
+          })
+        )
+      )
+
+  _describeUserPool = userPoolId =>
+    this._cognitoClient()
+      .then(client =>
+        client.describeUserPool({
+          UserPoolId: userPoolId
+        })
+        .promise()  
+      )
+
+  _addToGroup = (user, groupName) =>
+    this._cognitoClient()
+      .then(client =>
+        client.adminAddUserToGroup({
+          GroupName: groupName,
+          UserPoolId: user.pool.userPoolId,
+          Username: user.username
+        })
+        .promise()  
+      )
+
   _handleSignIn = () =>
-    new Promise(resolve => this.setState({currentUser: undefined}, resolve))
-      .then(() =>
-        Auth.currentAuthenticatedUser()
+    new Promise(resolve => this.setState({currentUser: undefined}, () => resolve(Auth.currentAuthenticatedUser())))
+      .then(cognitoUser => 
+        !!(cognitoUser.signInUserSession.accessToken.payload['cognito:groups'] || []).length ? (
+          Promise.resolve(cognitoUser)
+        ) : (
+          this._describeUserPool(cognitoUser.pool.userPoolId)
+            .then(result => 
+              this._addToGroup(cognitoUser, result.UserPool.EstimatedNumberOfUsers <= 2 ? 'Admins' : 'Users')  
+            )
+        )
+        .then(() => Promise.resolve(cognitoUser))
       )
-      .then(currentUser => 
-        new Promise(resolve => this.setState({currentUser}, resolve.bind(null, currentUser)))
-      )
-      .catch(err => console.log("ERROR", err) || this.setState({currentUser: null}));
+      // .then(cognitoUser => Promise.all([
+      //   client.query({
+      //     query: GetUser,
+      //     variables: {id: cognitoUser.username},
+      //     fetchPolicy: "network-only"
+      //   }),
+      //   cognitoUser
+      // ]))
+      // .then(([{data: { getUser }, loading}, cognitoUser]) => !!getUser ? (
+      //     Promise.resolve(getUser)
+      //   ) : (
+      //     this._createNewUser(cognitoUser)
+      //   )
+      // )
+      .then(currentUser => new Promise(resolve => this.setState({currentUser}, resolve.bind(null, currentUser))))
+      .then(() => this.forceUpdate())
+      .catch(err => this.setState({currentUser: null}));
 
   
   onAuthEvent = capsule => {
     switch (capsule.payload.event) {
       case 'signOut':
-        this.setState({currentUser: null})
+        this.setState({currentUser: null});
         break;
       case 'signIn':
-        this._handleSignIn()
+        setTimeout(this._handleSignIn.bind(this), 200);
         break;
       default:
         break;

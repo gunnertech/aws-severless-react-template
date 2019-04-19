@@ -7,13 +7,11 @@ class SignOut extends Component {
     signedOut: false
   };
 
-  async componentDidMount() {
-    try {
-      await Auth.signOut();
-    } catch(e) { 
-      console.log("Error", e);
-    }
-    this.setState({signedOut: true});
+  componentDidMount() {
+    new Promise(resolve => 
+      this.setState({signedOut: true}, resolve)
+    )
+    .then(() => Auth.signOut())
   }
 
   render() {
