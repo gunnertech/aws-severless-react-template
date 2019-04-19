@@ -68,7 +68,7 @@ $ yarn run amplify:init -- <project-name> prod
 $ yarn run amplify:deploy
 $ ../scripts/setvar.sh dev-user-pool-id $(aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-proddeveloper --output json --query UserPools[0].Id)
 $ ../scripts/setvar.sh dev-auth-role-name $(aws iam list-roles --profile <project-name>-proddeveloper --output text --query 'Roles[?ends_with(RoleName, `-authRole`) == `true`]|[0:1].RoleName')
-$ git add .; git commit -am "amplify setup";
+$ git add .; git commit -am "amplify setup"; git checkout <developer-name>
 ````
 
 ## Serverless
