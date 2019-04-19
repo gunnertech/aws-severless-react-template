@@ -1,5 +1,7 @@
 # Setup
 
+If you see "project-name" peppered throughout the README, you are reading the template version, which is fine for reference, but make sure to [Run the AWS scripts](https://github.com/gunnertech/aws-scripts) which will customize this README and the starter template in this repo.
+
 ## Prerequisites
 
 Install the following
