@@ -28,7 +28,7 @@ $ git merge <developer-name>; git push
 ## Sentry
 1. [Create a new project](https://sentry.io/organizations/gunner-technology/projects/new/) - make sure to use ``"<project-name>"`` when setting it up!
 2. Note the url (i.e. https://xxxxxxxxx@sentry.io/xxxxx)
-3. ``./scripts/setvar.sh sentry-url <url>``
+3. ``$ ./scripts/setvar.sh sentry-url <url>``
 
 ## Amplify CLI
 
