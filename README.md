@@ -45,18 +45,24 @@ $ amplify add analytics
 $ yarn run amplify:deploy
 $ amplify add storage
 $ yarn run amplify:deploy
-$ aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-devdeveloper
+$ aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-devdeveloper | grep "Id"
 $ ./scripts/setvar.sh dev-user-pool-id <Id>
+$ aws iam list-roles --profile <project-name>-devdeveloper | grep RoleName.*-authRole
+$ ./scripts/setvar.sh dev-auth-role-name <RoleName>
 $ git checkout -b staging
 $ yarn run amplify:init -- <project-name> staging
 $ yarn run amplify:deploy
-$ aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-stagingdeveloper
+$ aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-stagingdeveloper | grep "Id"
 $ ./scripts/setvar.sh staging-user-pool-id <Id>
+$ aws iam list-roles --profile <project-name>-stagingdeveloper | grep RoleName.*-authRole
+$ ./scripts/setvar.sh staging-auth-role-name <RoleName>
 $ git checkout -b master
 $ yarn run amplify:init -- <project-name> prod
 $ yarn run amplify:deploy
-$ aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-proddeveloper
+$ aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-proddeveloper | grep "Id"
 $ ./scripts/setvar.sh prod-user-pool-id <Id>
+$ aws iam list-roles --profile <project-name>-proddeveloper | grep RoleName.*-authRole
+$ ./scripts/setvar.sh prod-auth-role-name <RoleName>
 ````
 
 ## Serverless
@@ -228,3 +234,6 @@ $ expo publish:history  --release-channel prod
 ````
 $ aws amplify list-jobs --app-id <prod-app-id> --branch-name master --profile <project-name>-proddeveloper
 ````
+
+
+TODO: Refactor all serverless variables inside the Resource block in serverless.yml into Parameters and Refs
