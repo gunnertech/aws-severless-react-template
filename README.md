@@ -265,3 +265,4 @@ $ aws amplify list-jobs --app-id <prod-app-id> --branch-name master --profile <p
 4. Add Branch integration
 5. Document how to add a team member to an existing project
 6. Make setup scripts OS agnostic
+7. Document optional settings (i.e. Guest User, etc)
