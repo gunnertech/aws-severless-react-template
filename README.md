@@ -52,24 +52,18 @@ $ amplify add auth
 $ amplify add analytics
 $ amplify add storage
 $ yarn run amplify:deploy
-$ aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-devdeveloper | grep "Id"
-$ ./scripts/setvar.sh dev-user-pool-id <Id>
-$ aws iam list-roles --profile <project-name>-devdeveloper | grep RoleName.*-authRole
-$ ./scripts/setvar.sh dev-auth-role-name <RoleName>
+$ ../scripts/setvar.sh dev-user-pool-id $(aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-devdeveloper --output json --query UserPools[0].Id)
+$ ../scripts/setvar.sh dev-auth-role-name $(aws iam list-roles --profile <project-name>-devdeveloper --output text --query 'Roles[?ends_with(RoleName, `-authRole`) == `true`]|[0:1].RoleName')
 $ git checkout -b staging
 $ yarn run amplify:init -- <project-name> staging
 $ yarn run amplify:deploy
-$ aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-stagingdeveloper | grep "Id"
-$ ./scripts/setvar.sh staging-user-pool-id <Id>
-$ aws iam list-roles --profile <project-name>-stagingdeveloper | grep RoleName.*-authRole
-$ ./scripts/setvar.sh staging-auth-role-name <RoleName>
+$ ../scripts/setvar.sh dev-user-pool-id $(aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-stagingdeveloper --output json --query UserPools[0].Id)
+$ ../scripts/setvar.sh dev-auth-role-name $(aws iam list-roles --profile <project-name>-stagingdeveloper --output text --query 'Roles[?ends_with(RoleName, `-authRole`) == `true`]|[0:1].RoleName')
 $ git checkout -b master
 $ yarn run amplify:init -- <project-name> prod
 $ yarn run amplify:deploy
-$ aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-proddeveloper | grep "Id"
-$ ./scripts/setvar.sh prod-user-pool-id <Id>
-$ aws iam list-roles --profile <project-name>-proddeveloper | grep RoleName.*-authRole
-$ ./scripts/setvar.sh prod-auth-role-name <RoleName>
+$ ../scripts/setvar.sh dev-user-pool-id $(aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-proddeveloper --output json --query UserPools[0].Id)
+$ ../scripts/setvar.sh dev-auth-role-name $(aws iam list-roles --profile <project-name>-proddeveloper --output text --query 'Roles[?ends_with(RoleName, `-authRole`) == `true`]|[0:1].RoleName')
 ````
 
 ## Serverless
@@ -77,11 +71,11 @@ $ ./scripts/setvar.sh prod-auth-role-name <RoleName>
 $ cd <project-name>/serverless
 $ yarn
 $ sls deploy -s dev
-$ ./scripts/setvar.sh dev-cloudfront-domain <CdnDomainName>
+$ ../scripts/setvar.sh dev-cloudfront-domain $(aws cloudfront list-distributions --profile <project-name>-devdeveloper --output json --query DistributionList.Items[0].DomainName)
 $ sls deploy -s staging
-$ ./scripts/setvar.sh staging-cloudfront-domain <CdnDomainName>
+$ ../scripts/setvar.sh staging-cloudfront-domain $(aws cloudfront list-distributions --profile <project-name>-stagingdeveloper --output json --query DistributionList.Items[0].DomainName)
 $ sls deploy -s prod
-$ ./scripts/setvar.sh prod-cloudfront-domain <CdnDomainName>
+$ ../scripts/setvar.sh prod-cloudfront-domain $(aws cloudfront list-distributions --profile <project-name>-proddeveloper --output json --query DistributionList.Items[0].DomainName)
 ````
 
 
@@ -93,14 +87,11 @@ Log into the console and setup the deploy as seen in [this video](https://youtu.
 
 ````
 $ cd <project-name>/serverless
-$ aws amplify list-apps --profile <project-name>-devdeveloper
-$ ./scripts/setvar.sh dev-app-id <app-id> 
+$ ../scripts/setvar.sh dev-app-id $(aws amplify list-apps --profile <project-name>-devdeveloper --query apps[0].appId)
 $ yarn run amplify:hosting -- <project-name> dev <dev-app-id> <dev-cloudfront-domain> <sentry-url> 
-$ aws amplify list-apps --profile <project-name>-stagingdeveloper 
-$ ./scripts/setvar.sh staging-app-id <app-id>
+../scripts/setvar.sh staging-app-id $(aws amplify list-apps --profile <project-name>-stagingdeveloper --query apps[0].appId)
 $ yarn run amplify:hosting -- <project-name> staging <staging-app-id> <staging-cloudfront-domain> <sentry-url>
-$ aws amplify list-apps --profile <project-name>-proddeveloper
-$ ./scripts/setvar.sh prod-app-id <app-id>
+../scripts/setvar.sh prod-app-id $(aws amplify list-apps --profile <project-name>-proddeveloper --query apps[0].appId)
 $ yarn run amplify:hosting -- <project-name> prod <prod-app-id> <prod-cloudfront-domain> <sentry-url>
 ````
 
@@ -141,6 +132,8 @@ $ yarn run rds:create-db  -- prod
 $ cd <project-name>/serverless
 $ yarn run rds:generate-migration  -- <migration-name> <sql-statement>
 $ yarn run rds:migrate  -- dev
+$ amplify env checkout dev
+$ amplify api add-graphql-datasource
 ````
 
 # Adding a Team Member
@@ -156,6 +149,7 @@ $ yarn watch
 $ git checkout master; git pull prod master
 $ git checkout staging; git pull staging staging
 $ git checkout <developer-name>
+$ amplify env checkout dev
 $ git merge master
 $ git merge staging
 $ ### start repetition process

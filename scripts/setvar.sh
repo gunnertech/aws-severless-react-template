@@ -1,16 +1,12 @@
 #!/bin/bash
-# ./setvar.sh <name> <value>
-# ./setvar.sh sentry-url https://xxxxxxxxx@sentry.io/xxxxx
-# ./setvar.sh dev-app-id "blah blah blah"
-# ./setvar.sh staging-app-id "blah blah blah"
-
+# ./setvar.sh <variable-name> <value>
 export LC_CTYPE=C 
 export LANG=C
 
 set -e
 IFS='|'
-NAME=$1
+VARIABLE_NAME=$1
 VALUE=$2
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-find $DIR/.. -type f -print0 | xargs -0 sed -i "" "s/<$NAME>/$VALUE/g"
+find $DIR -type f -print0 | xargs -0 sed -i "" "s/<${VARIABLE_NAME}>/$VALUE/g"
