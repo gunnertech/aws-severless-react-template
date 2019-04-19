@@ -5,6 +5,7 @@ custom:
   accountId: { Ref: AWS::AccountId }
   environment: ${file(env.yml):${self:custom.stage}, file(env.yml):dev}
   domainName: ${self:custom.environment.DOMAIN_NAME}
+  userPoolId: ${self:custom.environment.USER_POOL_ID}
   output:
     handler: scripts/output.handler
     file: .build/stack.yml
@@ -42,8 +43,17 @@ resources:
     domainName:
       Type: String
       Default: ${self:custom.domainName}
+    userPoolId:
+      Type: String
+      Default: ${self:custom.userPoolId}
 
   Conditions:
+    ShouldCreateUserPoolGroups:
+      Fn::Not:
+        - Fn::Equals:
+          - Ref: userPoolId
+          - "NONE"
+
     ShouldCreateHostedZone:
       Fn::Not:
         - Fn::Equals:
@@ -57,6 +67,22 @@ resources:
         "Fn::GetAtt": [ CDN, DomainName ]
 
   Resources:
+    CognitoUserPoolUsersGroup:
+      Condition: ShouldCreateUserPoolGroups
+      Type: AWS::Cognito::UserPoolGroup
+      Properties:
+        GroupName: Users
+        UserPoolId:
+          Ref: userPoolId
+
+    CognitoUserPoolAdminsGroup:
+      Condition: ShouldCreateUserPoolGroups
+      Type: AWS::Cognito::UserPoolGroup
+      Properties:
+        GroupName: Admins
+        UserPoolId:
+          Ref: userPoolId
+
     UploadBucketPolicy: 
       Type: AWS::S3::BucketPolicy
       Properties: 
