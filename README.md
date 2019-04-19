@@ -15,7 +15,7 @@ Also, please note, this has only been tested on a Mac. It probably won't work on
 Install the following
 
 1. Brew ``$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"``
-1. Pyton ``$ brew install pyton``
+1. Python ``$ brew install python``
 1. [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html#install-tool-pip) or ``$ brew install awscli`` - make sure you have the latest
 1. [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 1. [NVM](https://github.com/creationix/nvm#installation-and-update)
