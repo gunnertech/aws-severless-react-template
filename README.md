@@ -45,18 +45,12 @@ $ git merge <developer-name>; git push
 ````
 $ cd <project-name>/serverless
 $ yarn run amplify:init -- <project-name> dev
-$ yarn run amplify:deploy
 
 #### The following will run you through prompts. [Make sure you understand what they mean](https://aws-amplify.github.io/docs/js/start)
-#### We deploy after each one because there are certain bugs with the cli still
 $ amplify add api
-$ yarn run amplify:deploy
 $ amplify add auth
-$ yarn run amplify:deploy
 $ amplify add analytics
-$ yarn run amplify:deploy
 $ amplify add storage
-$ yarn run amplify:deploy
 $ aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-devdeveloper | grep "Id"
 $ ./scripts/setvar.sh dev-user-pool-id <Id>
 $ aws iam list-roles --profile <project-name>-devdeveloper | grep RoleName.*-authRole
