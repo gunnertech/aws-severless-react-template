@@ -4,14 +4,14 @@
 
 Install the following
 
-1. AWS CLI (https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html#install-tool-pip)
-2. Git (https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-3. NVM (https://github.com/creationix/nvm#installation-and-update)
+1. [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html#install-tool-pip)
+2. [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+3. [NVM](https://github.com/creationix/nvm#installation-and-update)
 4. Node ``nvm install``
-5. Serverless framework config ``npm install -g serverless --latest``
+5. Serverless framework ``npm install -g serverless --latest``
 6. Expo ``npm install -g expo-cli --latest``
 7. Amplify ``npm install -g @aws-amplify/cli --latest``
-8. Run the AWS scripts (https://github.com/gunnertech/aws-scripts)
+8. [Run the AWS scripts](https://github.com/gunnertech/aws-scripts)
 
 
 ## Git
