@@ -26,7 +26,7 @@ $ git merge <developer-name>; git push
 ````
 
 ## Sentry
-1. [Create a new project](https://sentry.io/organizations/gunner-technology/projects/new/)
+1. [Create a new project](https://sentry.io/organizations/gunner-technology/projects/new/) - make sure to use "<project-name>" when setting it up!
 2. Note the url (i.e. https://xxxxxxxxx@sentry.io/xxxxx)
 3. ``./scripts/setvar.sh sentry-url <url>``
 
@@ -235,5 +235,17 @@ $ expo publish:history  --release-channel prod
 $ aws amplify list-jobs --app-id <prod-app-id> --branch-name master --profile <project-name>-proddeveloper
 ````
 
+# Recommended Reaing
+1. [Amplify GraphQL](https://aws-amplify.github.io/docs/cli/graphql)
+2. [Amplify Workflow](https://aws-amplify.github.io/docs/cli/multienv?sdk=js)
+3. [Amplify VSCode Extension](https://github.com/aws-amplify/amplify-js/wiki/VS-Code-Snippet-Extension#full-code-block-snippet-documentation)
+4. [Amplify with AppSync](https://aws-amplify.github.io/docs/js/api#aws-appsync-sdk)
+5. [Serverless Framework Docs](https://serverless.com/framework/docs/providers/aws/guide/quick-start/)
+6. [AWS CloudFormation Docs](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-reference.html)
 
-TODO: Refactor all serverless variables inside the Resource block in serverless.yml into Parameters and Refs
+# TODO
+
+1. Refactor all serverless variables inside the Resource block in serverless.yml into Parameters and Refs
+2. Add integration with Serverless Auroa
+3. Add example for all "categories"
+4. Add Branch integration
