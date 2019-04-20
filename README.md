@@ -110,8 +110,8 @@ TODO
 $ ## Start of iteration
 $ cd <project-name>/serverless
 $ yarn watch
-$ git checkout master; git pull prod master
-$ git checkout staging; git pull staging staging
+$ git checkout master; git pull
+$ git checkout staging; git pull
 $ git checkout <developer-name>
 $ amplify env checkout dev
 $ git merge master
