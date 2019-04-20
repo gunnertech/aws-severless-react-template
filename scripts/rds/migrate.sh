@@ -8,6 +8,7 @@ STAGE=$1
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 ACCOUNT_ID=$(aws sts get-caller-identity --profile <project-name>-${STAGE}developer --output text --query Account)
 DATABASE_NAME=<project-name>_${STAGE}_db
+mkdir -p $DIR/../../serverless/migrations/
 FILES=$DIR/../../serverless/migrations/*
 
 for f in $FILES

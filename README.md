@@ -20,71 +20,36 @@ Install the following
 1. [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 1. [NVM](https://github.com/creationix/nvm#installation-and-update)
 1. Node ``nvm install``
-1. Serverless framework config ``npm install -g serverless --latest``
-1. Expo ``npm install -g expo-cli --latest``
-1. Amplify ``npm install -g @aws-amplify/cli --latest``
-1. [Run the AWS scripts](https://github.com/gunnertech/aws-scripts)
 1. Yarn ``brew install yarn; brew upgrade yarn;``
+1. Serverless framework config ``yarn global add serverless``
+1. Expo ``yarn global add expo-cli``
+1. Amplify ``yarn global add @aws-amplify/cli``
+1. [Run the AWS scripts](https://github.com/gunnertech/aws-scripts) if you haven't already
 
-
-## Git
-
-````
-$ git checkout -b <developer-name>
-$ git add .; git commit -am "initial commit";
-$ git checkout -b staging
-$ git merge <developer-name>;
-$ git checkout -b master
-$ git merge <developer-name>;
-````
 
 ## Sentry
 1. [Create a new project](https://sentry.io/organizations/gunner-technology/projects/new/)
 2. Note the url (i.e. https://xxxxxxxxx@sentry.io/xxxxx)
 3. ``./scripts/setvar.sh sentry-url <url>``
 
+## Git
+
+````
+$ cd <project-name>
+$ ./scripts/git/setup.sh <developer-name>
+````
+
 ## Amplify CLI
 
 ````
-$ git checkout <developer-name>
-$ cd <project-name>/serverless
-$ yarn run amplify:init -- <project-name> dev
-
-#### The following will run you through prompts. [Make sure you understand what they mean](https://aws-amplify.github.io/docs/js/start)
-$ amplify add api
-$ amplify add analytics
-$ amplify add storage
-$ yarn run amplify:deploy
-$ ../scripts/setvar.sh dev-user-pool-id $(aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-devdeveloper --output json --query UserPools[0].Id)
-$ ../scripts/setvar.sh dev-auth-role-name $(aws iam list-roles --profile <project-name>-devdeveloper --output text --query 'Roles[?ends_with(RoleName, `-authRole`) == `true`]|[0:1].RoleName')
-$ git add .; git commit -am "amplify setup"; git checkout staging; git merge <developer-name>;
-$ yarn run amplify:init -- <project-name> staging
-$ yarn run amplify:deploy
-$ ../scripts/setvar.sh dev-user-pool-id $(aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-stagingdeveloper --output json --query UserPools[0].Id)
-$ ../scripts/setvar.sh dev-auth-role-name $(aws iam list-roles --profile <project-name>-stagingdeveloper --output text --query 'Roles[?ends_with(RoleName, `-authRole`) == `true`]|[0:1].RoleName')
-$ git add .; git commit -am "amplify setup"; git checkout master; git merge staging;
-$ yarn run amplify:init -- <project-name> prod
-$ yarn run amplify:deploy
-$ ../scripts/setvar.sh dev-user-pool-id $(aws cognito-idp list-user-pools --max-results 1 --profile <project-name>-proddeveloper --output json --query UserPools[0].Id)
-$ ../scripts/setvar.sh dev-auth-role-name $(aws iam list-roles --profile <project-name>-proddeveloper --output text --query 'Roles[?ends_with(RoleName, `-authRole`) == `true`]|[0:1].RoleName')
-$ git add .; git commit -am "amplify setup"; git checkout <developer-name>
+$ cd <project-name>
+$ ./scripts/amplify/setup.sh <developer-name>
 ````
 
 ## Serverless
 ````
-$ cd <project-name>/serverless
-$ yarn
-$ sls deploy -s dev
-$ ../scripts/setvar.sh dev-cloudfront-domain $(aws cloudfront list-distributions --profile <project-name>-devdeveloper --output json --query DistributionList.Items[0].DomainName)
-$ git add .; git commit -am "sets variables"; git push
-$ git checkout staging; git merge <developer-name>
-$ sls deploy -s staging
-$ ../scripts/setvar.sh staging-cloudfront-domain $(aws cloudfront list-distributions --profile <project-name>-stagingdeveloper --output json --query DistributionList.Items[0].DomainName)
-$ git add .; git commit -am "sets variables"; git push
-$ git checkout master; git merge staging
-$ sls deploy -s prod
-$ ../scripts/setvar.sh prod-cloudfront-domain $(aws cloudfront list-distributions --profile <project-name>-proddeveloper --output json --query DistributionList.Items[0].DomainName)
-$ git add .; git commit -am "sets variables"; git push
+$ cd <project-name>
+$ ./scripts/serverless/setup.sh <developer-name>
 ````
 
 
@@ -95,17 +60,8 @@ There is a bug with the aws cli which prevents us from completing setting up a n
 Log into the console and setup the deploy as seen in [this video](https://youtu.be/iql6pRyof20) for each stage (dev, staging, prod)
 
 ````
-$ git checkout <developer-name>
-$ cd <project-name>/serverless
-$ ../scripts/setvar.sh dev-app-id $(aws amplify list-apps --profile <project-name>-devdeveloper --query apps[0].appId)
-$ yarn run amplify:hosting -- <project-name> dev <dev-app-id> <dev-cloudfront-domain> <sentry-url> 
-$ git add .; git commit -am "set vars"; git push; git checkout staging; git merge <developer-name>
-$ ../scripts/setvar.sh staging-app-id $(aws amplify list-apps --profile <project-name>-stagingdeveloper --query apps[0].appId)
-$ yarn run amplify:hosting -- <project-name> staging <staging-app-id> <staging-cloudfront-domain> <sentry-url>
-$ git add .; git commit -am "set vars"; git push; git checkout master; git merge staging
-../scripts/setvar.sh prod-app-id $(aws amplify list-apps --profile <project-name>-proddeveloper --query apps[0].appId)
-$ yarn run amplify:hosting -- <project-name> prod <prod-app-id> <prod-cloudfront-domain> <sentry-url>
-$ git add .; git commit -am "set vars"; git push; git checkout <developer-name>
+$ cd <project-name>
+$ ./scripts/amplify/hosting/setup.sh <developer-name>
 ````
 
 ## [React Native Client](https://github.com/react-community/create-react-native-app)
@@ -130,24 +86,16 @@ $ yarn start # open the local site to make sure everything worked
 
 ### Setup
 ````
-$ cd <project-name>/serverless
-$ # Modify secrets.yml with a username password
-$ sls deploy -s dev
-$ yarn run rds:enable-api  -- dev
-$ yarn run rds:create-db  -- dev
-$ sls deploy -s staging
-$ yarn run rds:enable-api  -- staging
-$ yarn run rds:create-db  -- staging
-$ sls deploy -s prod
-$ yarn run rds:enable-api  -- prod
-$ yarn run rds:create-db  -- prod
+# Modify serverless/secrets.yml with a username and password
+$ cd <project-name>
+$ ./scripts/rds/setup.sh
 ````
 
-### Development
+### Modifications
 ````
 $ cd <project-name>/serverless
-$ yarn run rds:generate-migration  -- <migration-name> <sql-statement>
-$ yarn run rds:migrate  -- dev
+$ yarn run rds:generate-migration -- <migration-name> <sql-statement>
+$ yarn run rds:migrate -- dev
 $ amplify env checkout dev
 $ amplify api add-graphql-datasource
 ````
@@ -199,88 +147,28 @@ $ aws codecommit merge-pull-request-by-fast-forward --pull-request-id <request-i
   
 
 
-## Deploying (Staging)
+## Deploying
 
-````
-$ git checkout staging
-$ amplify env checkout staging
-$ git pull
-$ git merge master # (make sure you have the latest hotfixes)
-$ git push
-````
 
 ### Backend
 
 ````
-$ cd serverless
-$ sls deploy -s staging
-$ yarn run amplify:deploy
-$ yarn run rds:migrate  -- staging #only if using RDS
-$ ### (snapshot for the program)
-$ sls deploy list -s staging
+$ cd <project-name>
+$ ./scripts/deploy/backend.sh <stage (staging|prod)>
 ````
 
 ### React Native Front End
 ````
-$ cd react-native-client
-$ yarn start
-$ ###if you need to build a new standalone (i.e. expo or react version changes, icon, splash changes)
-$ #update version code, build numbers, etc in app.json
-$ expo build:ios --release-channel staging
-$ # UPLOAD .ipa USING APPLICATION LOADER - if first time, you'll have to add it via itunes connect first
-$ expo build:android --release-channel staging
-$ # Upload .apk to play store - if first time, you'll have to add the new app
-$ ###else
-$ expo publish --release-channel staging
-$ ###end if
-$ ###(snapshot output for the program)
-$ expo publish:history  --release-channel staging
+$ cd <project-name>
+$ ./scripts/deploy/mobile.sh <stage (staging|prod)>
 ````
 ### React Front End (automatically from the git push)
 
 ````
-$ ###(snapshot output for the program)
-$ aws amplify list-jobs --app-id <staging-app-id> --branch-name staging --profile <project-name>-stagingdeveloper
+$ cd <project-name>
+$ ./scripts/deploy/web.sh <stage (staging|prod)>
 ````
 
-## Deploying (Production) 
-
-(after Client approves changes on staging)
-
-````
-$ git checkout master
-$ amplify env checkout prod
-$ git merge staging
-$ git push
-````
-### Backend
-````
-$ cd serverless
-$ sls deploy -s prod
-$ yarn run amplify:deploy
-$ yarn run rds:migrate  -- prod #only if using RDS
-$ ### (snapshot for the program)
-$ sls deploy list -s prod
-````
-### React Native Front End
-````
-$ cd react-native-client
-$ yarn start
-$ ###if you need to build a new standalone (i.e. expo or react version changes, icon, splash changes)
-$ #update version code, build numbers, etc in app.json
-$ expo build:ios --release-channel prod
-$ # UPLOAD .ipa  USING APPLICATION LOADER - if first time, you'll have to add it via itunes connect first
-$ expo build:android --release-channel prod
-$ # Upload .apk to play store - if first time, you'll have to add the new app
-$ ###else
-$ ###end if 
-$ ###(snapshot output for the program)
-$ expo publish:history  --release-channel prod
-````
-### React Front End (automatically from the git push)
-````
-$ aws amplify list-jobs --app-id <prod-app-id> --branch-name master --profile <project-name>-proddeveloper
-````
 
 # Recommended Material
 1. [Amplify GraphQL](https://aws-amplify.github.io/docs/cli/graphql)
@@ -295,10 +183,9 @@ $ aws amplify list-jobs --app-id <prod-app-id> --branch-name master --profile <p
 # TODO
 
 1. Refactor all serverless variables inside the Resource block in serverless.yml into Parameters and Refs
-2. Add integration with Serverless Auroa via serverless.yml / CloudFormation
-3. Add example for all Amplify "categories"
-4. Add Branch integration
-5. Document how to add a team member to an existing project
-6. Make setup scripts OS agnostic
-7. Document optional settings (i.e. Guest User, etc)
-8. Put in generic Gunner Tech branding instead of SimpliSurvey
+1. Add Branch integration
+1. Document how to add a team member to an existing project
+1. Make setup scripts OS agnostic
+1. Document optional settings and resources (i.e. Guest User, etc)
+1. Put in generic Gunner Tech branding instead of SimpliSurvey
+1. Convert .sh scripts to node scripts (JAVASCRIPT ALL THE THINGS!)
