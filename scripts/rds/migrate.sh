@@ -18,7 +18,7 @@ do
   aws rds-data execute-sql --db-cluster-or-instance-arn "arn:aws:rds:us-east-1:$ACCOUNT_ID:cluster:<project-name>-$STAGE-cluster" \
     --schema "mysql"  --aws-secret-store-arn "HttpRDSSecret"  \
     --region us-east-1 --sql-statements "$value" --database "$DATABASE_NAME" \
-    --profile <project-name>-${STAGE}developer
+    --profile <project-name>-${STAGE}developer || true
     
 done
 

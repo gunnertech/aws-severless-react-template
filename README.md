@@ -52,7 +52,6 @@ $ yarn run amplify:init -- <project-name> dev
 
 #### The following will run you through prompts. [Make sure you understand what they mean](https://aws-amplify.github.io/docs/js/start)
 $ amplify add api
-$ amplify add auth
 $ amplify add analytics
 $ amplify add storage
 $ yarn run amplify:deploy
