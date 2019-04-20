@@ -111,6 +111,8 @@ $ git add .; git commit -am "set vars"; git push; git checkout <developer-name>
 
 ## [React Native Client](https://github.com/react-community/create-react-native-app)
 ````
+$ cd <project-name>/serverless
+$ yarn watch
 $ cd <project-name>/react-native-client
 $ yarn install
 $ yarn ios # Load the emulator to make sure everything worked
@@ -118,6 +120,8 @@ $ yarn ios # Load the emulator to make sure everything worked
 
 ## [React Client](https://github.com/facebook/create-react-app)
 ````
+$ cd <project-name>/serverless
+$ yarn watch
 $ cd <project-name>/react-client
 $ yarn install
 $ yarn start # open the local site to make sure everything worked
@@ -298,3 +302,4 @@ $ aws amplify list-jobs --app-id <prod-app-id> --branch-name master --profile <p
 5. Document how to add a team member to an existing project
 6. Make setup scripts OS agnostic
 7. Document optional settings (i.e. Guest User, etc)
+8. Put in generic Gunner Tech branding instead of SimpliSurvey
