@@ -185,7 +185,7 @@ $ ./scripts/deploy/web.sh <stage (staging|prod)>
 
 1. Refactor all serverless variables inside the Resource block in serverless.yml into Parameters and Refs
 1. Add Branch integration
-1. Document how to add a team member to an existing project
+1. Document how to add a team member / environment to an existing project
 1. Make setup scripts OS agnostic
 1. Document optional settings and resources (i.e. Guest User, etc)
 1. Put in generic Gunner Tech branding instead of SimpliSurvey

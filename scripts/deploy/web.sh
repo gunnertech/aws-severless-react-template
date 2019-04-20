@@ -1,6 +1,6 @@
 #!/bin/bash
-# ./scripts/deploy/staging/web.sh
-# ./scripts/deploy/staging/web.sh
+# ./scripts/deploy/web.sh
+# ./scripts/deploy/web.sh
 set -e
 IFS='|'
 
