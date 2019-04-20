@@ -189,3 +189,4 @@ $ ./scripts/deploy/web.sh <stage (staging|prod)>
 1. Document optional settings and resources (i.e. Guest User, etc)
 1. Put in generic Gunner Tech branding instead of SimpliSurvey
 1. Convert .sh scripts to node scripts (JAVASCRIPT ALL THE THINGS!)
+1. Make sentry optional
