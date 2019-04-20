@@ -6,7 +6,8 @@ If you see "project-name" peppered throughout the README, you are reading the te
 
 #### ``*****``This guide will only work if you run those scripts first``*****``
 
-Also, please note, this has only been tested on a Mac. It probably won't work on a PC or a Linux, but it could be refactored fairly easily to be OS agnostic.
+Also, please be aware, this will only work on macOS currently. We have plans to change the scripts to be OS agnostic, but we're a Mac shop, so if anyone out there wants to help us out, awesome.
+
 
 # Setup
 
