@@ -96,15 +96,18 @@ There is a bug with the aws cli which prevents us from completing setting up a n
 Log into the console and setup the deploy as seen in [this video](https://youtu.be/iql6pRyof20) for each stage (dev, staging, prod)
 
 ````
+$ git checkout <developer-name>
 $ cd <project-name>/serverless
 $ ../scripts/setvar.sh dev-app-id $(aws amplify list-apps --profile <project-name>-devdeveloper --query apps[0].appId)
 $ yarn run amplify:hosting -- <project-name> dev <dev-app-id> <dev-cloudfront-domain> <sentry-url> 
-../scripts/setvar.sh staging-app-id $(aws amplify list-apps --profile <project-name>-stagingdeveloper --query apps[0].appId)
+$ git add .; git commit -am "set vars"; git push; git checkout staging; git merge <developer-name>
+$ ../scripts/setvar.sh staging-app-id $(aws amplify list-apps --profile <project-name>-stagingdeveloper --query apps[0].appId)
 $ yarn run amplify:hosting -- <project-name> staging <staging-app-id> <staging-cloudfront-domain> <sentry-url>
+$ git add .; git commit -am "set vars"; git push; git checkout master; git merge staging
 ../scripts/setvar.sh prod-app-id $(aws amplify list-apps --profile <project-name>-proddeveloper --query apps[0].appId)
 $ yarn run amplify:hosting -- <project-name> prod <prod-app-id> <prod-cloudfront-domain> <sentry-url>
+$ git add .; git commit -am "set vars"; git push; git checkout <developer-name>
 ````
-
 
 ## [React Native Client](https://github.com/react-community/create-react-native-app)
 ````
@@ -284,6 +287,7 @@ $ aws amplify list-jobs --app-id <prod-app-id> --branch-name master --profile <p
 5. [Serverless Framework Docs](https://serverless.com/framework/docs/providers/aws/guide/quick-start/)
 6. [AWS CloudFormation Docs](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-reference.html)
 7. [Gunner Technology Walkthrough](https://www.youtube.com/playlist?list=PLQBYTfA46mzjBNcJiCAny3-EWRs0c1wl_)
+8. [AppSync with Aurora](https://docs.aws.amazon.com/appsync/latest/devguide/tutorial-rds-resolvers.html#create-database-and-table)
 
 # TODO
 
