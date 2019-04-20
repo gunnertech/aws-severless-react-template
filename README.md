@@ -82,7 +82,7 @@ $ yarn install
 $ yarn start # open the local site to make sure everything worked
 ````
 
-## RDS SQL Database (optional)
+## RDS Serverless SQL Database (optional)
 
 ### Setup
 ````
