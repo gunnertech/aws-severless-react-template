@@ -9,6 +9,8 @@ FILENAME=$1
 TIMESTAMP=$(date +%s)
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+mkdir -p $DIR/../../serverless/migrations
+
 echo $SQL > $DIR/../../serverless/migrations/$TIMESTAMP-$FILENAME.sql
 
 
