@@ -162,7 +162,7 @@ $ ./scripts/deploy/backend.sh <stage (staging|prod)>
 $ cd <project-name>
 $ ./scripts/deploy/mobile.sh <stage (staging|prod)>
 ````
-### React Front End (automatically from the git push)
+### React Front End
 
 ````
 $ cd <project-name>
