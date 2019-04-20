@@ -64,7 +64,7 @@ $ cd <project-name>
 $ ./scripts/amplify/hosting/setup.sh <developer-name>
 ````
 
-## [React Native Client](https://github.com/react-community/create-react-native-app)
+## React Native Client
 ````
 $ cd <project-name>/serverless
 $ yarn watch
@@ -73,7 +73,7 @@ $ yarn install
 $ yarn ios # Load the emulator to make sure everything worked
 ````
 
-## [React Client](https://github.com/facebook/create-react-app)
+## React Client
 ````
 $ cd <project-name>/serverless
 $ yarn watch
