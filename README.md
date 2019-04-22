@@ -126,8 +126,6 @@ $ amplify api add-graphql-datasource
 ````
 
 # Adding a Team Member
-TODO
-
 1. Dev requests access to base-stage (where pull requests are submitted, i.e. staging)
 1. If approved, dev's IAM user gets added to the IAM group with access to base-stage
 1. Dev must add git credentials to ~/.gitconfig
