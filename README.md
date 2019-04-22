@@ -29,6 +29,9 @@ Install the following
 
 ## Project
 ````
+$ git clone --depth=1 --single-branch -b amplify-template git@github.com:gunnertech/aws-severless-react-template.git <project-name>
+$ cd <project-name>
+$ yarn install
 $ yarn run project:setup <project-name>
 ````
 
