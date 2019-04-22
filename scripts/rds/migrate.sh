@@ -1,6 +1,5 @@
 #!/bin/bash
 # ./scripts/rds/migrate.sh <stage>
-# ./scripts/rds/migrate.sh dev
 set -e
 IFS='|'
 

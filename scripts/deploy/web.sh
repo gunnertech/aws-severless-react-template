@@ -11,10 +11,6 @@ STAGE=$1
 BRANCH=$STAGE
 APP_ID=$(aws amplify list-apps --profile <project-name>-${STAGE}developer --query apps[0].appId)
 
-if [ "$BRANCH" = "prod" ]; then
-  $BRANCH="master"
-fi
-
 
 cd $PROJECT_HOME
 $DIR/common.sh

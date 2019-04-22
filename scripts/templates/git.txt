@@ -1,0 +1,15 @@
+
+[credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-<stage>/"]
+	UseHttpPath = true
+	helper = !aws --profile <project-name>-<stage>developer codecommit credential-helper $@
+
+[remote "<stage>"]
+	url = https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-<stage>
+	fetch = +refs/heads/*:refs/remotes/<stage>/*
+	pushurl = https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-<stage>
+
+[branch "<stage>"]
+	remote = <stage>
+	merge = refs/heads/<stage>
+
+#<new-environment>

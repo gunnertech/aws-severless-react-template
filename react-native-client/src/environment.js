@@ -6,36 +6,11 @@ import { Constants } from 'expo'
 const sentry_url = '<sentry-url>'
 
 const ENV = {
-  dev: {
-    cdn: '<dev-cloudfront-domain>',
-    base_url: "https://dev.<dev-app-id>.amplifyapp.com",
-    sentry_url,
-    guest_user_name: null,
-    guest_password: null
-  },
-  staging: {
-    cdn: '<staging-cloudfront-domain>',
-    base_url: "https://staging.<staging-app-id>.amplifyapp.com",
-    sentry_url,
-    guest_user_name: null,
-    guest_password: null
-  },
-  prod: {
-    cdn: '<prod-cloudfront-domain>',
-    base_url: "https://prod.<prod-app-id>.amplifyapp.com",
-    sentry_url,
-    guest_user_name: null,
-    guest_password: null
-  }
+  //<new-environment>
 }
 
 function getEnvVars(env = '') {
-  if (env === null || env === undefined || env === '') return ENV.dev;
-  if (env.indexOf('dev') !== -1) return ENV.dev;
-  if (env.indexOf('staging') !== -1) return ENV.staging;
-  if (env.indexOf('prod') !== -1) return ENV.prod;
-
-  return ENV.dev;
+  return ENV[env];
 }
 
 

@@ -1,0 +1,394 @@
+#!/usr/bin/env node
+
+/****
+ * 
+ * setup:
+ * yarn install
+ * 
+ * usage:
+ * ./organization add -n <accountName> -o <organizational-unit-name> -e <email> [-r <region> -p <profile> -g <groupName> -a <accountId>]
+ * example:
+ * ./organization add -n projectname-staging -o ClientName -e projectname-staging@gunnertech.com -g ProjectNameAdmins
+ */
+
+function sleep(ms){
+  return new Promise(resolve=>{
+      setTimeout(resolve,ms)
+  })
+}
+
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
+
+const delay = (t, v) =>
+  new Promise(resolve => setTimeout(resolve.bind(null, v), t))
+
+const AWS = require('aws-sdk'),
+  fs = require('fs-extra'),
+  program = require('commander'),
+  promisify = require('util').promisify;
+
+program
+  .version('0.1.0')
+  .description('Creates a new AWS account and adds it to the either the specified organizational unit or the root')
+  .option('-s, --stage <stage>', 'Name of stage to create')
+  .option('-i, --identifier <identifier>', 'Domain/package identifer of the account owner')
+  .option('-o, --organizational-unit-name <organizationalUnitName>', 'Name of organizational unit to find or create')
+  .option('-n, --account-name [accountName]', 'Name of account to create', '')
+  .option('-r, --region [region]', 'AWS Region in which to create the new account', 'us-east-1')
+  .option('-p, --source-profile [sourceProfile]', 'Profile for your root account credentials', 'default')
+  .option('-e, --email [email]', 'Email address to use for the new account created. If not passed, one will be generated automatically', '')
+  .option('-g, --group-name [groupName]', 'The name of the IAM group to find or create. If not passed, one will be generated automatically', '')
+  .option('-a, --account-Id [accountId]', 'if passed will add this account to the organization and not create a new one.', '')
+
+program
+  .action(options => {
+        options.accountName = options.accountName || `${options.stage}-<project-name>`
+        options.accountAlias = options.accountAlias || (options.accountName || "").toLowerCase();
+        options.groupName = options.groupName || `${options.accountName}Admins`
+        options.email = options.email || `${options.accountName}@${options.domain}`
+
+        console.log(options)
+
+        const iam = new AWS.IAM({
+            credentials: new AWS.SharedIniFileCredentials({
+                profile: options.sourceProfile,
+                filename: `${process.env['HOME']}/.aws/credentials`
+            }),
+            region: options.region
+        });
+
+        const organizations = new AWS.Organizations({
+            credentials: new AWS.SharedIniFileCredentials({
+                profile: options.sourceProfile,
+                filename: `${process.env['HOME']}/.aws/credentials`
+            }),
+            region: 'us-east-1'
+        });
+
+        const organizationsDescribeOrganization = promisify(organizations.describeOrganization.bind(organizations)),
+            organizationsCreateAccount = promisify(organizations.createAccount.bind(organizations)),
+            organizationsMoveAccount = promisify(organizations.moveAccount.bind(organizations)),
+            organizationsCreateOrganizationalUnit = promisify(organizations.createOrganizationalUnit.bind(organizations)),
+            organizationsListOrganizationalUnitsForParent = promisify(organizations.listOrganizationalUnitsForParent.bind(organizations)),
+            organizationsDescribeCreateAccountStatus = promisify(organizations.describeCreateAccountStatus.bind(organizations)),
+            organizationslistRoots = promisify(organizations.listRoots.bind(organizations)),
+            iamCreateGroup = promisify(iam.createGroup.bind(iam)),
+            iamGetGroup = promisify(iam.getGroup.bind(iam)),
+            iamGetUser = promisify(iam.getUser.bind(iam)),
+            iamAttachGroupPolicy = promisify(iam.attachGroupPolicy.bind(iam)),
+            iamAddUserToGroup = promisify(iam.addUserToGroup.bind(iam)),
+            iamCreatePolicy = promisify(iam.createPolicy.bind(iam)),
+            asyncAppendFile = promisify(fs.appendFile.bind(fs));
+
+
+        async function getRootAccountId(argv) {
+            try {
+                var data = await organizationsDescribeOrganization({});
+            } catch (err) {
+                console.log(err, err.stack);
+                process.exit(1);
+            }
+
+            const rootAccountId = data.Organization.MasterAccountArn.split(':')[4]
+
+            return {...argv, rootAccountId };
+        }
+
+        async function getRootOrganizationalUnitId(argv) {
+            try {
+                var data = await organizationslistRoots({});
+            } catch (err) {
+                console.log(err, err.stack);
+                process.exit(1);
+            }
+
+            const rootOrganziationalUnitId = data.Roots[0].Id
+
+            return {...argv, rootOrganziationalUnitId };
+        }
+
+        async function createAccount(argv) {
+            var { accountName, email } = argv;
+            var roleName = `${accountName.replace(/ /,'')}OrganizationAccountAccessRole`;
+            var accountId = argv.accountId;
+            var accountStatus = null;
+            var creationStatusId = null;
+            var usernameData = await iamGetUser();
+            var username = usernameData.User.UserName;
+
+            if(accountId) {
+                return {...argv, roleName, accountId };
+            }
+            
+            
+
+            
+            
+
+            var ticks = "...";
+
+            try {
+                var data = await organizationsCreateAccount({
+                    AccountName: accountName,
+                    Email: email,
+                    RoleName: roleName
+                });
+
+                creationStatusId = data.CreateAccountStatus.Id;
+                await sleep(5000);
+                while (accountStatus !== 'SUCCEEDED') {
+                    console.log("Creating Account" + (ticks += "."));
+                    console.log(accountStatus);
+                    var data = await organizationsDescribeCreateAccountStatus({
+                        CreateAccountRequestId: creationStatusId
+                    });
+                    creationStatusId = data.CreateAccountStatus.Id;
+                    accountStatus = data.CreateAccountStatus.State;
+                    accountId = data.CreateAccountStatus.AccountId;
+                    await sleep(5000);
+                }
+            } catch (err) {
+                console.log(err, err.stack);
+                // process.exit(1);
+            }
+
+            console.log("Done creating account!");
+
+            return {...argv, roleName, accountId, username };
+        }
+
+        async function createOrganizationalUnit(argv) {
+            var ou = null;
+            
+            try {
+                var data = await organizationsListOrganizationalUnitsForParent({
+                    ParentId: argv.rootOrganziationalUnitId
+                });
+
+                ou = data.OrganizationalUnits.find(ou => ou.Name === argv.organizationalUnitName);
+
+                if(!ou) {
+                    try {
+                        var data = await organizationsCreateOrganizationalUnit({
+                            Name: argv.organizationalUnitName,
+                            ParentId: argv.rootOrganziationalUnitId
+                        })
+
+                        ou = data.OrganizationalUnit;
+                    } catch (err) {
+                        console.log(err, err.stack);
+                        process.exit(1);
+                    }
+                }
+
+                console.log(data)
+            } catch (err) {
+                console.log(err, err.stack);
+                process.exit(1);
+            }
+
+            console.log("Done with organziational unit!");
+
+            return {...argv, organizationalUnitId: ou.Id };
+        }
+
+        async function moveAccount(argv) {
+            try {
+                await organizationsMoveAccount({
+                    AccountId: argv.accountId,
+                    SourceParentId: argv.rootOrganziationalUnitId,
+                    DestinationParentId: argv.organizationalUnitId
+                })
+            } catch (err) {
+                console.log(err, err.stack);
+                process.exit(1);
+            }
+
+            console.log("Done moving account!");
+
+            return argv;
+        }
+
+        async function createGroup(argv) {
+            var groupName = argv.groupName;
+
+            try {
+                var data = await iamGetGroup({
+                    GroupName: groupName,
+                })
+
+                if(!data || !data.Group) {
+                    var data = await iamCreateGroup({
+                        GroupName: groupName,
+                    })
+                }
+            } catch (err) {
+                try {
+                    var data = await iamCreateGroup({
+                        GroupName: groupName,
+                    })
+                } catch (err) {
+                    console.log(err, err.stack);
+                    process.exit(1);
+                }
+            }
+
+            console.log("Done creating group!");
+
+            return {...argv, groupName };
+        }
+
+        async function createPolicy(argv) {
+            var policyName = `${argv.accountName}Access`,
+                policyArn = `arn:aws:iam::${argv.rootAccountId}:policy/${policyName}`,
+                policyDocument = {
+                    "Version": "2012-10-17",
+                    "Statement": [{
+                        "Effect": "Allow",
+                        "Action": [
+                            "sts:AssumeRole"
+                        ],
+                        "Resource": [
+                            `arn:aws:iam::${argv.accountId}:role/${argv.roleName}`
+                        ]
+                    }]
+                }
+
+            try {
+                var data = await iamCreatePolicy({
+                    PolicyDocument: JSON.stringify(policyDocument),
+                    PolicyName: policyName,
+                })
+            } catch (err) {
+                console.log(err, err.stack);
+                process.exit(1);
+            }
+
+            console.log("Done creating policy!");
+
+            return {...argv, policyArn };
+        }
+
+        async function attachGroupPolicy(argv) {
+            try {
+                var data = await iamAttachGroupPolicy({
+                    GroupName: argv.groupName,
+                    PolicyArn: argv.policyArn,
+                })
+            } catch (err) {
+                console.log(err, err.stack);
+                process.exit(1);
+            }
+
+            console.log("Done attaching policy to group!");
+
+            return {...argv };
+        }
+
+        async function addUserToGroup(argv) {
+            try {
+                var data = await iamAddUserToGroup({
+                    GroupName: argv.groupName,
+                    UserName: argv.username,
+                })
+            } catch (err) {
+                // console.log(err, err.stack);
+                // process.exit(1);
+                console.log("User was already in the group.");
+            }
+
+            console.log("Done adding user to group!");
+
+            await delay(10000)
+
+            return {...argv };
+        }
+
+        async function createAccountAlias(argv) {
+            // const iamCreateAccountAlias = promisify(argv.newAccountIam.createAccountAlias.bind(argv.newAccountIam));
+
+            // await delay(10000)
+
+            // try {
+            //     var data = await iamCreateAccountAlias({
+            //         AccountAlias: argv.accountAlias,
+            //     })
+            // } catch (err) {
+            //     console.log(err, err.stack);
+            //     process.exit(1);
+            // }
+
+            const { stdout, stderr } = await exec(`aws iam create-account-alias --account-alias ${argv.accountAlias} --profile ${argv.accountAlias}developer`);
+            console.log('stdout:', stdout);
+            console.log('stderr:', stderr);
+
+            console.log("Done creating account alias!");
+
+            return {...argv };
+        }
+
+        async function writeCredentialsToFile(argv) {
+            var credentials = `
+[${argv.accountAlias}developer]
+role_arn = arn:aws:iam::${argv.accountId}:role/${argv.roleName}
+source_profile = ${argv.sourceProfile}
+region = ${argv.region}
+
+`;
+
+            var configData = `
+[profile ${argv.accountAlias}developer]
+role_arn = arn:aws:iam::${argv.accountId}:role/${argv.roleName}
+source_profile = ${argv.sourceProfile}
+region = ${argv.region}
+
+`;
+
+            try {
+                var data = await asyncAppendFile(`${process.env['HOME']}/.aws/credentials`, credentials)
+            } catch (err) {
+                console.log(err, err.stack);
+                process.exit(1);
+            }
+
+            try {
+                var data = await asyncAppendFile(`${process.env['HOME']}/.aws/config`, configData)
+            } catch (err) {
+                console.log(err, err.stack);
+                process.exit(1);
+            }
+
+            argv.profile = `${argv.accountAlias}developer`;
+
+            const newAccountIam = new AWS.IAM({
+                credentials: new AWS.SharedIniFileCredentials({
+                    profile: argv.profile,
+                    filename: `${process.env['HOME']}/.aws/credentials`
+                }),
+                region: options.region
+            });
+
+            return {...argv, newAccountIam };
+        }
+
+        
+
+        
+        
+        createAccount(options)
+            .then(getRootAccountId)
+            .then(getRootOrganizationalUnitId)
+            .then(createOrganizationalUnit)
+            .then(moveAccount)
+            .then(createPolicy)
+            .then(createGroup)
+            .then(attachGroupPolicy)
+            .then(addUserToGroup)
+            .then(writeCredentialsToFile)
+            .then(createAccountAlias)
+            .then(() => console.log(`Your account has been created.`))
+            .catch(console.log);
+    })
+
+program.parse(process.argv);

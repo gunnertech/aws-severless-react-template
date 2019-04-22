@@ -1,15 +1,11 @@
 #!/bin/bash
-# ./scripts/git/setup.sh <developer-name>
+# ./scripts/git/setup.sh <stage>
 # ./scripts/git/setup.sh cody
+# ./scripts/git/setup.sh staging
+# ./scripts/git/setup.sh prod
 set -e
 IFS='|'
 
-DEVELOPER_NAME=$1
+STAGE=$1
 
-git checkout -b $DEVELOPER_NAME
-git add .; git commit -am "initial commit";
-git checkout -b staging
-git merge $DEVELOPER_NAME;
-git checkout -b master
-git merge staging;
-git checkout $DEVELOPER_NAME
+git checkout -b $STAGE

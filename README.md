@@ -15,6 +15,7 @@ Also, please be aware, this will only work on macOS currently. We have plans to 
 
 Install the following
 
+1. Make sure you have an AWS account with proper ~/.aws/config and ~/.aws/credential files
 1. Brew ``$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"``
 1. Python ``$ brew install python; brew upgrade python``
 1. [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html#install-tool-pip) or ``$ brew install awscli; brew upgrade awscli``
@@ -25,10 +26,34 @@ Install the following
 1. Serverless framework config ``yarn global add serverless``
 1. Expo ``yarn global add expo-cli``
 1. Amplify ``yarn global add @aws-amplify/cli``
-1. [Run the AWS scripts](https://github.com/gunnertech/aws-scripts) if you haven't already
 
+## Project
+````
+$ yarn run project:setup <project-name>
+````
+
+
+## Environment
+````
+$ chmod 0644 ~/.aws/credentials
+$ chmod 0644 ~/.aws/config
+$ cd <project-name>
+$ yarn install
+$ yarn run environment:setup -o <organizational-unit-name> -s <stage> -d <domain>
+$ yarn run environment:configure <stage> <project-name>
+````
+
+### Examples
+````
+$ yarn run environment:setup -o Qualis -s cody -d gunnertech.com # developer specific environment
+$ yarn run environment:setup -o Qualis -s staging -d gunnertech.com # staging environment
+$ yarn run environment:setup -o Qualis -s prod -d gunnertech.com # production environment
+````
 
 ## Sentry
+
+When you create the project in sentry, make sure you use ``<project-name>`` as the project name
+
 1. [Create a new project](https://sentry.io/organizations/gunner-technology/projects/new/)
 2. Note the url (i.e. https://xxxxxxxxx@sentry.io/xxxxx)
 3. ``./scripts/setvar.sh sentry-url <url>``
@@ -37,20 +62,20 @@ Install the following
 
 ````
 $ cd <project-name>
-$ ./scripts/git/setup.sh <developer-name>
+$ ./scripts/git/setup.sh <stage> (cody|dary|build|staging|prod|etc)
 ````
 
 ## Amplify CLI
 
 ````
 $ cd <project-name>
-$ ./scripts/amplify/setup.sh <developer-name>
+$ ./scripts/amplify/setup.sh <stage> (cody|dary|build|staging|prod|etc)
 ````
 
 ## Serverless
 ````
 $ cd <project-name>
-$ ./scripts/serverless/setup.sh <developer-name>
+$ ./scripts/serverless/setup.sh <stage> (cody|dary|build|staging|prod|etc)
 ````
 
 
@@ -62,25 +87,21 @@ Log into the console and setup the deploy as seen in [this video](https://youtu.
 
 ````
 $ cd <project-name>
-$ ./scripts/amplify/hosting/setup.sh <developer-name>
+$ ./scripts/amplify/hosting/setup.sh <stage> (cody|dary|build|staging|prod|etc)
 ````
 
 ## React Native Client
+
 ````
-$ cd <project-name>/serverless
-$ yarn watch
 $ cd <project-name>/react-native-client
 $ yarn install
-$ yarn ios # Load the emulator to make sure everything worked
 ````
 
 ## React Client
+
 ````
-$ cd <project-name>/serverless
-$ yarn watch
 $ cd <project-name>/react-client
 $ yarn install
-$ yarn start # open the local site to make sure everything worked
 ````
 
 ## RDS Serverless SQL Database (optional)
@@ -89,63 +110,111 @@ $ yarn start # open the local site to make sure everything worked
 ````
 # Modify serverless/secrets.yml with a username and password
 $ cd <project-name>
-$ ./scripts/rds/setup.sh
+$ ./scripts/rds/setup.sh <stage> (cody|dary|build|staging|prod|etc)
 ````
 
-### Modifications
+### Schema Migrations and Codegen
 ````
 $ cd <project-name>/serverless
-$ yarn run rds:generate-migration -- <migration-name> <sql-statement>
-$ yarn run rds:migrate -- dev
-$ amplify env checkout dev
+$ yarn run rds:generate-migration <migration-name> <sql-statement>
+$ yarn run rds:migrate <stage>
+$ amplify env checkout <stage>
 $ amplify api add-graphql-datasource
 ````
 
 # Adding a Team Member
 TODO
 
+1. Dev requests access to base-stage (where pull requests are submitted, i.e. staging)
+1. If approved, dev's IAM user gets added to the IAM group with access to base-stage
+1. Dev must add git credentials to ~/.gitconfig
+````
+[credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-<base-stage>/"]
+	UseHttpPath = true
+	helper = !aws --profile <project-name>-<base-stage>developer codecommit credential-helper $@
+
+[remote "<base-stage>"]
+	url = https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-<base-stage>
+	fetch = +refs/heads/*:refs/remotes/<base-stage>/*
+	pushurl = https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-<base-stage>
+
+[branch "<base-stage>"]
+	remote = <base-stage>
+	merge = refs/heads/<base-stage>
+````
+
+After that, the dev has access to the project and can set up a new environment for themselves
+
+````
+$ git clone --single-branch -b <base-stage> https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-<base-stage>
+$ cd <project-name>
+````
+
+Go to [Environment Setup](#environment)
 
 
 # Workflow
+
+## Running Locally
+
+### Backend 
+
 ````
-$ ## Start of iteration
 $ cd <project-name>/serverless
 $ yarn watch
-$ git checkout master; git pull
-$ git checkout staging; git pull
-$ git checkout <developer-name>
-$ amplify env checkout dev
-$ git merge master
-$ git merge staging
-$ ### start repetition process
+````
+
+### React Client 
+
+````
+$ cd <project-name>/react-client
+$ yarn start
+````
+
+### React Native Client 
+
+````
+$ cd <project-name>/react-native-client
+$ yarn <simulator> (ios|android)
+````
+
+## Start of iteration
+````
+$ git checkout <base-stage (staging|prod)>; git pull; # this makes sure you have the latest code
+$ git checkout <developer-name>; git merge <base-stage>
+$ amplify env checkout <developer-name>
+````
+
+## Work on issues
+````
 $ git checkout -b <issue-number>
-$ #work work work
-$ #IF have_to_make_backend_changes
-$ cd <project-name>/serverless
-$ sls deploy -s dev
-$ yarn run amplify:deploy
-$ yarn run rds:migrate  -- dev #only if using RDS
-$ #END IF
+$ # work work work
+$ ./scripts/deploy/backend.sh <developer-name> (migrate) # if you need to make backend changes
 $ git add .; git commit -am “closes #<issue-number>”
 $ git checkout <developer-name>
 $ git merge <issue-number>
 $ git push
 $ git branch -D <issue-number>
-$ ## repeat on more issues throughout the iteration
-$ git checkout -b <iteration-date> (format: YYYYMMDD) %
-$ git merge <developer-name>
-$ git push origin <iteration-date>
-$ git tag released/<iteration-date>
-$ git push origin released/<iteration-date>
-$ git push staging <iteration-date>
-$ git checkout <developer-name>
-$ git branch -D <iteration-date>
-$ ## Submit pull request:
-$ aws codecommit create-pull-request --title "<iteration-date> Iteration Pull Request" --description "<iteration-date> Iteration Pull Request" --client-request-token <iteration-date> --targets repositoryName=<project-name>-staging,sourceReference=<iteration-date> --profile <project-name>-stagingdeveloper
-$ ## ACCEPT pull request (after reviewing it):
-$ aws codecommit merge-pull-request-by-fast-forward --pull-request-id <request-id> --repository-name <project-name>-staging --profile <project-name>-stagingdeveloper
+$ # Repeat on all issues assigned
 ````
-  
+
+## Submit pull request
+
+Each developer on the project will submit a pull request
+
+````
+./scripts/git/approve-pull-request.sh <current-stage> <target-stage> <iteration-end-date: (format: YYYYMMDD)>
+````
+
+## Approve pull requests
+
+Team lead reviews and approves pull requests
+
+````
+$ ./scripts/git/setup.sh <stage> <request-id> <iteration-end-date: (format: YYYYMMDD)>
+$ # repeat above for all pull requests
+$ ./scripts/git/tag.sh <stage> <iteration-end-date  (format: YYYYMMDD)>
+````  
 
 
 ## Deploying

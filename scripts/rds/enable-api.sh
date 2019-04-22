@@ -1,6 +1,5 @@
 #!/bin/bash
 # ./scripts/rds/enable-api.sh <stage>
-# ./scripts/rds/enable-api.sh dev
 set -e
 IFS='|'
 

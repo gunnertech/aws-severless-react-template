@@ -10,10 +10,6 @@ PROJECT_HOME="${DIR}../../"
 STAGE=$1
 BRANCH=$STAGE
 
-if [ "$BRANCH" = "prod" ]; then
-  $BRANCH="master"
-fi
-
 
 
 git checkout $BRANCH

@@ -4,8 +4,8 @@ service:
 custom:
   accountId: { Ref: AWS::AccountId }
   identifier: ${self:service.name}-${self:custom.stage}
-  environment: ${file(env.yml):${self:custom.stage}, file(env.yml):dev}
-  secrets: ${file(secrets.yml):${self:custom.stage}, file(secrets.yml):dev}
+  environment: ${file(env.yml):${self:custom.stage}}
+  secrets: ${file(secrets.yml):${self:custom.stage}}
   createDbCluster: ${self:custom.environment.CREATE_DB_CLUSTER}
   domainName: ${self:custom.environment.DOMAIN_NAME}
   userPoolId: ${self:custom.environment.USER_POOL_ID}
@@ -35,9 +35,9 @@ plugins:
 provider:
   name: aws
   runtime: nodejs8.10
-  stage: ${opt:stage, 'dev'}
+  stage: ${opt:stage}
   region: ${self:custom.environment.REGION, 'us-east-1'}
-  profile: "${self:service.name}-${opt:stage, 'dev'}developer"
+  profile: "${self:service.name}-${opt:stage}developer"
   iamRoleStatements:
     - Effect: Allow
       Action:

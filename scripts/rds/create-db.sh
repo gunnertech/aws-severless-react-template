@@ -1,6 +1,5 @@
 #!/bin/bash
 # ./scripts/rds/create-db.sh <stage>
-# ./scripts/rds/create-db.sh dev
 set -e
 IFS='|'
 
