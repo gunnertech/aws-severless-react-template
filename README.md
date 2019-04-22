@@ -182,17 +182,17 @@ $ yarn <simulator> (ios|android)
 ## Start of iteration
 ````
 $ git checkout <base-stage (staging|prod)>; git pull; # this makes sure you have the latest code
-$ git checkout <developer-name>; git merge <base-stage>
-$ amplify env checkout <developer-name>
+$ git checkout <stage>; git merge <base-stage>
+$ amplify env checkout <stage>
 ````
 
 ## Work on issues
 ````
 $ git checkout -b <issue-number>
 $ # work work work
-$ ./scripts/deploy/backend.sh <developer-name> (migrate) # if you need to make backend changes
+$ ./scripts/deploy/backend.sh <stage> (migrate) # if you need to make backend changes
 $ git add .; git commit -am “closes #<issue-number>”
-$ git checkout <developer-name>
+$ git checkout <stage>
 $ git merge <issue-number>
 $ git push
 $ git branch -D <issue-number>
@@ -255,9 +255,11 @@ $ ./scripts/deploy/web.sh <stage (staging|prod)>
 
 1. Refactor all serverless variables inside the Resource block in serverless.yml into Parameters and Refs
 1. Add Branch integration
-1. Document how to add a team member / environment to an existing project
 1. Make setup scripts OS agnostic
 1. Document optional settings and resources (i.e. Guest User, etc)
 1. Put in generic Gunner Tech branding instead of SimpliSurvey
 1. Convert .sh scripts to node scripts (JAVASCRIPT ALL THE THINGS!)
 1. Make sentry optional
+1. Add view generators
+1. Add route generators
+1. Add congiration parameters for vars like project-name and base-stage
