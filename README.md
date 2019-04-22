@@ -2,13 +2,6 @@
 
 This project is meant to be a starter template for a serverless platform, leveraging the Serverless Framework, AWS Amplify, AWS AppSync, GraphQL, React and Expo.
 
-If you see "project-name" peppered throughout the README, you are reading the template version, which is fine for reference, but make sure to [Run the AWS scripts](https://github.com/gunnertech/aws-scripts) which will customize this README as well as the code in the starter template.
-
-#### ``*****``This guide will only work if you run those scripts first``*****``
-
-Also, please be aware, this will only work on macOS currently. We have plans to change the scripts to be OS agnostic, but we're a Mac shop, so if anyone out there wants to help us out, awesome.
-
-
 # Setup
 
 ## Prerequisites
