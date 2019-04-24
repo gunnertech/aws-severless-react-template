@@ -164,7 +164,7 @@ $ # Repeat on all issues assigned
 Each developer on the project will submit a pull request
 
 ````
-./scripts/git/approve-pull-request.sh <current-stage> <target-stage> <iteration-end-date: (format: YYYYMMDD)>
+./scripts/git/approve-pull-request.sh <stage> <target-stage> <iteration-end-date: (format: YYYYMMDD)>
 ````
 
 ## Approve pull requests
