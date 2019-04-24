@@ -122,25 +122,33 @@ $ amplify api add-graphql-datasource
 1. If approved, dev's IAM user gets added to the IAM group with access to base-stage
 1. Dev must add git credentials to ~/.gitconfig
 ````
-[credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-<base-stage>/"]
+[credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/mr-fister-<base-stage>/"]
 	UseHttpPath = true
-	helper = !aws --profile <project-name>-<base-stage>developer codecommit credential-helper $@
-
-[remote "<base-stage>"]
-	url = https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-<base-stage>
-	fetch = +refs/heads/*:refs/remotes/<base-stage>/*
-	pushurl = https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-<base-stage>
-
-[branch "<base-stage>"]
-	remote = <base-stage>
-	merge = refs/heads/<base-stage>
+	helper = !aws --profile mr-fister-<base-stage>developer codecommit credential-helper $@
 ````
 
 After that, the dev has access to the project and can set up a new environment for themselves
 
 ````
-$ git clone --single-branch -b <base-stage> https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-<base-stage>
-$ cd <project-name>
+$ git clone --single-branch -b <base-stage> https://git-codecommit.us-east-1.amazonaws.com/v1/repos/mr-fister-<base-stage>
+$ cd mr-fister
+````
+
+Add the following to the project's ~/.git/config (replacing base-stage where appropriate)
+
+````
+[credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/mr-fister-<base-stage>/"]
+	UseHttpPath = true
+	helper = !aws --profile mr-fister-<base-stage>developer codecommit credential-helper $@
+
+[remote "<base-stage>"]
+	url = https://git-codecommit.us-east-1.amazonaws.com/v1/repos/mr-fister-<base-stage>
+	fetch = +refs/heads/*:refs/remotes/<base-stage>/*
+	pushurl = https://git-codecommit.us-east-1.amazonaws.com/v1/repos/mr-fister-<base-stage>
+
+[branch "<base-stage>"]
+	remote = <base-stage>
+	merge = refs/heads/<base-stage>
 ````
 
 Go to [Environment Setup](#environment)
@@ -255,3 +263,4 @@ $ ./scripts/deploy/web.sh <stage (staging|prod)>
 1. Add view generators
 1. Add route generators
 1. Add congiration parameters for vars like project-name and base-stage
+1. Script the adding of teammates
