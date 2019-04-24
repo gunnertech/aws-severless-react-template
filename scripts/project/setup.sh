@@ -1,5 +1,5 @@
 #!/bin/bash
-# ./scripts/project/setup.sh mr-fister
+# ./scripts/project/setup.sh <project-name>
 export LC_CTYPE=C 
 export LANG=C
 
@@ -19,5 +19,5 @@ git init
 # curl -o $DIR/$PROJECT/serverless/secrets.yml https://gist.githubusercontent.com/CodySwannGT/b26d5f204bcd02f7f34c20775cb9ae88/raw/5965be72dadea4015e6a7045209ab6635355b3c0/secrets.yml
 # find $DIR/$PROJECT/.git/ -type f -print0 | xargs -0 sed -i "" "s/<developer-name>/$INITIAL_STAGE/g"
 # find $DIR/$PROJECT/serverless/secrets.yml -type f -print0 | xargs -0 sed -i "" "s/<developer-name>/$INITIAL_STAGE/g"
-find $PROJECT_ROOT -type f -print0 | xargs -0 sed -i "" "s/mr-fister/$PROJECT/g"
+find $PROJECT_ROOT -type f -print0 | xargs -0 sed -i "" "s/<project-name>/$PROJECT/g"
 
