@@ -6,7 +6,7 @@ set -e
 IFS='|'
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-PROJECT_HOME="${DIR}../../"
+PROJECT_HOME="${DIR}/../../"
 STAGE=$1
 BRANCH=$STAGE
 

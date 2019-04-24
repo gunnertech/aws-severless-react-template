@@ -9,7 +9,7 @@ IFS='|'
 STAGE=$1
 SENTRY_URL=$2
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-PROJECT_HOME="${DIR}../../../"
+PROJECT_HOME="${DIR}/../../../"
 APP_ID=$(aws amplify list-apps --profile <project-name>-${STAGE}developer --query apps[0].appId)
 CLOUD_FRONT_DOMAIN=$(aws cloudfront list-distributions --profile <project-name>-${STAGE}developer --output json --query DistributionList.Items[0].DomainName)
 

@@ -43,10 +43,10 @@ program
 
 program
   .action(options => {
-        options.accountName = options.accountName || `${options.stage}-<project-name>`
+        options.accountName = options.accountName || `<project-name>-${options.stage}`
         options.accountAlias = options.accountAlias || (options.accountName || "").toLowerCase();
         options.groupName = options.groupName || `${options.accountName}Admins`
-        options.email = options.email || `${options.accountName}@${options.domain}`
+        options.email = options.email || `${options.accountName}@${options.identifier}`
 
         console.log(options)
 

@@ -5,7 +5,7 @@ IFS='|'
 
 STAGE=$1
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-PROJECT_HOME="${DIR}../../"
+PROJECT_HOME="${DIR}/../../"
 
 git checkout $STAGE;
 cd $PROJECT_HOME/serverless;

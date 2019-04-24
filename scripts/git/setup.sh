@@ -9,3 +9,4 @@ IFS='|'
 STAGE=$1
 
 git checkout -b $STAGE
+git add .; git commit -am "initial commit"

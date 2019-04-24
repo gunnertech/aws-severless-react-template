@@ -34,8 +34,7 @@ $ yarn run project:setup <project-name>
 $ chmod 0644 ~/.aws/credentials
 $ chmod 0644 ~/.aws/config
 $ cd <project-name>
-$ yarn install
-$ yarn run environment:setup -o <organizational-unit-name> -s <stage> -d <domain>
+$ yarn run environment:setup -o <organizational-unit-name> -s <stage> -i <identifier>
 $ yarn run environment:configure <stage> <project-name>
 ````
 
