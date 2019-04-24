@@ -72,22 +72,29 @@ $ amplify api add-graphql-datasource
 
 # Adding a Team Member
 1. Dev requests access to base-stage (where pull requests are submitted, i.e. staging)
-1. If approved, dev's IAM user gets added to the IAM group with access to base-stage
-1. Dev must add git credentials to ~/.gitconfig
+
+1. If approved, team lead will add dev's IAM user to the IAM group with access to base-stage
+
+````
+$ aws iam list-groups #find the name of the group
+# aws iam add-user-to-group --group-name <value> --user-name <value>
+````
+
+1. Dev must add git credentials to their ``~/.gitconfig`` file
 ````
 [credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-<base-stage>/"]
 	UseHttpPath = true
 	helper = !aws --profile <project-name>-<base-stage>developer codecommit credential-helper $@
 ````
 
-After that, the dev has access to the project and can set up a new environment for themselves
+1. After that, the dev has access to the project and can set up a new environment for themselves
 
 ````
 $ git clone --single-branch -b <base-stage> https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-<base-stage>
 $ cd <project-name>
 ````
 
-Add the following to the project's ~/.git/config (replacing base-stage where appropriate)
+1. Add the following to the project's ``~/.git/config`` (replacing base-stage where appropriate)
 
 ````
 [credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-<base-stage>/"]
@@ -104,7 +111,7 @@ Add the following to the project's ~/.git/config (replacing base-stage where app
 	merge = refs/heads/<base-stage>
 ````
 
-Go to [Environment Setup](#environment)
+1. Go to [Environment Setup](#environment) and setup a new stage for yourself
 
 
 # Workflow
