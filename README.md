@@ -20,6 +20,14 @@ Install the following
 1. Expo ``yarn global add expo-cli``
 1. Amplify ``yarn global add @aws-amplify/cli``
 
+## Sentry
+
+When you create the project in sentry, make sure you use ``<project-name>`` as the project name
+
+1. [Create a new project](https://sentry.io/organizations/gunner-technology/projects/new/)
+2. Note the url (i.e. https://xxxxxxxxx@sentry.io/xxxxx)
+3. ``./scripts/setvar.sh sentry-url <url>``
+
 ## Project
 ````
 $ git clone --depth=1 --single-branch -b amplify-template git@github.com:gunnertech/aws-severless-react-template.git <project-name>
@@ -45,14 +53,6 @@ $ yarn run environment:setup -o Qualis -s staging -d gunnertech.com # staging en
 $ yarn run environment:setup -o Qualis -s prod -d gunnertech.com # production environment
 ````
 
-## Sentry
-
-When you create the project in sentry, make sure you use ``<project-name>`` as the project name
-
-1. [Create a new project](https://sentry.io/organizations/gunner-technology/projects/new/)
-2. Note the url (i.e. https://xxxxxxxxx@sentry.io/xxxxx)
-3. ``./scripts/setvar.sh sentry-url <url>``
-
 ## Git
 
 ````
@@ -75,10 +75,6 @@ $ ./scripts/serverless/setup.sh <stage> (cody|dary|build|staging|prod|etc)
 
 
 ## Amplify Hosting
-
-There is a bug with the aws cli which prevents us from completing setting up a new CI App headlessly, so we'll have to log into the console for now (ugh!).
-
-Log into the console and setup the deploy as seen in [this video](https://youtu.be/iql6pRyof20) for each stage (dev, staging, prod)
 
 ````
 $ cd <project-name>
