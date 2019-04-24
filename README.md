@@ -162,7 +162,7 @@ $ # Repeat on all issues assigned
 Each developer on the project will submit a pull request
 
 ````
-yarn git:submit <stage> <target-stage> <iteration-end-date: (format: YYYYMMDD)>
+$ yarn git:submit <stage> <target-stage> <iteration-end-date: (format: YYYYMMDD)>
 ````
 
 ## Approve pull requests
