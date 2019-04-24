@@ -36,36 +36,34 @@ When you create the project in sentry, make sure you use ``<project-name>`` as t
 
 1. [Create a new project](https://sentry.io/organizations/gunner-technology/projects/new/)
 2. Note the url (i.e. https://xxxxxxxxx@sentry.io/xxxxx)
-3. ``./<project-name>/scripts/setvar.sh sentry-url <url>``
+3. ``yarn setvar sentry-url <url>``
 
 
 ## Environment
 ````
-$ cd <project-name>
-$ yarn run environment:setup <project-name> <stage> <org-name> <domain>
+$ yarn environment:setup <project-name> <stage> <org-name> <domain>
 ````
 
 ### Examples
 ````
-$ yarn run environment:setup <project-name> cody Qualis gunnertech.com # developer specific environment
-$ yarn run environment:setup <project-name> staging Qualis gunnertech.com # staging environment
-$ yarn run environment:setup <project-name> prod Qualis gunnertech.com # production environment
+$ yarn environment:setup <project-name> cody Qualis gunnertech.com # developer specific environment
+$ yarn environment:setup <project-name> staging Qualis gunnertech.com # staging environment
+$ yarn environment:setup <project-name> prod Qualis gunnertech.com # production environment
 ````
 
 ## RDS Serverless SQL Database (optional)
 
 ### Setup
 ````
-# Modify serverless/secrets.yml with a username and password
-$ cd <project-name>
-$ ./scripts/rds/setup.sh <stage> (cody|dary|build|staging|prod|etc)
+$ # Modify serverless/secrets.yml with a username and password for the appropriate stage
+$ yarn rds:setup <stage> (cody|dary|build|staging|prod|etc)
 ````
 
 ### Schema Migrations and Codegen
 ````
 $ cd <project-name>/serverless
-$ yarn run rds:generate-migration <migration-name> <sql-statement>
-$ yarn run rds:migrate <stage>
+$ yarn rds:generate-migration <migration-name> <sql-statement>
+$ yarn rds:migrate <stage>
 $ amplify env checkout <stage>
 $ amplify api add-graphql-datasource
 ````
@@ -150,7 +148,7 @@ $ amplify env checkout <stage>
 ````
 $ git checkout -b <issue-number>
 $ # work work work
-$ ./scripts/deploy/backend.sh <stage> (migrate) # if you need to make backend changes
+$ yarn deploy:backend <stage> (migrate) # if you need to make backend changes
 $ git add .; git commit -am “closes #<issue-number>”
 $ git checkout <stage>
 $ git merge <issue-number>
@@ -164,7 +162,7 @@ $ # Repeat on all issues assigned
 Each developer on the project will submit a pull request
 
 ````
-./scripts/git/submit-pull-request.sh <stage> <target-stage> <iteration-end-date: (format: YYYYMMDD)>
+yarn git:submit <stage> <target-stage> <iteration-end-date: (format: YYYYMMDD)>
 ````
 
 ## Approve pull requests
@@ -172,9 +170,9 @@ Each developer on the project will submit a pull request
 Team lead reviews and approves pull requests
 
 ````
-$ ./scripts/git/approve-pull-request.sh <stage> <request-id> <iteration-end-date: (format: YYYYMMDD)>
+$ yarn git:approve <stage> <request-id> <iteration-end-date: (format: YYYYMMDD)>
 $ # repeat above for all pull requests
-$ ./scripts/git/tag.sh <stage> <iteration-end-date  (format: YYYYMMDD)>
+$ yarn git:tag <stage> <iteration-end-date  (format: YYYYMMDD)>
 ````  
 
 
@@ -184,20 +182,17 @@ $ ./scripts/git/tag.sh <stage> <iteration-end-date  (format: YYYYMMDD)>
 ### Backend
 
 ````
-$ cd <project-name>
-$ ./scripts/deploy/backend.sh <stage (staging|prod)>
+$ yarn deploy:backend <stage>
 ````
 
 ### React Native Front End
 ````
-$ cd <project-name>
-$ ./scripts/deploy/mobile.sh <stage (staging|prod)>
+$ yarn deploy:mobile <stage>
 ````
 ### React Front End
 
 ````
-$ cd <project-name>
-$ ./scripts/deploy/web.sh <stage (staging|prod)>
+$ yarn deploy:web <stage>
 ````
 
 

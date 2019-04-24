@@ -8,8 +8,15 @@
   "license": "MIT",
   "private": false,
   "scripts": {
+    "setvar": "./scripts/setvar.sh",
     "environment:setup": "./scripts/environment/setup.sh",
-    "environment:configure": "./scripts/environment/configure.sh",
+    "rds:setup": "./scripts/rds/setup.sh",
+    "deploy:backend": "./scripts/deploy/backend.sh",
+    "deploy:mobile": "./scripts/deploy/mobile.sh",
+    "deploy:web": "./scripts/deploy/web.sh",
+    "git:submit": "./scripts/git/submit-pull-request.sh",
+    "git:approve": "./scripts/git/approve-pull-request.sh",
+    "git:tag": "./scripts/git/tag.sh",
     "project:setup": "./scripts/project/setup.sh"
   },
   "dependencies": {
