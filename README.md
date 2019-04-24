@@ -20,79 +20,36 @@ Install the following
 1. Expo ``yarn global add expo-cli``
 1. Amplify ``yarn global add @aws-amplify/cli``
 
-## Sentry
 
+## Project
+````
+$ curl -s https://gist.githubusercontent.com/CodySwannGT/674a5a93cbbeceffe9f67aa060cc0c6e/raw/8192ea0b6b32eb165cac45059ce348f9fc7dc0b2/gunnerfy.sh | bash /dev/stdin <project-name>
+````
+
+### Example
+````
+$ curl -s https://gist.githubusercontent.com/CodySwannGT/674a5a93cbbeceffe9f67aa060cc0c6e/raw/8192ea0b6b32eb165cac45059ce348f9fc7dc0b2/gunnerfy.sh | bash /dev/stdin my-cool-project
+````
+
+## Sentry
 When you create the project in sentry, make sure you use ``<project-name>`` as the project name
 
 1. [Create a new project](https://sentry.io/organizations/gunner-technology/projects/new/)
 2. Note the url (i.e. https://xxxxxxxxx@sentry.io/xxxxx)
-3. ``./scripts/setvar.sh sentry-url <url>``
-
-## Project
-````
-$ git clone --depth=1 --single-branch -b amplify-template git@github.com:gunnertech/aws-severless-react-template.git <project-name>
-$ cd <project-name>
-$ yarn install
-$ yarn run project:setup <project-name>
-````
+3. ``./<project-name>/scripts/setvar.sh sentry-url <url>``
 
 
 ## Environment
 ````
-$ chmod 0644 ~/.aws/credentials
-$ chmod 0644 ~/.aws/config
 $ cd <project-name>
-$ yarn run environment:setup -o <organizational-unit-name> -s <stage> -i <identifier>
-$ yarn run environment:configure <stage> <project-name>
+$ yarn run environment:setup <project-name> <stage> <org-name> <domain>
 ````
 
 ### Examples
 ````
-$ yarn run environment:setup -o Qualis -s cody -d gunnertech.com # developer specific environment
-$ yarn run environment:setup -o Qualis -s staging -d gunnertech.com # staging environment
-$ yarn run environment:setup -o Qualis -s prod -d gunnertech.com # production environment
-````
-
-## Git
-
-````
-$ cd <project-name>
-$ ./scripts/git/setup.sh <stage> (cody|dary|build|staging|prod|etc)
-````
-
-## Amplify CLI
-
-````
-$ cd <project-name>
-$ ./scripts/amplify/setup.sh <stage> (cody|dary|build|staging|prod|etc)
-````
-
-## Serverless
-````
-$ cd <project-name>
-$ ./scripts/serverless/setup.sh <stage> (cody|dary|build|staging|prod|etc)
-````
-
-
-## Amplify Hosting
-
-````
-$ cd <project-name>
-$ ./scripts/amplify/hosting/setup.sh <stage> (cody|dary|build|staging|prod|etc)
-````
-
-## React Native Client
-
-````
-$ cd <project-name>/react-native-client
-$ yarn install
-````
-
-## React Client
-
-````
-$ cd <project-name>/react-client
-$ yarn install
+$ yarn run environment:setup <project-name> cody Qualis gunnertech.com # developer specific environment
+$ yarn run environment:setup <project-name> staging Qualis gunnertech.com # staging environment
+$ yarn run environment:setup <project-name> prod Qualis gunnertech.com # production environment
 ````
 
 ## RDS Serverless SQL Database (optional)

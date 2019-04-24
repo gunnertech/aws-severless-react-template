@@ -8,7 +8,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "environment:setup": "./scripts/environment/setup",
+    "environment:setup": "./scripts/environment/setup.sh",
     "environment:configure": "./scripts/environment/configure.sh",
     "project:setup": "./scripts/project/setup.sh"
   },
