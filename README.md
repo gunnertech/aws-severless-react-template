@@ -23,12 +23,12 @@ Install the following
 
 ## Project
 ````
-$ curl -s https://gist.githubusercontent.com/CodySwannGT/674a5a93cbbeceffe9f67aa060cc0c6e/raw/8192ea0b6b32eb165cac45059ce348f9fc7dc0b2/gunnerfy.sh | bash /dev/stdin <project-name>
+$ curl -s https://gist.githubusercontent.com/CodySwannGT/674a5a93cbbeceffe9f67aa060cc0c6e/raw/d87d5dec3266535321417a068b5173cb93eefe04/gunnerfy.sh | bash /dev/stdin <project-name>
 ````
 
 ### Example
 ````
-$ curl -s https://gist.githubusercontent.com/CodySwannGT/674a5a93cbbeceffe9f67aa060cc0c6e/raw/8192ea0b6b32eb165cac45059ce348f9fc7dc0b2/gunnerfy.sh | bash /dev/stdin my-cool-project
+$ curl -s https://gist.githubusercontent.com/CodySwannGT/674a5a93cbbeceffe9f67aa060cc0c6e/raw/d87d5dec3266535321417a068b5173cb93eefe04/gunnerfy.sh | bash /dev/stdin my-cool-project
 ````
 
 ## Sentry
