@@ -1,6 +1,6 @@
 #!/bin/bash
-# ./scripts/git/approve-pull-request.sh <current-stage> <target-stage> <iteration-end-date>
-# ./scripts/git/approve-pull-request.sh cody staging 20190404
+# ./scripts/git/submit-pull-request.sh <current-stage> <target-stage> <iteration-end-date>
+# ./scripts/git/submit-pull-request.sh cody staging 20190404
 set -e
 IFS='|'
 

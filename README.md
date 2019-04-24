@@ -165,7 +165,7 @@ Each developer on the project will submit a pull request
 Team lead reviews and approves pull requests
 
 ````
-$ ./scripts/git/setup.sh <stage> <request-id> <iteration-end-date: (format: YYYYMMDD)>
+$ ./scripts/git/approve-pull-request.sh <stage> <request-id> <iteration-end-date: (format: YYYYMMDD)>
 $ # repeat above for all pull requests
 $ ./scripts/git/tag.sh <stage> <iteration-end-date  (format: YYYYMMDD)>
 ````  
