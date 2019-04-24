@@ -12,5 +12,5 @@ git checkout $STAGE;
 cd $PROJECT_HOME/serverless;
 yarn install
 sls deploy -s $STAGE
-$PROJECT_HOME/scripts/setvar.sh $STAGE-cloudfront-domain $(aws cloudfront list-distributions --profile <project-name>-${$STAGE}developer --output json --query DistributionList.Items[0].DomainName)
+$PROJECT_HOME/scripts/setvar.sh $STAGE-cloudfront-domain $(aws cloudfront list-distributions --profile <project-name>-${STAGE}developer --output json --query DistributionList.Items[0].DomainName)
 git add .; git commit -am "sets variables"; git push
