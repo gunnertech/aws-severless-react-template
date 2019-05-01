@@ -11,7 +11,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 PROJECT_HOME="${DIR}/../../"
 
 git checkout $STAGE;
-cd $DIR/../serverless;
+cd $PROJECT_HOME/serverless;
 git checkout $STAGE
 $DIR/init.sh <project-name> $STAGE
 amplify add api || true
