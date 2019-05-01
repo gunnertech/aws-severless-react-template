@@ -12,7 +12,6 @@ PROJECT_HOME="${DIR}/../../"
 
 git checkout $STAGE;
 cd $PROJECT_HOME/serverless;
-git checkout $STAGE
 $DIR/init.sh <project-name> $STAGE
 amplify add api || true
 amplify add auth || true
