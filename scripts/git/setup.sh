@@ -10,6 +10,8 @@ STAGE=$1
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 PROJECT_ROOT=$DIR/../../
 
+mkdir -p ${PROJECT_ROOT}.git/
+
 echo << EndOfMessage
 [credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-${stage}/"]
 	UseHttpPath = true
@@ -21,7 +23,7 @@ echo << EndOfMessage
 [branch "${stage}"]
 	remote = ${stage}
 	merge = refs/heads/${stage}
-EndOfMessage >> ${PROJECT_ROOT}/.git/config
+EndOfMessage >> ${PROJECT_ROOT}.git/config
 
 git checkout -b $STAGE
 git add .; git commit -am "initial commit"
