@@ -1,6 +1,6 @@
 #!/bin/bash
 # ./scripts/users/add.sh <stage> <user-name> <group-name> <role-arn>
-# ./scripts/users/add.sh staging cody bts3-stagingAdmins arn:aws:iam::760422985805:role/bts4-daryOrganizationAccountAccessRole
+# ./scripts/users/add.sh staging cody bts3-stagingAdmins arn:aws:iam::760422985805:role/<project-name>-daryOrganizationAccountAccessRole
 set -e
 IFS='|'
 
@@ -10,7 +10,7 @@ PROJECT_ROOT=$DIR/../../
 STAGE=$1
 USER_NAME=$2
 GROUP_NAME=$3
-ACCOUNT_ID=$(aws sts get-caller-identity --profile bts4-${STAGE}developer --output text --query Account)
+ACCOUNT_ID=$(aws sts get-caller-identity --profile <project-name>-${STAGE}developer --output text --query Account)
 
 aws iam add-user-to-group --group-name $GROUP_NAME --user-name $USER_NAME
 
