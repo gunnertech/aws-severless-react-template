@@ -9,12 +9,12 @@ IFS='|'
 STAGE=$1
 SENTRY_URL="<sentry-url>"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-PROJECT_HOME="${DIR}/../../../"
+PROJECT_HOME="${DIR}/../../.."
 # APP_ID=$(aws amplify list-apps --profile <project-name>-${STAGE}developer --query apps[0].appId)
 CLOUD_FRONT_DOMAIN=$(aws cloudfront list-distributions --profile <project-name>-${STAGE}developer --output json --query DistributionList.Items[0].DomainName)
 
 git checkout $STAGE;
-cd $DIR/../serverless;
+# cd $DIR/../serverless;
 $PROJECT_HOME/scripts/setvar.sh $STAGE-app-id $APP_ID
 # $DIR/configure.sh <project-name> $STAGE $APP_ID $CLOUD_FRONT_DOMAIN $SENTRY_URL
 $DIR/configure -n <project-name> -s $STAGE -c $CLOUD_FRONT_DOMAIN -t $SENTRY_URL
