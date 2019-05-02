@@ -1,7 +1,10 @@
 #!/bin/bash
-# ./scripts/amplify/init <project name> <env>
+# ./scripts/amplify/init <project name> <stage>
 set -e
 IFS='|'
+
+PROJECT_NAME=$1
+STAGE=$2
 
 REACTCONFIG="{\
 \"SourceDir\":\"src\",\
@@ -12,12 +15,12 @@ REACTCONFIG="{\
 AWSCLOUDFORMATIONCONFIG="{\
 \"configLevel\":\"project\",\
 \"useProfile\":true,\
-\"profileName\":\"$1-$2developer\",\
+\"profileName\":\"${PROJECT_NAME}-${STAGE}developer\",\
 \"region\":\"us-east-1\"\
 }"
 AMPLIFY="{\
-\"projectName\":\"$1\",\
-\"envName\":\"$2\",\
+\"projectName\":\"${PROJECT_NAME}\",\
+\"envName\":\"${STAGE}\",\
 \"defaultEditor\":\"code\"\
 }"
 FRONTEND="{\
