@@ -1,5 +1,5 @@
 #!/bin/bash
-# ./scripts/git/setup.sh <stage>
+# ./scripts/git/setup.sh <STAGE>
 # ./scripts/git/setup.sh cody
 # ./scripts/git/setup.sh staging
 # ./scripts/git/setup.sh prod
@@ -15,16 +15,16 @@ git init
 # mkdir -p ${PROJECT_ROOT}.git/
 
 cat >> ${PROJECT_ROOT}.git/config << EndOfMessage
-[credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name> -${stage}/"]
+[credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name> -${STAGE}/"]
 	UseHttpPath = true
-	helper = !aws --profile <project-name> -${stage}developer codecommit credential-helper $@
-[remote "${stage}"]
-	url = https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name> -${stage}
+	helper = !aws --profile <project-name> -${STAGE}developer codecommit credential-helper $@
+[remote "${STAGE}"]
+	url = https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name> -${STAGE}
 	fetch = +refs/heads/*:refs/remotes/origin/*
-	pushurl = https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name> -${stage}
-[branch "${stage}"]
-	remote = ${stage}
-	merge = refs/heads/${stage}
+	pushurl = https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name> -${STAGE}
+[branch "${STAGE}"]
+	remote = ${STAGE}
+	merge = refs/heads/${STAGE}
 EndOfMessage
 
 git checkout -b $STAGE
