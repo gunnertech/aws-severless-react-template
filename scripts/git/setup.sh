@@ -10,7 +10,7 @@ STAGE=$1
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 PROJECT_ROOT=$DIR/../../
 
-echo EndOfMessage
+echo << EndOfMessage
 [credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-${stage}/"]
 	UseHttpPath = true
 	helper = !aws --profile <project-name>-${stage}developer codecommit credential-helper $@
