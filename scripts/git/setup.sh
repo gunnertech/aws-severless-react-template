@@ -15,13 +15,13 @@ git init
 # mkdir -p ${PROJECT_ROOT}.git/
 
 cat >> ${PROJECT_ROOT}.git/config << EndOfMessage
-[credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name> -${STAGE}/"]
+[credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-${STAGE}/"]
 	UseHttpPath = true
-	helper = !aws --profile <project-name> -${STAGE}developer codecommit credential-helper $@
+	helper = !aws --profile <project-name>-${STAGE}developer codecommit credential-helper $@
 [remote "${STAGE}"]
-	url = https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name> -${STAGE}
+	url = https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-${STAGE}
 	fetch = +refs/heads/*:refs/remotes/origin/*
-	pushurl = https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name> -${STAGE}
+	pushurl = https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-${STAGE}
 [branch "${STAGE}"]
 	remote = ${STAGE}
 	merge = refs/heads/${STAGE}
