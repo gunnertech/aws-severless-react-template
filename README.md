@@ -76,7 +76,7 @@ $ amplify api add-graphql-datasource
 ````
 $ # find the <group-name> i.e. bts3-stagingAdmins
 $ aws iam list-groups 
-$ #find the role i.e. arn:aws:iam::760422985805:role/bts4-daryOrganizationAccountAccessRole
+$ # find the role i.e. arn:aws:iam::760422985805:role/bts4-daryOrganizationAccountAccessRole
 $ aws iam list-roles --max-items 1000 --profile <project-name>-<stage>developer
 $ yarn users:add <base-stage> <user-name> <group-name> <role-arn>
 $ # email the output of the script to the developer so they can complete setup
