@@ -8,10 +8,10 @@ This project is meant to be a starter template for a serverless platform, levera
 
 Install the following
 
-1. Make sure you have an AWS account with proper ~/.aws/config and ~/.aws/credential files
 1. Brew ``$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"``
 1. Python ``$ brew install python; brew upgrade python``
 1. [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html#install-tool-pip) or ``$ brew install awscli; brew upgrade awscli``
+1. Setup your aws cli ``aws configure``
 1. [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 1. [NVM](https://github.com/creationix/nvm#installation-and-update)
 1. Node ``nvm install``
