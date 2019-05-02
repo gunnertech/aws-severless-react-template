@@ -17,6 +17,11 @@ PROJECT_ROOT=$DIR/../../
 rm -rf $PROJECT_ROOT/.git
 cd $PROJECT_ROOT
 
+
+echo "Configuring git for ${STAGE}...."
+$PROJECT_ROOT/scripts/git/setup.sh ${STAGE}
+echo "Done Configuring git for ${STAGE}"
+
 echo "Adding environment ${STAGE}...."
 $DIR/add -o $ORG_NAME -s $STAGE -i $DOMAIN
 echo "Done adding environment ${STAGE}"
@@ -24,10 +29,6 @@ echo "Done adding environment ${STAGE}"
 echo "Configuring environment ${STAGE}...."
 $DIR/configure.sh $STAGE $PROJECT
 echo "Done Configuring environment ${STAGE}"
-
-echo "Configuring git for ${STAGE}...."
-$PROJECT_ROOT/scripts/git/setup.sh ${STAGE}
-echo "Done Configuring git for ${STAGE}"
 
 echo "Configuring amplify for ${STAGE}...."
 $PROJECT_ROOT/scripts/amplify/setup.sh ${STAGE}
