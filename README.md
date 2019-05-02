@@ -69,47 +69,18 @@ $ amplify api add-graphql-datasource
 ````
 
 # Adding a Team Member
-1. Dev requests access to base-stage (where pull requests are submitted, i.e. staging)
+1. Dev requests access to ``<base-stage>`` (where pull requests are submitted, i.e. staging) with their IAM ``<user-name>``
 
 1. If approved, team lead will add dev's IAM user to the IAM group with access to base-stage
 
 ````
-$ aws iam list-groups #find the name of the group
-$ # aws iam add-user-to-group --group-name <value> --user-name <value>
+$ # find the <group-name> i.e. bts3-stagingAdmins
+$ aws iam list-groups 
+$ #find the role i.e. arn:aws:iam::760422985805:role/bts4-daryOrganizationAccountAccessRole
+$ aws iam list-roles --max-items 1000 --profile <project-name>-<stage>developer
+$ yarn users:add <base-stage> <user-name> <group-name> <role-arn>
+$ # email the output of the script to the developer so they can complete setup
 ````
-
-3. Dev must add git credentials to their ``~/.gitconfig`` file
-````
-[credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-<base-stage>/"]
-	UseHttpPath = true
-	helper = !aws --profile <project-name>-<base-stage>developer codecommit credential-helper $@
-````
-
-4. After that, the dev has access to the project and can set up a new environment for themselves
-
-````
-$ git clone --single-branch -b <base-stage> https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-<base-stage>
-$ cd <project-name>
-````
-
-5. Add the following to the project's ``~/.git/config`` (replacing base-stage where appropriate)
-
-````
-[credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-<base-stage>/"]
-	UseHttpPath = true
-	helper = !aws --profile <project-name>-<base-stage>developer codecommit credential-helper $@
-
-[remote "<base-stage>"]
-	url = https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-<base-stage>
-	fetch = +refs/heads/*:refs/remotes/<base-stage>/*
-	pushurl = https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-<base-stage>
-
-[branch "<base-stage>"]
-	remote = <base-stage>
-	merge = refs/heads/<base-stage>
-````
-
-6. Go to [Environment Setup](#environment) and setup a new stage for yourself
 
 
 # Workflow

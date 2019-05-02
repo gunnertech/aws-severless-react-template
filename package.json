@@ -17,6 +17,7 @@
     "git:submit": "./scripts/git/submit-pull-request.sh",
     "git:approve": "./scripts/git/approve-pull-request.sh",
     "git:tag": "./scripts/git/tag.sh",
+    "users:add": "./scripts/users/add.sh",
     "project:setup": "./scripts/project/setup.sh"
   },
   "dependencies": {
