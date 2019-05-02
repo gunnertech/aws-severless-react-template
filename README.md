@@ -188,5 +188,5 @@ $ yarn deploy:web <stage>
 1. Make sentry optional
 1. Add view generators
 1. Add route generators
-1. Add congiration parameters for vars like project-name and base-stage
-1. Script the adding of teammates
+1. Add congiration parameters for vars like project-name and base-stage so they aren't search/replace
+1. Move scripting to CloudFormation custom resources and macros
