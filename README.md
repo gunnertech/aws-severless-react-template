@@ -177,6 +177,26 @@ $ yarn deploy:web <stage>
 7. [Gunner Technology Walkthrough](https://www.youtube.com/playlist?list=PLQBYTfA46mzjBNcJiCAny3-EWRs0c1wl_)
 8. [AppSync with Aurora](https://docs.aws.amazon.com/appsync/latest/devguide/tutorial-rds-resolvers.html#create-database-and-table)
 
+# Gotchas
+
+## DynamoDB
+
+### One index at a time
+
+DynamoDB will not let you create or delete two GSIs at the same time and for some reason, CloudFormation isn't smart enough to wait and do them sequentially.
+
+This is especially problematic with the @connection directive
+
+Try using this snippet before deploying new indexes to make sure the coast is clear:
+
+````
+$ aws dynamodb describe-table --table-name <table-name> --query Table.GlobalSecondaryIndexes[*].IndexStatus --profile <profile>
+````
+
+If everything is "ACTIVE", you're safe to deploy
+
+
+
 # TODO
 
 1. Refactor all serverless variables inside the Resource block in serverless.yml into Parameters and Refs
