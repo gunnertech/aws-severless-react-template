@@ -153,7 +153,7 @@ $ yarn git:tag <stage> <iteration-end-date  (format: YYYYMMDD)>
 ### Backend
 
 ````
-$ yarn deploy:backend <stage>
+$ yarn deploy:backend <stage> 
 ````
 
 ### React Native Front End
@@ -195,7 +195,11 @@ $ aws dynamodb describe-table --table-name <table-name> --query Table.GlobalSeco
 
 If everything is "ACTIVE", you're safe to deploy
 
+## Accounts
 
+If you want to delete an account, simply close the account.
+
+However, you should also remove the IAM Group and IAM Policy in the main account as well
 
 # TODO
 

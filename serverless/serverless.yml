@@ -11,9 +11,9 @@ custom:
   userPoolId: ${self:custom.environment.USER_POOL_ID}
   guestUserName: ${self:custom.environment.GUEST_USER_NAME}
   authRoleName: ${self:custom.environment.AUTH_ROLE_NAME}
+  uploadBucketName: ${self:custom.environment.BUCKET_NAME}
   stage: ${opt:stage, self:provider.stage}
   region: ${opt:region, self:provider.region}
-  uploadBucketName: "com-gunnertech-${self:service.name}-${self:custom.stage}"
   output:
     handler: scripts/output.handler
     file: .build/stack.yml

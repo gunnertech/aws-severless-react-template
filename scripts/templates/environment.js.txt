@@ -2,7 +2,7 @@
 <stage>: {
     cdn: '<<stage>-cloudfront-domain>',
     base_url: "https://<stage>.<<stage>-app-id>.amplifyapp.com",
-    sentry_url,
+    sentry_url: '',
     guest_user_name: null,
     guest_password: null
   },
