@@ -41,9 +41,10 @@ DangerZone.Branch.subscribe(bundle =>
 I18n.setLanguage('en');
 I18n.putVocabularies(authScreenLabels);
 
-
-Sentry.enableInExpoDevelopment = false;
-Sentry.config(ENV.sentry_url).install();
+if(!!ENV.sentry_url && !!ENV.sentry_url.replace("<sentry-url>","")) {
+  Sentry.enableInExpoDevelopment = false;
+  Sentry.config(ENV.sentry_url).install();
+}
 
 
 console.disableYellowBox = true;
