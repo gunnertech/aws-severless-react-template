@@ -4,11 +4,6 @@
   "description": "Gunner Technology Serverless Starter Pack",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "amplify:build": "rm -rf ../react-client/src/aws-exports.js && cp ./src/aws-exports.js ../react-client/src/aws-exports.js &&  rm -rf ../react-client/src/graphql && cp -R  ./src/graphql ../react-client/src && rm -rf ../react-native-client/aws-exports.js && cp ./amplify/aws-exports.js ../react-native-client/aws-exports.js &&  rm -rf ../react-native-client/src/graphql && cp -R ./src/graphql ../react-native-client/src",
-    "amplify:deploy": "../scripts/amplify/deploy.sh",
-    "rds:migrate": "../scripts/rds/migrate.sh",
-    "rds:generate-migration": "../scripts/rds/generate-migration.sh",
-    "watch": "watch 'yarn run amplify:build' ./"
   },
   "devDependencies": {
     "aws-sdk": "^2.399.0",
@@ -19,7 +14,6 @@
     "babel-preset-env": "^1.6.0",
     "serverless": "latest",
     "serverless-webpack": "^5.2.0",
-    "watch": "^1.0.2",
     "webpack": "^4.25.1"
   },
   "author": "Gunner Technology",
