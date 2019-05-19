@@ -1,5 +1,5 @@
 
-[credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/<project-name>-<stage>/"]
+[credential "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/gotseason8sucks9-<stage>/"]
 	UseHttpPath = true
 	helper = !aws --profile <project-name>-<stage>developer codecommit credential-helper $@
 

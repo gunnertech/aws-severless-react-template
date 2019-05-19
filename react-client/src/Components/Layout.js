@@ -72,7 +72,7 @@ const Template = ({ navigate, location, data, children, showNav, notifications }
   <Container>
     <Helmet
       encodeSpecialCharacters={true}
-      title="<project-name>"
+      title="gotseason8sucks9"
       meta={[
         { name: `description`, content: `<project-name>` },
         { name: `keywords`, content: `<project-name>` },

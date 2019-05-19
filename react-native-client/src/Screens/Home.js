@@ -36,7 +36,7 @@ class Home extends React.PureComponent {
         "menu"
       }
       centerElement={
-        "<project-name>"
+        "gotseason8sucks9"
       }
       onLeftElementPress={() => navigationProps.navigation.toggleDrawer() }
     />

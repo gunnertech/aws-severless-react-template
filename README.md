@@ -23,7 +23,7 @@ Install the following
 
 ## Project
 ````
-$ curl -s https://gist.githubusercontent.com/CodySwannGT/674a5a93cbbeceffe9f67aa060cc0c6e/raw/d87d5dec3266535321417a068b5173cb93eefe04/gunnerfy.sh | bash /dev/stdin <project-name>
+$ curl -s https://gist.githubusercontent.com/CodySwannGT/674a5a93cbbeceffe9f67aa060cc0c6e/raw/d87d5dec3266535321417a068b5173cb93eefe04/gunnerfy.sh | bash /dev/stdin gotseason8sucks9
 ````
 
 ### Example
