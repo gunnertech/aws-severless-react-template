@@ -9,7 +9,7 @@ const ENV = {
   
 dary: {
     cdn: 'd3hjvrp3m1mh6h.cloudfront.net',
-    base_url: "https://dary.<dary-app-id>.amplifyapp.com",
+    base_url: "https://dary.d18hokli0itulj.amplifyapp.com",
     sentry_url: '<sentry-url>',
     guest_user_name: null,
     guest_password: null
