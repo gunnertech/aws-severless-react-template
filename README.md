@@ -32,7 +32,7 @@ $ curl -s https://gist.githubusercontent.com/CodySwannGT/674a5a93cbbeceffe9f67aa
 ````
 
 ## Sentry
-When you create the project in sentry, make sure you use ``<project-name>`` as the project name
+When you create the project in sentry, make sure you use ``gotseason8sucks9`` as the project name
 
 1. [Create a new project](https://sentry.io/organizations/gunner-technology/projects/new/)
 2. Note the url (i.e. https://xxxxxxxxx@sentry.io/xxxxx)

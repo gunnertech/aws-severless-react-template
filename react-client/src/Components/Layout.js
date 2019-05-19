@@ -74,7 +74,7 @@ const Template = ({ navigate, location, data, children, showNav, notifications }
       encodeSpecialCharacters={true}
       title="gotseason8sucks9"
       meta={[
-        { name: `description`, content: `<project-name>` },
+        { name: `description`, content: `gotseason8sucks9` },
         { name: `keywords`, content: `<project-name>` },
         { name: 'og:url', content: `${process.env.REACT_APP_base_url}${location.pathname}` }
       ]}
