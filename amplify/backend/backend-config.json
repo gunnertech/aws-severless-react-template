@@ -1,0 +1,29 @@
+{
+	"auth": {
+		"cognito11fa672c": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation"
+		}
+	},
+	"api": {
+		"gotseason8sucks9": {
+			"service": "AppSync",
+			"providerPlugin": "awscloudformation",
+			"output": {
+				"securityType": "AMAZON_COGNITO_USER_POOLS"
+			}
+		}
+	},
+	"analytics": {
+		"gotseason8sucks9": {
+			"service": "Pinpoint",
+			"providerPlugin": "awscloudformation"
+		}
+	},
+	"storage": {
+		"s325f9f51c": {
+			"service": "S3",
+			"providerPlugin": "awscloudformation"
+		}
+	}
+}

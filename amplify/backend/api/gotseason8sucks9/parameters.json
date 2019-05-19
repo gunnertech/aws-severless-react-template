@@ -1,0 +1,10 @@
+{
+    "AppSyncApiName": "gotseason8sucks9",
+    "DynamoDBBillingMode": "PAY_PER_REQUEST",
+    "AuthCognitoUserPoolId": {
+        "Fn::GetAtt": [
+            "authcognito11fa672c",
+            "Outputs.UserPoolId"
+        ]
+    }
+}

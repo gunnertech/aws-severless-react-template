@@ -1,0 +1,19 @@
+{
+    "dary": {
+        "awscloudformation": {
+            "AuthRoleName": "gotseason8sucks9-dary-20190518210113-authRole",
+            "UnauthRoleArn": "arn:aws:iam::146858144936:role/gotseason8sucks9-dary-20190518210113-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::146858144936:role/gotseason8sucks9-dary-20190518210113-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "gotseason8sucks9-dary-20190518210113-deployment",
+            "UnauthRoleName": "gotseason8sucks9-dary-20190518210113-unauthRole",
+            "StackName": "gotseason8sucks9-dary-20190518210113",
+            "StackId": "arn:aws:cloudformation:us-east-1:146858144936:stack/gotseason8sucks9-dary-20190518210113/bebac490-79ea-11e9-9e65-12989ba5c57e"
+        },
+        "categories": {
+            "auth": {
+                "cognito11fa672c": {}
+            }
+        }
+    }
+}

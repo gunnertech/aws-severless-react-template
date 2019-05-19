@@ -1,0 +1,20 @@
+{
+    "appName": "gotseason8sucks9",
+    "roleName": "pinpointLambdaRole449a37b8",
+    "cloudWatchPolicyName": "cloudWatchPolicy449a37b8",
+    "pinpointPolicyName": "pinpointPolicy449a37b8",
+    "authPolicyName": "pinpoint_amplify_449a37b8",
+    "unauthPolicyName": "pinpoint_amplify_449a37b8",
+    "authRoleName": {
+        "Ref": "AuthRoleName"
+    },
+    "unauthRoleName": {
+        "Ref": "UnauthRoleName"
+    },
+    "authRoleArn": {
+        "Fn::GetAtt": [
+            "AuthRole",
+            "Arn"
+        ]
+    }
+}
