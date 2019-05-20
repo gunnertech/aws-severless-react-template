@@ -137,7 +137,7 @@ const appSyncLink = createAppSyncLink({
 const link = ApolloLink.from([stateLink, appSyncLink]);
 const client = new AWSAppSyncClient({disableOffline: true}, { link });
 
-if(!!REACT_APP_sentry_url && !!REACT_APP_sentry_url.replace("<sentry-url>","")) {
+if(!!process.env.REACT_APP_sentry_url && !!process.env.REACT_APP_sentry_url.replace("<sentry-url>","")) {
   Sentry.enableInExpoDevelopment = false;
   Sentry.init({
     dsn: process.env.REACT_APP_sentry_url
