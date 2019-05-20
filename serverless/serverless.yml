@@ -54,10 +54,10 @@ resources:
       Default: ${self:custom.region}
     dbClusterMasterUserName:
       Type: String
-      Default: ${self:custom.secrets.DB_CLUSTER_MASTER_USERNAME, 'NONE'}
+      Default: ${self:custom.secrets.DB_CLUSTER_MASTER_USERNAME, ''}
     dbClusterMasterPassword:
       Type: String
-      Default: ${self:custom.secrets.DB_CLUSTER_MASTER_PASSWORD, 'NONE'}
+      Default: ${self:custom.secrets.DB_CLUSTER_MASTER_PASSWORD, ''}
     identifier:
       Type: String
       Default: ${self:custom.identifier}
@@ -79,14 +79,14 @@ resources:
       Fn::Not:
         - Fn::Equals:
           - Ref: dbClusterMasterUserName
-          - 'NONE'
+          - ''
     
     ShouldCreateDbCluster:
       Fn::And:
         - Fn::Not:
           - Fn::Equals:
             - Ref: dbClusterMasterPassword
-            - "NONE"
+            - ""
         - Condition: HasClusterUserName
 
     ShouldCreateGuestUser:
