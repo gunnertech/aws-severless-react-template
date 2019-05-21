@@ -21,6 +21,7 @@
     "aws-sdk": "^2.400.0",
     "buffer": "^5.2.1",
     "expo": "^32.0.0",
+    "expo-env": "^1.1.1",
     "graphql": "^14.0.2",
     "graphql-tag": "^2.10.0",
     "hoist-non-react-statics": "^3.0.1",

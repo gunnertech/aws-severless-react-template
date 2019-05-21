@@ -6,8 +6,5 @@
   "repository": "git@github.com:gunnertech/aws-severless-react-template.git",
   "author": "Cody Swann <cody@gunnertech.com>",
   "license": "MIT",
-  "private": false,
-  "dependencies": {
-    "expo-env": "^1.1.1"
-  }
+  "private": false
 }
