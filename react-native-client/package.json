@@ -3,12 +3,12 @@
   "main": "node_modules/expo/AppEntry.js",
   "private": true,
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "start": "./node_modules/.bin/expo-env --env=$STAGE && expo start",
+    "android": "./node_modules/.bin/expo-env --env=$STAGE && expo start --android",
+    "ios": "./node_modules/.bin/expo-env --env=$STAGE && expo start --ios",
     "eject": "expo eject",
-    "build_ios": "expo build:ios",
-    "build_android": "expo build:android"
+    "build:ios": "expo build:ios",
+    "build:android": "expo build:android"
   },
   "dependencies": {
     "apollo-client": "^2.4.12",

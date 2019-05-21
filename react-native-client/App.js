@@ -92,7 +92,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     Hub.listen('auth', data => 
-      console.log('A new auth event has happened: ', data.payload.data.username + ' has ' + data.payload.event) ||
+      console.log('A new auth event has happened: ', data) ||
       this.onAuthEvent(data)             
     )
   }
