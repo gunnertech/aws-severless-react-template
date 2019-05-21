@@ -6,7 +6,6 @@ custom:
   identifier: ${self:service.name}-${self:custom.stage}
   environment: ${file(env.yml):${self:custom.stage}}
   secrets: ${file(secrets.yml):${self:custom.stage}}
-  createDbCluster: ${self:custom.environment.CREATE_DB_CLUSTER}
   domainName: ${self:custom.environment.DOMAIN_NAME}
   userPoolId: ${self:custom.environment.USER_POOL_ID}
   guestUserName: ${self:custom.environment.GUEST_USER_NAME}
