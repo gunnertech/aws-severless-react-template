@@ -108,7 +108,7 @@ resources:
           - Ref: domainName
           - "NONE"
 
-    ShouldCreateAddUserToGroupPolicy:
+    ShouldCreateAuthPolicy:
       Fn::Not:
         - Fn::Equals:
           - Ref: authRoleName
@@ -155,7 +155,7 @@ resources:
               - 'cluster'
 
     AddUserToGroupIamPolicy:
-      Condition: ShouldCreateAddUserToGroupPolicy
+      Condition: ShouldCreateAuthPolicy
       Type: AWS::IAM::Policy
       Properties: 
         PolicyDocument: 
@@ -167,7 +167,13 @@ resources:
                 - "cognito-idp:AdminAddUserToGroup"
                 - "cognito-idp:DescribeUserPool"
               Resource: "arn:aws:cognito-idp:*:*:userpool/*"
-        PolicyName: AddUserToGroupPolicy
+            - 
+              Effect: "Allow"
+              Action: 
+                - "ses:SendEmail"
+                - ""
+              Resource: "arn:aws:ses:us-east-1:*"
+        PolicyName: ExtraAuthUserPolicy
         Roles:
           - Ref: authRoleName
           
