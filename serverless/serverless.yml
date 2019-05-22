@@ -108,7 +108,7 @@ resources:
           - Ref: domainName
           - "NONE"
 
-    ShouldCreateAuthPolicy:
+    ShouldCreateAddUserToGroupPolicy:
       Fn::Not:
         - Fn::Equals:
           - Ref: authRoleName
@@ -155,7 +155,7 @@ resources:
               - 'cluster'
 
     AddUserToGroupIamPolicy:
-      Condition: ShouldCreateAuthPolicy
+      Condition: ShouldCreateAddUserToGroupPolicy
       Type: AWS::IAM::Policy
       Properties: 
         PolicyDocument: 
@@ -171,9 +171,8 @@ resources:
               Effect: "Allow"
               Action: 
                 - "ses:SendEmail"
-                - ""
               Resource: "arn:aws:ses:us-east-1:*"
-        PolicyName: ExtraAuthUserPolicy
+        PolicyName: AddUserToGroupPolicy
         Roles:
           - Ref: authRoleName
           
