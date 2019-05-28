@@ -1,4 +1,14 @@
 version: 0.1
+backend:
+  phases:
+    build:
+      commands:
+        - amplifyPush --simple
+    postBuild:
+        commands:
+        - ls amplify/src
+        - mv amplify/src/graphql react-client/src
+        - cp amplify/src/aws-exports.js react-client/src
 frontend:
   phases:
     preBuild:
