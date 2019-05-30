@@ -48,8 +48,8 @@ const styles = theme => ({
   logo: {
     height: '50px',
     width: 'auto',
-    marginTop: `${theme.spacing.unit/2}px`,
-    marginLeft: `${theme.spacing.unit}px`
+    marginTop: `${theme.spacing(0.5)}px`,
+    marginLeft: `${theme.spacing(1)}px`
   },
   flex: {
     flex: 1,
@@ -58,8 +58,8 @@ const styles = theme => ({
     [theme.breakpoints.up('md')]: {
       display: 'none',
     },
-    marginLeft: `-${theme.spacing.unit*2}px`,
-    marginRight: `${theme.spacing.unit*3}px`,
+    marginLeft: `-${theme.spacing(2)}px`,
+    marginRight: `${theme.spacing(3)}px`,
   },
   toolbar: theme.mixins.toolbar,
   drawerPaper: {
@@ -75,7 +75,7 @@ const styles = theme => ({
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit * 3,
+    padding: theme.spacing(3),
     display: "flex",
     flexDirection: "column",
     minHeight: "100vh",
@@ -86,9 +86,9 @@ const styles = theme => ({
     },
   },
   footer: {
-    padding: theme.spacing.unit,
-    marginTop: theme.spacing.unit*10,
-    marginBottom: theme.spacing.unit,
+    padding: theme.spacing(1),
+    marginTop: theme.spacing(10),
+    marginBottom: theme.spacing(10),
     textAlign: 'center'
   },
   social: {
@@ -98,11 +98,11 @@ const styles = theme => ({
   socialItem: {
     listStyleType: 'none', 
     display: 'inline-block',
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
   },
   testimonialWrapper: {
-    marginBottom: theme.spacing.unit*10
+    marginBottom: theme.spacing(10)
   }
 });
 

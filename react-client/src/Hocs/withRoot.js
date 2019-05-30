@@ -27,7 +27,6 @@ function withRoot(Component) {
         <JssProvider generateClassName={this.muiPageContext.generateClassName}>
           <MuiThemeProvider
             theme={this.muiPageContext.theme}
-            sheetsManager={this.muiPageContext.sheetsManager}
           >
             <CssBaseline />
             <Component {...this.props} />

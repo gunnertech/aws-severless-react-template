@@ -4,8 +4,8 @@ import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
   toast: {
-    marginTop: theme.spacing.unit * 2, 
-    padding: theme.spacing.unit * 2,
+    marginTop: theme.spacing(2), 
+    padding: theme.spacing(2),
     color: 'white',
     backgroundColor: theme.palette.secondary.main
   }

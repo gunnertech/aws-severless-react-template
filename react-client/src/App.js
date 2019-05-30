@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Amplify, { Auth, Hub } from 'aws-amplify';
 import { Rehydrated } from 'aws-appsync-react';
 import { ApolloProvider } from 'react-apollo';
@@ -7,20 +6,18 @@ import AWSAppSyncClient, { createAppSyncLink, createLinkWithCache } from "aws-ap
 import { ApolloLink } from 'apollo-link';
 import { withClientState } from 'apollo-link-state';
 import * as Sentry from '@sentry/browser';
-import { ConfirmSignIn, ConfirmSignUp, ForgotPassword, RequireNewPassword, VerifyContact, withAuthenticator } from 'aws-amplify-react';
 import CognitoIdentityServiceProvider from 'aws-sdk/clients/cognitoidentityserviceprovider';
+import gql from 'graphql-tag';
 
-import SignUp from "./Screens/SignUp";
-import SignIn from "./Screens/SignIn";
-import HomeScreen from "./Screens/Home";
-import SplashScreen from "./Screens/Splash";
-import PrivacyPolicyScreen from "./Screens/PrivacyPolicy";
-import SignOutScreen from "./Screens/SignOut";
+import Router from "./Components/Router"
 
 import { CurrentUserProvider } from './Contexts/CurrentUser'
 import { NotificationsProvider } from './Contexts/Notifications'
 import { ActionMenuProvider } from './Contexts/ActionMenu';
-import { LayoutProvider } from './Contexts/Layout'
+
+import { getUser } from './graphql/queries'
+import { createUser, updateUser } from './graphql/mutations'
+
 
 
 import { I18n } from 'aws-amplify';
@@ -41,64 +38,6 @@ const authScreenLabels = {
 
 I18n.setLanguage('en');
 I18n.putVocabularies(authScreenLabels);
-
-const PrivateRoute = ({ component: Component, ...rest }) => (
-  <Route {...rest} render={props => {
-    const ComponentWithAuth = withAuthenticator(Component, false, [
-      <SignIn/>,
-      <ConfirmSignIn/>,
-      <VerifyContact/>,
-      <SignUp
-
-        signUpConfig={{
-          hideAllDefaults: true,
-          signUpFields: [
-            {
-              key: 'name',
-              type: 'text',
-              required: true,
-              label: 'Name',
-              displayOrder: 1,
-              placeholder: "Name (as you want others to see it)"
-            },
-            {
-              key: 'username',
-              type: 'email',
-              required: true,
-              label: 'Email',
-              displayOrder: 2,
-              placeholder: "Enter your email (used to sign in)"
-            },
-            
-            {
-              key: 'phone_number',
-              type: 'tel',
-              required: false,
-              label: 'Mobile',
-              displayOrder: 3,
-              placeholder: "Enter your mobile number"
-            },
-            {
-              key: 'password',
-              type: 'password',
-              required: true,
-              label: 'Password',
-              displayOrder: 4,
-              placeholder: "Enter your password"
-            }
-          ]
-      }}
-    />,
-    <ConfirmSignUp/>,
-    <ForgotPassword/>,
-    <RequireNewPassword />
-  ], false);
-
-    return (
-      <ComponentWithAuth {...props} />
-    )
-  }} />
-)
 
 const defaults = {};
 const resolvers = {};
@@ -151,7 +90,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     Hub.listen('auth', data => 
-      console.log('A new auth event has happened: ', data.payload.data.username + ' has ' + data.payload.event) ||
+      console.log('A new auth event has happened: ', data) ||
       this.onAuthEvent(data)             
     )
   }
@@ -162,20 +101,30 @@ class App extends Component {
     notifications: []
   }
 
-  // _createNewUser = cognitoUser =>
-  //   client.mutate({
-  //     mutation: CreateUser,
-  //     onError: e => console.log("_createNewUser", e),
-  //     variables: {
-  //       id: cognitoUser.username,
-  //       phone: cognitoUser.attributes.phone_number || undefined,
-  //       email: cognitoUser.attributes.email || undefined,
-  //       name: cognitoUser.attributes.name || undefined,
-  //       active: true,
-  //     },
-  //   })
-  //   .then(({data: {createUser}}) => Promise.resolve(createUser))
-//console.log(CognitoIdentityServiceProvider)
+  _updateUser = (cognitoUser, groupName) =>
+    client.mutate({
+      mutation: gql(updateUser),
+      onError: e => console.log("_updateUser", e),
+      variables: {input:{
+        id: cognitoUser.username,
+        groups: [groupName]
+      }},
+    })
+    .then(({data: {updateUser}}) => updateUser)
+
+  _createNewUser = (cognitoUser, groupName) =>
+    client.mutate({
+      mutation: gql(createUser),
+      onError: e => console.log("_createNewUser", e),
+      variables: {input:{
+        id: cognitoUser.username,
+        email: cognitoUser.attributes.email || undefined,
+        groups: [groupName],
+        applicationStatus: groupName === 'Admins' ? 'APPROVED' : 'PENDING'
+      }},
+    })
+    .then(({data: {createUser}}) => createUser)
+
   _cognitoClient = () =>
     Auth.currentCredentials()
       .then(credentials =>
@@ -205,39 +154,43 @@ class App extends Component {
           UserPoolId: user.pool.userPoolId,
           Username: user.username
         })
-        .promise()  
+        .promise()
+        .then(console.log) 
       )
 
   _handleSignIn = () =>
     new Promise(resolve => this.setState({currentUser: undefined}, () => resolve(Auth.currentAuthenticatedUser())))
-      .then(cognitoUser => 
-        !!(cognitoUser.signInUserSession.accessToken.payload['cognito:groups'] || []).length ? (
-          Promise.resolve(cognitoUser)
-        ) : (
+      .then(cognitoUser => Promise.all([
+        cognitoUser,
+        //if the user isn't in a group, add them to one
+        !(cognitoUser.signInUserSession.accessToken.payload['cognito:groups'] || []).length ? ( 
           this._describeUserPool(cognitoUser.pool.userPoolId)
-            .then(result => 
-              this._addToGroup(cognitoUser, result.UserPool.EstimatedNumberOfUsers <= 2 ? 'Admins' : 'Users')  
-            )
+            .then(({UserPool: {EstimatedNumberOfUsers}}) => EstimatedNumberOfUsers <= 2 ? 'Admins' : 'Users')
+            .then(groupName => this._addToGroup(cognitoUser, groupName).then(() => groupName))
+        ) : (
+          cognitoUser.signInUserSession.accessToken.payload['cognito:groups'][0]
         )
-        .then(() => Promise.resolve(cognitoUser))
+      ]))
+      .then(([cognitoUser, groupName]) => Promise.all([
+        client.query({
+          query: gql(getUser),
+          variables: {id: cognitoUser.username},
+          fetchPolicy: "network-only"
+        }),
+        cognitoUser,
+        groupName
+      ]))
+      .then(([{data: { getUser }}, cognitoUser, groupName]) => 
+        !getUser ? (
+          this._createNewUser(cognitoUser, groupName)
+        ) : !!(getUser.groups||[]).length ? (
+          getUser
+        ) : (
+          this._updateUser(cognitoUser, groupName)
+        )
       )
-      // .then(cognitoUser => Promise.all([
-      //   client.query({
-      //     query: GetUser,
-      //     variables: {id: cognitoUser.username},
-      //     fetchPolicy: "network-only"
-      //   }),
-      //   cognitoUser
-      // ]))
-      // .then(([{data: { getUser }, loading}, cognitoUser]) => !!getUser ? (
-      //     Promise.resolve(getUser)
-      //   ) : (
-      //     this._createNewUser(cognitoUser)
-      //   )
-      // )
       .then(currentUser => new Promise(resolve => this.setState({currentUser}, resolve.bind(null, currentUser))))
-      .then(() => this.forceUpdate())
-      .catch(err => this.setState({currentUser: null}));
+      .catch(err => console.log(err) || this.setState({currentUser: null}))
 
   onAuthEvent = capsule => {
     switch (capsule.payload.event) {
@@ -275,16 +228,7 @@ class App extends Component {
                   null
                 ) : (
                   <ActionMenuProvider>
-                    <Router>
-                      <LayoutProvider showNav={true}>
-                        <Switch>
-                          <Route path='/' exact component={SplashScreen} />
-                          <Route path='/sign-out' exact component={SignOutScreen} />
-                          <Route path='/privacy-policy' exact component={PrivacyPolicyScreen} />
-                          <PrivateRoute path='/home' exact component={HomeScreen} />
-                        </Switch>
-                      </LayoutProvider>
-                    </Router>
+                    <Router />
                   </ActionMenuProvider>
                 )
               }
