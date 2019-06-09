@@ -16,24 +16,14 @@ custom:
   output:
     handler: scripts/output.handler
     file: .build/stack.yml
-  # nested-stacks:
-  #   location: stacks
-  #   stacks:
-  #     - id: MigrationsNestedStack
-  #       template: migrations.yml
-  #       enabled: true
-  #       timeout: 60
-  #       parameters:
-  #         - InstanceType: t1.micro
-  #         - BlahBlah: abc123
 
 plugins:
   - serverless-webpack
   - serverless-stack-output
-  # - serverless-aws-nested-stacks
+
 provider:
   name: aws
-  runtime: nodejs8.10
+  runtime: nodejs10.x
   stage: ${opt:stage}
   region: ${self:custom.environment.REGION, 'us-east-1'}
   profile: "${self:service.name}-${opt:stage}developer"
@@ -44,6 +34,7 @@ provider:
         - SNS:Publish
         - SES:Publish
         - SNS:*
+        - secretsmanager:GetSecretValue
       Resource: "*"
 
 resources:
@@ -69,6 +60,15 @@ resources:
     guestUserName:
       Type: String
       Default: ${self:custom.guestUserName, 'NONE'}
+    adminUserName:
+      Type: String
+      Default: ${self:custom.secrets.ADMIN_USERNAME, ''}
+    adminUserPassword:
+      Type: String
+      Default: ${self:custom.secrets.ADMIN_PASSWORD, ''}
+    adminUserId:
+      Type: String
+      Default: ${self:custom.secrets.ADMIN_USER_ID, ''}
     authRoleName:
       Type: String
       Default: ${self:custom.authRoleName, 'NONE'}
@@ -88,6 +88,12 @@ resources:
             - ""
         - Condition: HasClusterUserName
 
+    ShouldCreateAdminUserSecret:
+      Fn::Not:
+        - Fn::Equals:
+          - Ref: adminUserPassword
+          - ""
+
     ShouldCreateGuestUser:
       Fn::And:
         - Fn::Not:
@@ -95,7 +101,21 @@ resources:
             - Ref: guestUserName
             - "NONE"
         - Condition: ShouldCreateUserPoolGroups
-        
+
+    ShouldCreateAdminUser:
+      Fn::And:
+        - Fn::Not:
+          - Fn::Equals:
+            - Ref: adminUserName
+            - ""
+        - Condition: ShouldCreateUserPoolGroups
+    
+    ShouldAddAdminUserToGroup:
+      Fn::Not:
+        - Fn::Equals:
+          - Ref: adminUserId
+          - ""
+
     ShouldCreateUserPoolGroups:
       Fn::Not:
         - Fn::Equals:
@@ -115,12 +135,31 @@ resources:
           - "NONE"
       
   Outputs:
+    AdminUserId:
+      Description: The id used for the admin user
+      Value:
+        Ref: CognitoUserPoolAdmin
     CdnDomainName:
       Description: The domain name of the cloudfront distribution
       Value: 
         "Fn::GetAtt": [ CDN, DomainName ]
 
   Resources:
+    AdminUserSecret:
+      Condition: ShouldCreateAdminUserSecret
+      Type: "AWS::SecretsManager::Secret"
+      Properties:
+        Name: AdminUserSecret
+        Description: "Admin User Secret"
+        SecretString: 
+          Fn::Join: 
+            - ''
+            - - '{"username":"'
+              - Ref: adminUserName
+              - '","password":"'
+              - Ref: adminUserPassword
+              - '"}'
+
     DbSecret:
       Condition: ShouldCreateDbCluster
       Type: "AWS::SecretsManager::Secret"
@@ -175,7 +214,7 @@ resources:
         PolicyName: AddUserToGroupPolicy
         Roles:
           - Ref: authRoleName
-          
+    
     CognitoUserApiUser:
       Condition: ShouldCreateGuestUser
       Type: AWS::Cognito::UserPoolUser
@@ -194,6 +233,38 @@ resources:
             Value: "API"
           - Name: email_verified
             Value: "true"
+
+    CognitoUserPoolAdmin:
+      Condition: ShouldCreateAdminUser
+      Type: AWS::Cognito::UserPoolUser
+      Properties:
+        Username: 
+          Ref: adminUserName
+        DesiredDeliveryMediums:
+          - EMAIL
+        UserPoolId:
+          Ref: userPoolId
+        UserAttributes:
+          - Name: name
+            Value: 'Admin'
+          - Name: email
+            Value:
+              Ref: adminUserName
+          - Name: email_verified
+            Value: "true"
+    
+    CognitoUserPoolUserToGroupAttachment:
+      Condition: ShouldAddAdminUserToGroup
+      DependsOn: 
+        - CognitoUserPoolAdmin
+        - CognitoUserPoolAdminsGroup
+      Type: AWS::Cognito::UserPoolUserToGroupAttachment
+      Properties:
+        GroupName: Admins
+        Username: 
+          Ref: adminUserId
+        UserPoolId:
+          Ref: userPoolId
 
     CognitoUserPoolUsersGroup:
       Condition: ShouldCreateUserPoolGroups
@@ -300,8 +371,8 @@ resources:
       Type: AWS::SNS::Topic
       Properties: 
         DisplayName: "sms${self:custom.stage}"
-        TopicName: "sms${self:custom.stage}"    
-
+        TopicName: "sms${self:custom.stage}"
+        
 functions:
   dummy: # NEED AT LEAST ONE FUNCTION OR WON'T DEPLOY
     handler: first.hello
