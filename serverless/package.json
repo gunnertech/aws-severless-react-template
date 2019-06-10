@@ -7,26 +7,25 @@
   },
   "devDependencies": {
     "aws-sdk": "^2.399.0",
-    "babel-core": "^6.25.0",
-    "babel-loader": "^7.1.1",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-polyfill": "^6.23.0",
-    "babel-preset-env": "^1.6.0",
+    "@babel/preset-env": "latest",
+    "babel-loader": "latest",
+    "babel-plugin-source-map-support": "latest",
+    "serverless-webpack": "latest",
+    "@babel/core": "latest",
+    "@babel/cli": "latest",
     "serverless": "latest",
-    "serverless-webpack": "^5.2.0",
-    "webpack": "^4.25.1"
+    "webpack-node-externals": "latest",
+    "webpack": "latest"
   },
   "author": "Gunner Technology",
   "license": "MIT",
   "dependencies": {
+    "source-map-support": "latest",
     "amazon-cognito-identity-js": "latest",
-    "aws-amplify-serverless-plugin": "^1.4.1",
     "aws-appsync": "latest",
     "cross-fetch": "^3.0.2",
     "graphql": "latest",
     "graphql-tag": "latest",
-    "node-fetch": "^2.2.0",
-    "serverless-aws-nested-stacks": "^0.1.2",
     "serverless-stack-output": "^0.2.3"
   }
 }

@@ -13,9 +13,15 @@ custom:
   uploadBucketName: ${self:custom.environment.BUCKET_NAME}
   stage: ${opt:stage, self:provider.stage}
   region: ${opt:region, self:provider.region}
+  webpack:
+    webpackConfig: ./webpack.config.js 
+    includeModules: true
   output:
     handler: scripts/output.handler
     file: .build/stack.yml
+
+package:
+  individually: true
 
 plugins:
   - serverless-webpack
@@ -371,7 +377,7 @@ resources:
       Type: AWS::SNS::Topic
       Properties: 
         DisplayName: "sms${self:custom.stage}"
-        TopicName: "sms${self:custom.stage}"
+        TopicName: "sms${self:custom.stage}"    
         
 functions:
   dummy: # NEED AT LEAST ONE FUNCTION OR WON'T DEPLOY
