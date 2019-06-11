@@ -141,10 +141,6 @@ resources:
           - "NONE"
       
   Outputs:
-    AdminUserId:
-      Description: The id used for the admin user
-      Value:
-        Ref: CognitoUserPoolAdmin
     CdnDomainName:
       Description: The domain name of the cloudfront distribution
       Value: 
