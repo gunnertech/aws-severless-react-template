@@ -7,10 +7,10 @@ custom:
   environment: ${file(env.yml):${self:custom.stage}}
   secrets: ${file(secrets.yml):${self:custom.stage}}
   domainName: ${self:custom.environment.DOMAIN_NAME}
-  userPoolId: ${self:custom.environment.USER_POOL_ID}
+  userPoolId: ${file(amplifyconfig.js):env.aws_user_pools_id}
   guestUserName: ${self:custom.environment.GUEST_USER_NAME}
   authRoleName: ${self:custom.environment.AUTH_ROLE_NAME}
-  uploadBucketName: ${self:custom.environment.BUCKET_NAME}
+  uploadBucketName: ${file(amplifyconfig.js):env.aws_user_files_s3_bucket}
   stage: ${opt:stage, self:provider.stage}
   region: ${opt:region, self:provider.region}
   webpack:
@@ -31,7 +31,7 @@ provider:
   name: aws
   runtime: nodejs10.x
   stage: ${opt:stage}
-  region: ${self:custom.environment.REGION, 'us-east-1'}
+  region: ${file(amplifyconfig.js):env.aws_project_region, 'us-east-1'}
   profile: "${self:service.name}-${opt:stage}developer"
   iamRoleStatements:
     - Effect: Allow
@@ -45,6 +45,9 @@ provider:
 
 resources:
   Parameters:
+    uploadBucketName:
+      Type: String
+      Default: ${self:custom.uploadBucketName}
     awsRegion:
       Type: String
       Default: ${self:custom.region}
@@ -287,33 +290,22 @@ resources:
     UploadBucketPolicy: 
       Type: AWS::S3::BucketPolicy
       Properties: 
-        Bucket: ${self:custom.uploadBucketName}
+        Bucket: 
+          Ref: uploadBucketName
         PolicyDocument: 
           Statement: 
             - 
               Action: 
                 - "s3:GetObject"
               Effect: "Allow"
-              Resource: 
-                Fn::Join: 
-                  - ""
-                  - 
-                    - "arn:aws:s3:::"
-                    - ${self:custom.uploadBucketName}
-                    - "/*"
+              Resource: { 'Fn::Join': ['', ['arn:aws:s3:::', { 'Ref': "uploadBucketName" }, "/*"]] }
               Principal:
                 AWS: { 'Fn::Join': ['', ['arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ', { 'Ref': "OriginAccessIdentity" }]] }
             - 
               Action: 
                 - "s3:GetObject"
               Effect: "Allow"
-              Resource: 
-                Fn::Join: 
-                  - ""
-                  - 
-                    - "arn:aws:s3:::"
-                    - ${self:custom.uploadBucketName}
-                    - "/*"
+              Resource: { 'Fn::Join': ['', ['arn:aws:s3:::', { 'Ref': "uploadBucketName" }, "/*"]] }
               Principal: '*'
     OriginAccessIdentity:
       Type: "AWS::CloudFront::CloudFrontOriginAccessIdentity"
@@ -329,13 +321,13 @@ resources:
           Enabled: true
           HttpVersion: http2
           Origins:
-            - DomainName: "${self:custom.uploadBucketName}.s3.amazonaws.com"
-              Id: "S3-${self:custom.uploadBucketName}"
+            - DomainName: { 'Fn::Join': ['', [{ 'Ref': "uploadBucketName" }, ".s3.amazonaws.com"]] }
+              Id: { 'Fn::Join': ['', ['S3-', { 'Ref': "uploadBucketName" }]] }
               S3OriginConfig:
                 OriginAccessIdentity: { 'Fn::Join': ['/', ['origin-access-identity', 'cloudfront', { 'Ref': "OriginAccessIdentity" }]] }
           DefaultCacheBehavior:
             ViewerProtocolPolicy: https-only
-            TargetOriginId: "S3-${self:custom.uploadBucketName}"
+            TargetOriginId: { 'Fn::Join': ['', ['S3-', { 'Ref': "uploadBucketName" }]] }
             AllowedMethods:
               - GET
               - HEAD
@@ -353,7 +345,8 @@ resources:
       Type: "AWS::CodeCommit::Repository"
       DependsOn: RepoSNSTopic
       Properties:
-        RepositoryName: ${self:service.name}-${self:custom.stage}
+        RepositoryName: 
+          Ref: identifier
         RepositoryDescription: CodeCommit Repository
         Triggers:
         - Name: MasterTrigger
@@ -366,14 +359,9 @@ resources:
       Type: "AWS::Route53::HostedZone"
       Properties: 
         HostedZoneConfig: 
-          Comment: "My hosted zone for ${self:custom.domainName}"
-        Name: ${self:custom.domainName}
-
-    SMSTopic:
-      Type: AWS::SNS::Topic
-      Properties: 
-        DisplayName: "sms${self:custom.stage}"
-        TopicName: "sms${self:custom.stage}"    
+          Comment: "My hosted zone d"
+        Name: 
+          Ref: domainName
         
 functions:
   dummy: # NEED AT LEAST ONE FUNCTION OR WON'T DEPLOY
