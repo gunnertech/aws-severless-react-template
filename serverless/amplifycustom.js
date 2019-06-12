@@ -29,23 +29,49 @@ const awscreds = ({projectName, stage}) =>
         ))
     ))
 
+const getStreams = params =>
+  awscreds({stage: params.stage, projectName: params.projectName})
+    .then(credentials =>
+      Promise.resolve(new AWS.DynamoDB({
+        credentials,
+        region: 'us-east-1'
+      }))
+      .then(dynamodb =>
+        dynamodb
+          .listTables()
+          .promise()
+          .then(data =>
+            Promise.all(data.TableNames.map(tableName => dynamodb.describeTable({TableName: tableName}).promise()))
+          )
+      )
+      .then(tableArray => new Promise(resolve => {
+        const tables = {};
+        tableArray.forEach(tableData => (tables[tableData.Table.TableName.split("-")[0]] = tableData.Table.LatestStreamArn) );
+        resolve(tables);
+      }))
+    )
+
+const getAuthRoleName = params =>
+  awscreds({stage: params.stage, projectName: params.projectName})
+    .then(credentials =>
+      (new AWS.IAM({
+        credentials,
+        region: 'us-east-1'
+      }))
+      .listRoles()
+      .promise()
+      .then(data => Promise.resolve(data.Roles.find(role => role.RoleName.endsWith('-authRole')).RoleName))
+    )
 
 module.exports.custom = () => {
   const doc = yaml.safeLoad(fs.readFileSync('./env.yml', 'utf8'));
   const stage = amplifystage.stage();
   return Promise.all([
-    awscreds({stage: stage, projectName: doc[stage].SERVICE})
-      .then(credentials =>
-        (new AWS.IAM({
-          credentials,
-          region: 'us-east-1'
-        }))
-        .listRoles()
-        .promise()
-        .then(data => Promise.resolve(data.Roles.find(role => role.RoleName.endsWith('-authRole')).RoleName))
-      )
+    getAuthRoleName({stage: stage, projectName: doc[stage].SERVICE}),
+    getStreams({stage: stage, projectName: doc[stage].SERVICE})
   ])
     .then(arr => Promise.resolve({
-      auth_role_name: arr[0]
+      auth_role_name: arr[0],
+      streams: arr[1]
     }))
 }
