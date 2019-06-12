@@ -20,12 +20,14 @@
   "author": "Gunner Technology",
   "license": "MIT",
   "dependencies": {
-    "source-map-support": "latest",
     "amazon-cognito-identity-js": "latest",
     "aws-appsync": "latest",
     "cross-fetch": "^3.0.2",
+    "fs-extra": "^8.0.1",
     "graphql": "latest",
     "graphql-tag": "latest",
-    "serverless-stack-output": "^0.2.3"
+    "js-yaml": "^3.13.1",
+    "serverless-stack-output": "^0.2.3",
+    "source-map-support": "latest"
   }
 }
