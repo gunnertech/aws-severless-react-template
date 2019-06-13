@@ -193,7 +193,7 @@ class MainNavigation extends React.Component {
             </IconButton>
             <Link to="/" className={classes.flex}>
               <img 
-                src={require('../assets/images/logo.png')}
+                src={require('../assets/images/nav-logo.png')}
                 className={classes.logo}
                 alt="Home"
               />

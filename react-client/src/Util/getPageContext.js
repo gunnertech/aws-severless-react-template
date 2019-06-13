@@ -9,17 +9,17 @@ import { createGenerateClassName } from '@material-ui/styles';
 const theme = createMuiTheme({
   typography: {
     useNextVariants: true,
-    fontSize: 18,
-    // subtitle1: {
-    //   color: "#EF4035" 
-    // }
+    // fontSize: 18,
+    subtitle1: {
+      color: "#EF4035" 
+    }
   },
   palette: {
     primary: {
-      main: "#b78df9"
+      main: "#222222"
     },
     secondary: {
-      main: "#b78df9"
+      main: "#EF4035"
     }
   }
 });
