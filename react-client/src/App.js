@@ -128,7 +128,6 @@ const App = () => {
 
   useEffect(() => {
     const onAuthEvent = capsule => {
-      console.log(capsule.payload);
       switch (capsule.payload.event) {
         case 'signOut':
           setCurrentUser(null);
