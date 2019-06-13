@@ -1,22 +1,21 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import Amplify, { Auth, Hub } from 'aws-amplify';
 import { Rehydrated } from 'aws-appsync-react';
 import { ApolloProvider } from 'react-apollo';
+import { ApolloProvider as ApolloHooksProvider } from 'react-apollo-hooks';
 import AWSAppSyncClient, { createAppSyncLink, createLinkWithCache } from "aws-appsync";
 import { ApolloLink } from 'apollo-link';
 import { withClientState } from 'apollo-link-state';
 import * as Sentry from '@sentry/browser';
 import CognitoIdentityServiceProvider from 'aws-sdk/clients/cognitoidentityserviceprovider';
-import gql from 'graphql-tag';
+
+import getCurrentUserFromCognitoUser from './Util/getCurrentUserFromCognitoUser'
 
 import Router from "./Components/Router"
 
 import { CurrentUserProvider } from './Contexts/CurrentUser'
 import { NotificationsProvider } from './Contexts/Notifications'
 import { ActionMenuProvider } from './Contexts/ActionMenu';
-
-import { getUser } from './graphql/queries'
-import { createUser, updateUser } from './graphql/mutations'
 
 
 
@@ -27,13 +26,13 @@ import awsmobile from './aws-exports';
 
 
 const authScreenLabels = {
-    en: {
-        "Username": "Email",
-        "Enter your username": "Enter your email",
-        'Sign Up': 'Create new account',
-        'Sign Up Account': 'Create a new account',
-        'Confirm Sign Up': 'Confirm Sign Up by entering the code that was sent to your email address'
-    }
+  en: {
+    "Username": "Email",
+    "Enter your username": "Enter your email",
+    'Sign Up': 'Create new account',
+    'Sign Up Account': 'Create a new account',
+    'Confirm Sign Up': 'Confirm Sign Up by entering the code that was sent to your email address'
+  }
 };
 
 I18n.setLanguage('en');
@@ -85,141 +84,106 @@ if(!!process.env.REACT_APP_sentry_url && !!process.env.REACT_APP_sentry_url.repl
 
 Amplify.configure(awsmobile);
 
-
-class App extends Component {
-  constructor(props) {
-    super(props);
-    Hub.listen('auth', data => 
-      console.log('A new auth event has happened: ', data) ||
-      this.onAuthEvent(data)             
+const cognitoClient = () =>
+  Auth.currentCredentials()
+    .then(credentials =>
+      Promise.resolve(
+        new CognitoIdentityServiceProvider({
+          apiVersion: '2016-04-18',
+          credentials: Auth.essentialCredentials(credentials),
+          region: "us-east-1"
+        })
+      )
     )
-  }
 
-  state = {
-    currentUser: undefined,
-    showNav: true,
-    notifications: []
-  }
+const describeUserPool = userPoolId =>
+  cognitoClient()
+    .then(client =>
+      client.describeUserPool({
+        UserPoolId: userPoolId
+      })
+      .promise()  
+    )
 
-  _updateUser = (cognitoUser, groupName) =>
-    client.mutate({
-      mutation: gql(updateUser),
-      onError: e => console.log("_updateUser", e),
-      variables: {input:{
-        id: cognitoUser.username,
-        groups: [groupName]
-      }},
-    })
-    .then(({data: {updateUser}}) => updateUser)
+const addToGroup = (user, groupName) =>
+  cognitoClient()
+    .then(client =>
+      client.adminAddUserToGroup({
+        GroupName: groupName,
+        UserPoolId: user.pool.userPoolId,
+        Username: user.username
+      })
+      .promise()
+    )
 
-  _createNewUser = (cognitoUser, groupName) =>
-    client.mutate({
-      mutation: gql(createUser),
-      onError: e => console.log("_createNewUser", e),
-      variables: {input:{
-        id: cognitoUser.username,
-        email: cognitoUser.attributes.email || undefined,
-        groups: [groupName],
-        applicationStatus: groupName === 'Admins' ? 'APPROVED' : 'PENDING'
-      }},
-    })
-    .then(({data: {createUser}}) => createUser)
+const App = () => {
+  const [currentUser, setCurrentUser] = useState(undefined);
+  const [cognitoUser, setCognitoUser] = useState(null);
+  const [notifications, setNotifications] = useState([]);
 
-  _cognitoClient = () =>
-    Auth.currentCredentials()
-      .then(credentials =>
-        Promise.resolve(
-          new CognitoIdentityServiceProvider({
-            apiVersion: '2016-04-18',
-            credentials: Auth.essentialCredentials(credentials),
-            region: "us-east-1"
-          })
-        )
-      )
+  useEffect(() => {
+    Auth.currentAuthenticatedUser()
+      .then(cognitoUser => setCognitoUser(cognitoUser))
+  }, [1]);
 
-  _describeUserPool = userPoolId =>
-    this._cognitoClient()
-      .then(client =>
-        client.describeUserPool({
-          UserPoolId: userPoolId
-        })
-        .promise()  
-      )
+  useEffect(() => {
+    const onAuthEvent = capsule => {
+      console.log(capsule.payload);
+      switch (capsule.payload.event) {
+        case 'signOut':
+          setCurrentUser(null);
+          setCognitoUser(null);
+          break;
+        case 'signIn_failure':
+        case 'signUp_failure':
+          setNotifications([capsule.payload.data])
+          setTimeout(() => setNotifications([]), 4000)
+          break;
+        case 'signIn':
+            setCognitoUser(capsule.payload.data);
+          break;
+        default:
+          break;
+      }
+    }
 
-  _addToGroup = (user, groupName) =>
-    this._cognitoClient()
-      .then(client =>
-        client.adminAddUserToGroup({
-          GroupName: groupName,
-          UserPoolId: user.pool.userPoolId,
-          Username: user.username
-        })
-        .promise()
-        .then(console.log) 
-      )
+    Hub.listen('auth', onAuthEvent);
 
-  _handleSignIn = () =>
-    new Promise(resolve => this.setState({currentUser: undefined}, () => resolve(Auth.currentAuthenticatedUser())))
-      .then(cognitoUser => Promise.all([
+    return () =>
+      Hub.remove(('auth', onAuthEvent))
+  }, [1]);
+
+  useEffect(() => {
+    console.log("got me", cognitoUser);
+
+    !cognitoUser ? (
+      setCurrentUser(null)
+    ) : (
+      Promise.all([
         cognitoUser,
         //if the user isn't in a group, add them to one
         !(cognitoUser.signInUserSession.accessToken.payload['cognito:groups'] || []).length ? ( 
-          this._describeUserPool(cognitoUser.pool.userPoolId)
+          describeUserPool(cognitoUser.pool.userPoolId)
             .then(({UserPool: {EstimatedNumberOfUsers}}) => EstimatedNumberOfUsers <= 2 ? 'Admins' : 'Users')
-            .then(groupName => this._addToGroup(cognitoUser, groupName).then(() => groupName))
+            .then(groupName => addToGroup(cognitoUser, groupName).then(() => groupName))
         ) : (
           cognitoUser.signInUserSession.accessToken.payload['cognito:groups'][0]
         )
-      ]))
-      .then(([cognitoUser, groupName]) => Promise.all([
-        client.query({
-          query: gql(getUser),
-          variables: {id: cognitoUser.username},
-          fetchPolicy: "network-only"
-        }),
-        cognitoUser,
-        groupName
-      ]))
-      .then(([{data: { getUser }}, cognitoUser, groupName]) => 
-        !getUser ? (
-          this._createNewUser(cognitoUser, groupName)
-        ) : !!(getUser.groups||[]).length ? (
-          getUser
-        ) : (
-          this._updateUser(cognitoUser, groupName)
-        )
-      )
-      .then(currentUser => new Promise(resolve => this.setState({currentUser}, resolve.bind(null, currentUser))))
-      .catch(err => console.log(err) || this.setState({currentUser: null}))
+      ])
+        .then(([cognitoUser, groupName]) => getCurrentUserFromCognitoUser(cognitoUser, {groupName}))
+        .then(currentUser => setCurrentUser(currentUser))
+        .catch(err => [
+          console.log(err),
+          setCurrentUser(null),
+          setCognitoUser(null)
+        ])
+    )
 
-  onAuthEvent = capsule => {
-    switch (capsule.payload.event) {
-      case 'signOut':
-        this.setState({currentUser: null});
-        break;
-      case 'signIn_failure':
-      case 'signUp_failure':
-        this.setState(
-          {notifications: [capsule.payload.data]}, 
-          () => setTimeout(() => this.setState({notifications: []}), 4000)
-        )
-        break;
-      case 'signIn':
-        setTimeout(this._handleSignIn.bind(this), 200);
-        break;
-      default:
-        break;
-    }
-  }
+  }, [cognitoUser])
 
-  componentDidMount() {
-    this._handleSignIn();
-  }
-
-  render() {
-    const { currentUser, notifications } = this.state;
-    return (
-      <ApolloProvider client={client}>
+  return (
+    <ApolloProvider client={client}>
+      <ApolloHooksProvider client={client}>
         <Rehydrated>
           <NotificationsProvider notifications={notifications}>
             <CurrentUserProvider currentUser={currentUser}>
@@ -235,9 +199,10 @@ class App extends Component {
             </CurrentUserProvider>
           </NotificationsProvider>
         </Rehydrated>
-      </ApolloProvider>
-    );
-  }
+      </ApolloHooksProvider>
+    </ApolloProvider>
+  );
 }
+
 
 export default App;

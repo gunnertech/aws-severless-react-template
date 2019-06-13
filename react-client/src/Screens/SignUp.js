@@ -237,7 +237,7 @@ class MySignUp extends SignUp {
     const inviteInputs = Cache.getItem('inviteInputs') || {};
     this.inputs.username = (this.inputs.username||"").toLowerCase()
     // this.inputs.email = (this.inputs.email||inviteInputs.email||"").toLowerCase()
-    this.inputs.name = (this.inputs.name||inviteInputs.name||"").toLowerCase()
+    // this.inputs.name = (this.inputs.name||inviteInputs.name||"").toLowerCase()
     Cache.setItem('signupInputs', this.inputs);
     if (!this.inputs.dial_code) {
         this.inputs.dial_code = this.getDefaultDialCode();
@@ -264,6 +264,7 @@ class MySignUp extends SignUp {
     inputKeys.forEach((key, index) => {
         if (!['username', 'password', 'checkedValue', 'dial_code'].includes(key)) {
           if (key !== 'phone_line_number' && key !== 'dial_code' && key !== 'error') {
+              console.log(key)
             const newKey = `${this.needPrefix(key) ? 'custom:' : ''}${key}`;
             signup_info.attributes[newKey] = inputVals[index];
           } else if (inputVals[index]) {
