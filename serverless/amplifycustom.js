@@ -1,4 +1,4 @@
-const awsconfig = require("./amplifyconfig");
+const awsconfig = require("./amplifyconfig")
 const amplifystage = require("./amplifystage");
 const AWS = require("aws-sdk");
 const fs = require('fs-extra');
@@ -29,6 +29,26 @@ const awscreds = ({projectName, stage}) =>
         ))
     ))
 
+const getAdminUserId = params => (
+  !(params.secrets[params.stage].ADMIN_USERNAME && params.secrets[params.stage].ADMIN_PASSWORD) ? (
+    Promise.resolve(null)
+  ) : (
+    awscreds({stage: params.stage, projectName: params.projectName})
+      .then(credentials =>
+        Promise.resolve(new AWS.CognitoIdentityServiceProvider({
+          credentials,
+          region: 'us-east-1'
+        }))
+        .then(cognito =>
+          cognito
+            .listUsers({UserPoolId: awsconfig.env().aws_user_pools_id, Filter: 'email="'+params.secrets[params.stage].ADMIN_USERNAME+'"'})
+            .promise()
+        )
+      )
+      .then(data => Promise.resolve(data.Users[0].Username))
+  )
+)
+
 const getStreams = params =>
   awscreds({stage: params.stage, projectName: params.projectName})
     .then(credentials =>
@@ -51,7 +71,7 @@ const getStreams = params =>
       }))
     )
 
-const getAuthRoleName = params =>
+const getAuthRoleName = params => (
   awscreds({stage: params.stage, projectName: params.projectName})
     .then(credentials =>
       (new AWS.IAM({
@@ -62,16 +82,20 @@ const getAuthRoleName = params =>
       .promise()
       .then(data => Promise.resolve(data.Roles.find(role => role.RoleName.endsWith('-authRole')).RoleName))
     )
+)
 
 module.exports.custom = () => {
   const doc = yaml.safeLoad(fs.readFileSync('./env.yml', 'utf8'));
+  const secrets = yaml.safeLoad(fs.readFileSync('./secrets.yml', 'utf8'));
   const stage = amplifystage.stage();
   return Promise.all([
-    getAuthRoleName({stage: stage, projectName: doc[stage].SERVICE}),
-    getStreams({stage: stage, projectName: doc[stage].SERVICE})
+    getAuthRoleName({stage: stage, projectName: doc[stage].SERVICE, env: doc, secrets: secrets}),
+    getStreams({stage: stage, projectName: doc[stage].SERVICE, env: doc, secrets: secrets}),
+    getAdminUserId({stage: stage, projectName: doc[stage].SERVICE, env: doc, secrets: secrets})
   ])
     .then(arr => Promise.resolve({
       auth_role_name: arr[0],
-      streams: arr[1]
+      streams: arr[1],
+      adminUserId: arr[2] || ""
     }))
 }
