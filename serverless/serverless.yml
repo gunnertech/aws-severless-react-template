@@ -37,6 +37,31 @@ provider:
   region: ${file(amplifyconfig.js):env.aws_project_region, 'us-east-1'}
   profile: "${self:service.name}-${file(amplifystage.js):stage}developer"
   iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "ses:SendEmail"
+      Resource: "*"
+    - Effect: "Allow"
+      Action:
+        - "sqs:SendMessage"
+        - "sqs:GetQueueUrl"
+        - "sqs:ChangeMessageVisibility"
+        - "sqs:DeleteMessage"
+        - "sqs:GetQueueAttributes"
+        - "sqs:ReceiveMessage"
+      Resource: "*"
+    - Effect: "Allow"
+      Action:
+        - "sqs:ListQueues"
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - s3:*
+        - SNS:Publish
+        - SES:Publish
+        - SNS:*
+        - secretsmanager:GetSecretValue
+      Resource: "*"
     - Effect: Allow
       Action:
         - s3:*
