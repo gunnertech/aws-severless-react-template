@@ -169,7 +169,7 @@ const App = () => {
           cognitoUser.signInUserSession.accessToken.payload['cognito:groups'][0]
         )
       ])
-        .then(([cognitoUser, groupName]) => getCurrentUserFromCognitoUser(cognitoUser, {groupName}))
+        .then(([cognitoUser, groupName]) => getCurrentUserFromCognitoUser(client, cognitoUser, {groupName}))
         .then(currentUser => setCurrentUser(currentUser))
         .catch(err => [
           console.log(err),
