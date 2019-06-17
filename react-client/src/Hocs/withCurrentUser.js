@@ -9,7 +9,7 @@ const withCurrentUser = () => {
       render() {
         return (
           <CurrentUserConsumer>
-            {({currentUser}) => <WrappedComponent {...this.props} currentUser={currentUser} />}
+            {value => <WrappedComponent {...this.props} currentUser={value} />}
           </CurrentUserConsumer>
         );
       }

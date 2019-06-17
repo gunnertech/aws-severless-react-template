@@ -16,9 +16,7 @@ export class CurrentUserProvider extends React.Component {
     const { currentUser, children } = this.props;
     return (
       <CurrentUser.Provider
-        value={{
-          currentUser: currentUser
-        }}
+        value={currentUser}
       >      
         {children}
       </CurrentUser.Provider>
@@ -27,3 +25,5 @@ export class CurrentUserProvider extends React.Component {
 }
 
 export const CurrentUserConsumer = CurrentUser.Consumer;
+
+export const CurrentUserContext = CurrentUser;

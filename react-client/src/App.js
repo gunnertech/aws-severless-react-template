@@ -118,7 +118,7 @@ const addToGroup = (user, groupName) =>
 
 const App = () => {
   const [currentUser, setCurrentUser] = useState(undefined);
-  const [cognitoUser, setCognitoUser] = useState(null);
+  const [cognitoUser, setCognitoUser] = useState(undefined);
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
@@ -153,10 +153,9 @@ const App = () => {
   }, [1]);
 
   useEffect(() => {
-    console.log("got me", cognitoUser);
 
     !cognitoUser ? (
-      setCurrentUser(null)
+      setCurrentUser(cognitoUser)
     ) : (
       Promise.all([
         cognitoUser,
