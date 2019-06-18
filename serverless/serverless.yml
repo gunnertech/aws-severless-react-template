@@ -36,10 +36,20 @@ provider:
   stage: ${file(amplifystage.js):stage}
   region: ${file(amplifyconfig.js):env.aws_project_region, 'us-east-1'}
   profile: "${self:service.name}-${file(amplifystage.js):stage}developer"
+  environment:
+    AWS_ACCOUNT_ID: { Ref: AWS::AccountId }
+    SYSTEM_EMAIL_ADDRESS: ${self:custom.environment.SYSTEM_EMAIL_ADDRESS}
+    DOMAIN_NAME: ${self:custom.environment.DOMAIN_NAME}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
+        - "cloudformation:describeStacks"
+      Resource: "*"
+    - Effect: "Allow"
+      Action:
         - "ses:SendEmail"
+        - "ses:VerifyEmailIdentity"
+        - "ses:VerifyDomainIdentity"
       Resource: "*"
     - Effect: "Allow"
       Action:
@@ -58,7 +68,6 @@ provider:
       Action:
         - s3:*
         - SNS:Publish
-        - SES:Publish
         - SNS:*
         - secretsmanager:GetSecretValue
       Resource: "*"
@@ -72,6 +81,7 @@ provider:
       Resource: "*"
 
 resources:
+  # Transform: "AWS::Serverless-2016-10-31"
   Parameters:
     uploadBucketName:
       Type: String
@@ -109,6 +119,9 @@ resources:
     authRoleName:
       Type: String
       Default: ${self:custom.authRoleName, 'NONE'}
+    systemEmailAddress:
+      Type: String
+      Default: ${self:custom.environment.SYSTEM_EMAIL_ADDRESS, ""}
 
   Conditions:
     HasClusterUserName:
@@ -117,6 +130,12 @@ resources:
           - Ref: dbClusterMasterUserName
           - ''
     
+    ShouldSendVerificationEmail:
+      Fn::Not:
+        - Fn::Equals:
+          - Ref: systemEmailAddress
+          - ""
+
     ShouldCreateDbCluster:
       Fn::And:
         - Fn::Not:
@@ -387,10 +406,51 @@ resources:
       Type: "AWS::Route53::HostedZone"
       Properties: 
         HostedZoneConfig: 
-          Comment: "My hosted zone d"
+          Comment: "My host zone"
         Name: 
           Ref: domainName
-        
+    # Macro:
+    #   Type: AWS::CloudFormation::Macro
+    #   Properties:
+    #     FunctionName:
+    #       Fn::GetAtt:
+    #         - GetStackLastUpdatedTimeLambdaFunction
+    #         - Arn
+    #     Name: StackLastUpdatedTime
+    VerificationEmail:
+      # DependsOn: Macro
+      Condition: ShouldSendVerificationEmail
+      Type: Custom::VerificationEmail
+      Properties:
+        ServiceToken:
+          Fn::GetAtt:
+            - SendVerificationEmailLambdaFunction
+            - Arn
+    VerificationDomain:
+      Condition: ShouldCreateHostedZone
+      Type: Custom::VerificationDomain
+      Properties:
+        ServiceToken:
+          Fn::GetAtt:
+            - VerifyDomainLambdaFunction
+            - Arn
+    VerificationDkim:
+      Condition: ShouldCreateHostedZone
+      Type: Custom::VerificationDkim
+      Properties:
+        HostedZoneId: { Ref: DNS }
+        ServiceToken:
+          Fn::GetAtt:
+            - VerifyDkimLambdaFunction
+            - Arn
+
 functions:
-  dummy: # NEED AT LEAST ONE FUNCTION OR WON'T DEPLOY
-    handler: first.hello
+  sendVerificationEmail:
+    handler: cfn.sendVerificationEmail
+  verifyDomain:
+    handler: cfn.verifyDomain
+  verifyDkim:
+    Condition: ShouldCreateHostedZone
+    handler: cfn.verifyDkim
+  # getStackLastUpdatedTime:
+  #   handler: cfn.getStackLastUpdatedTime
