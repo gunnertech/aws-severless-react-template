@@ -14,4 +14,4 @@ function getEnvVars(env = '') {
 }
 
 
-export default getEnvVars(Constants.manifest.releaseChannel)
+export default getEnvVars(Constants.manifest.releaseChannel || Expo.Constants.manifest.extra.ENV)

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Font, DangerZone } from 'expo';
+// import { Font, DangerZone } from 'expo';
 import { ThemeContext, getTheme } from 'react-native-material-ui';
 import Amplify, { Auth, Hub } from 'aws-amplify';
 import { Rehydrated } from 'aws-appsync-react';
@@ -11,6 +11,8 @@ import { withClientState } from 'apollo-link-state';
 import { ThemeProvider } from 'react-native-elements';
 import { Cache } from 'aws-amplify';
 import CognitoIdentityServiceProvider from 'aws-sdk/clients/cognitoidentityserviceprovider';
+import * as Font from 'expo-font'
+import Branch, { BranchEvent } from 'react-native-branch'
 
 import AppNavigator from './src/Navigators/App'
 import muiTheme from './src/Styles/muiTheme'
@@ -32,7 +34,7 @@ const authScreenLabels = {
     }
 };
 
-DangerZone.Branch.subscribe(bundle =>
+Branch.subscribe(bundle =>
   bundle && bundle.params && !bundle.error && bundle.params && bundle.params.user && (
     Cache.setItem('inviteInputs', bundle.params.user)
   )
@@ -41,7 +43,7 @@ DangerZone.Branch.subscribe(bundle =>
 I18n.setLanguage('en');
 I18n.putVocabularies(authScreenLabels);
 
-if(!!ENV.sentry_url && !!ENV.sentry_url.replace("<sentry-url>","")) {
+if(!!ENV && !!ENV.sentry_url && !!ENV.sentry_url.replace("<sentry-url>","")) {
   Sentry.enableInExpoDevelopment = false;
   Sentry.config(ENV.sentry_url).install();
 }
