@@ -25,6 +25,7 @@
     "cross-fetch": "^3.0.2",
     "fs-extra": "^8.0.1",
     "graphql": "latest",
+    "axios": "latest",
     "graphql-tag": "latest",
     "js-yaml": "^3.13.1",
     "serverless-stack-output": "^0.2.3",
