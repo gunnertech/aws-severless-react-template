@@ -11,7 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
 // import Divider from '@material-ui/core/Divider';
-import { ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import { ListItem, ListItemIcon, ListItemText, Button } from '@material-ui/core';
 // import { ListSubheader } from '@material-ui/core';
 
 import MenuIcon from '@material-ui/icons/Menu';
@@ -26,8 +26,9 @@ import { ActionMenuConsumer } from '../Contexts/ActionMenu';
 import NotificationToast from '../Components/NotificationToast'
 
 
+const navStyle = 'vertical'; //vertical or horizontal;
 
-const drawerWidth = 248;
+const drawerWidth = navStyle === 'horizontal' ? 0 : 248;
 
 
 const styles = theme => ({
@@ -51,6 +52,9 @@ const styles = theme => ({
     marginTop: `${theme.spacing(0.5)}px`,
     marginLeft: `${theme.spacing(1)}px`
   },
+  logoLink: {
+    flexGrow: 1
+  },
   flex: {
     flex: 1,
   },
@@ -58,8 +62,8 @@ const styles = theme => ({
     [theme.breakpoints.up('md')]: {
       display: 'none',
     },
-    marginLeft: `-${theme.spacing(2)}px`,
-    marginRight: `${theme.spacing(3)}px`,
+    // marginLeft: `-${theme.spacing(2)}px`,
+    // marginRight: `${theme.spacing(3)}px`,
   },
   toolbar: theme.mixins.toolbar,
   drawerPaper: {
@@ -87,9 +91,15 @@ const styles = theme => ({
   },
   footer: {
     padding: theme.spacing(1),
+    paddingTop: theme.spacing(2),
+    margin: theme.spacing(-4),
     marginTop: theme.spacing(10),
-    marginBottom: theme.spacing(10),
-    textAlign: 'center'
+    // marginBottom: theme.spacing(10),
+    textAlign: 'center',
+    backgroundColor: theme.palette.primary.dark
+  },
+  footerText: {
+    color: theme.palette.primary.contrastText
   },
   social: {
     alignItems: 'center', 
@@ -184,6 +194,7 @@ class MainNavigation extends React.Component {
         <AppBar className={classes.appBar}>
           <Toolbar>
             <IconButton
+              edge="start"
               color="inherit"
               aria-label="open drawer"
               onClick={this.handleDrawerToggle}
@@ -191,13 +202,27 @@ class MainNavigation extends React.Component {
             >
               <MenuIcon />
             </IconButton>
-            <Link to="/" className={classes.flex}>
+            <Link className={classes.logoLink} to="/" >
               <img 
                 src={require('../assets/images/nav-logo.png')}
                 className={classes.logo}
                 alt="Home"
               />
             </Link>
+            {
+              navStyle === 'horizontal' &&
+              <>
+                {
+                  !currentUser && 
+                  <Button component={Link} to="/home" color="inherit">Sign In</Button>
+                }
+                {
+                  !!currentUser && 
+                  <Button component={Link} to="/sign-out" color="inherit">Sign Out</Button>
+                }
+                
+              </>
+            }
             <ActionMenuConsumer>
               {({Element}) => Element ? Element : null}
             </ActionMenuConsumer>
@@ -219,17 +244,20 @@ class MainNavigation extends React.Component {
             {drawer}
           </Drawer>
         </Hidden>
-        <Hidden smDown>
-          <Drawer
-            variant="permanent"
-            open
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-          >
-            {drawer}
-          </Drawer>
-        </Hidden>
+        {
+          navStyle === 'vertical' &&
+          <Hidden smDown>
+            <Drawer
+              variant="permanent"
+              open
+              classes={{
+                paper: classes.drawerPaper,
+              }}
+            >
+              {drawer}
+            </Drawer>
+          </Hidden>
+        }
         <div className={classes.content}>
           <div className={classes.toolbar} />
           <div className={classes.flex}>
@@ -265,9 +293,8 @@ class MainNavigation extends React.Component {
             </ul>
             */}
 
-            <Typography paragraph>
-              © {(new Date()).getFullYear()} &lt;Company Name&gt; <br />
-              <Link to={`/privacy-policy`}>Privacy Policy</Link>
+            <Typography variant="caption" paragraph className={classes.footerText}>
+              © {(new Date()).getFullYear()} Model Search <a href="https://arnoldmodelsearch.com/">Arnold Competition</a>&nbsp;|&nbsp;<Link to={`/privacy-policy`}>Privacy Policy</Link>
             </Typography>
           </footer>
         </div>
