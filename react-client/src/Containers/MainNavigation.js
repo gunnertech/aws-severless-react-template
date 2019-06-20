@@ -69,7 +69,7 @@ const styles = theme => ({
   drawerPaper: {
     width: drawerWidth,
     [theme.breakpoints.up('md')]: {
-      width: navStyle === 'horizontal' ? 0 : 248,
+      width: navStyle === 'horizontal' ? 0 : drawerWidth,
       position: 'fixed',
       overflowY: 'hidden',
       '&:hover': {
@@ -87,7 +87,7 @@ const styles = theme => ({
     width: '100%',
     overflow: 'hidden',
     [theme.breakpoints.up('md')]: {
-      marginLeft: drawerWidth
+      marginLeft: navStyle === 'horizontal' ? 0 : drawerWidth,
     },
   },
   footer: {
