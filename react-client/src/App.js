@@ -124,6 +124,7 @@ const App = () => {
   useEffect(() => {
     Auth.currentAuthenticatedUser()
       .then(cognitoUser => setCognitoUser(cognitoUser))
+      .catch(() => setCognitoUser(null))
   }, [1]);
 
   useEffect(() => {
