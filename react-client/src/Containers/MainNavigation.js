@@ -28,7 +28,7 @@ import NotificationToast from '../Components/NotificationToast'
 
 const navStyle = 'vertical'; //vertical or horizontal;
 
-const drawerWidth = navStyle === 'horizontal' ? 0 : 248;
+const drawerWidth = 248;
 
 
 const styles = theme => ({
@@ -69,6 +69,7 @@ const styles = theme => ({
   drawerPaper: {
     width: drawerWidth,
     [theme.breakpoints.up('md')]: {
+      width: navStyle === 'horizontal' ? 0 : 248,
       position: 'fixed',
       overflowY: 'hidden',
       '&:hover': {
