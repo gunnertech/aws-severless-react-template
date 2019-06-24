@@ -124,7 +124,7 @@ const App = () => {
   useEffect(() => {
     Auth.currentAuthenticatedUser()
       .then(cognitoUser => setCognitoUser(cognitoUser))
-      .catch(() => setCognitoUser(null))
+      .catch(err => setCognitoUser(null))
   }, [1]);
 
   useEffect(() => {
@@ -154,9 +154,11 @@ const App = () => {
   }, [1]);
 
   useEffect(() => {
-
+    
     !cognitoUser ? (
       setCurrentUser(cognitoUser)
+    ) : cognitoUser.username === process.env.REACT_APP_guest_user_name || cognitoUser.attributes.email === process.env.REACT_APP_guest_user_name ? (
+      setCurrentUser(null)
     ) : (
       Promise.all([
         cognitoUser,
