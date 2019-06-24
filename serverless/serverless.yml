@@ -256,6 +256,7 @@ resources:
               Effect: "Allow"
               Action: 
                 - "cognito-idp:AdminAddUserToGroup"
+                - "cognito-idp:AdminRemoveUserFromGroup"
                 - "cognito-idp:DescribeUserPool"
               Resource: "arn:aws:cognito-idp:*:*:userpool/*"
             - 
