@@ -317,6 +317,17 @@ Resources:
             Action: 
               - "ses:SendEmail"
             Resource: "arn:aws:ses:*"
+          - 
+            Effect: "Allow"
+            Action: 
+              - "mobileanalytics:*"
+              - "mobiletargeting:*"
+            Resource: "*"
+          - 
+            Effect: "Allow"
+            Action: 
+              - "s3:*"
+            Resource: "*"
       PolicyName: CognitoAdminsIamPolicy
       Roles:
         - Ref: CognitoAdminsRole
