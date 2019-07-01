@@ -7,7 +7,6 @@ import AWSAppSyncClient, { createAppSyncLink, createLinkWithCache } from "aws-ap
 import { ApolloLink } from 'apollo-link';
 import { withClientState } from 'apollo-link-state';
 import * as Sentry from '@sentry/browser';
-import CognitoIdentityServiceProvider from 'aws-sdk/clients/cognitoidentityserviceprovider';
 
 import getCurrentUserFromCognitoUser from './Util/getCurrentUserFromCognitoUser'
 
