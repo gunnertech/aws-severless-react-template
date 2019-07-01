@@ -1,4 +1,3 @@
-// const awsexports = require("../amplify/src/aws-exports")
 const fs = require('fs');
 
 

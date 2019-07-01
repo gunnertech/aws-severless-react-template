@@ -160,18 +160,7 @@ const App = () => {
     ) : cognitoUser.username === process.env.REACT_APP_guest_user_name || cognitoUser.attributes.email === process.env.REACT_APP_guest_user_name ? (
       setCurrentUser(null)
     ) : (
-      Promise.all([
-        cognitoUser,
-        //if the user isn't in a group, add them to one
-        !(cognitoUser.signInUserSession.accessToken.payload['cognito:groups'] || []).length ? ( 
-          describeUserPool(cognitoUser.pool.userPoolId)
-            .then(({UserPool: {EstimatedNumberOfUsers}}) => EstimatedNumberOfUsers <= 2 ? 'Admins' : 'Users')
-            .then(groupName => addToGroup(cognitoUser, groupName).then(() => groupName))
-        ) : (
-          cognitoUser.signInUserSession.accessToken.payload['cognito:groups'][0]
-        )
-      ])
-        .then(([cognitoUser, groupName]) => getCurrentUserFromCognitoUser(client, cognitoUser, {groupName}))
+      getCurrentUserFromCognitoUser(client, cognitoUser)
         .then(currentUser => setCurrentUser(currentUser))
         .catch(err => [
           console.log(err),

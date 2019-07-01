@@ -6,7 +6,6 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
-    "aws-sdk": "^2.399.0",
     "@babel/preset-env": "latest",
     "babel-loader": "latest",
     "babel-plugin-source-map-support": "latest",
@@ -20,12 +19,13 @@
   "author": "Gunner Technology",
   "license": "MIT",
   "dependencies": {
+    "aws-sdk": "^2.399.0",
     "amazon-cognito-identity-js": "latest",
     "aws-appsync": "latest",
+    "axios": "^0.19.0",
     "cross-fetch": "^3.0.2",
     "fs-extra": "^8.0.1",
     "graphql": "latest",
-    "axios": "latest",
     "graphql-tag": "latest",
     "js-yaml": "^3.13.1",
     "serverless-stack-output": "^0.2.3",

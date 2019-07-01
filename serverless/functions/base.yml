@@ -1,0 +1,14 @@
+sendVerificationEmail:
+  handler: cfn.sendVerificationEmail
+verifyDomain:
+  handler: cfn.verifyDomain
+verifyDkim:
+  Condition: ShouldCreateHostedZone
+  handler: cfn.verifyDkim
+createAdminUser:
+  Condition: ShouldCreateAdminUserSecret
+  handler: cfn.createAdminUser
+createIdentityPoolMapping:
+  handler: cfn.createIdentityPoolMapping
+  # getStackLastUpdatedTime:
+  #   handler: cfn.getStackLastUpdatedTime
