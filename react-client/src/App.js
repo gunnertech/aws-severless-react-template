@@ -35,9 +35,6 @@ const authScreenLabels = {
   }
 };
 
-I18n.setLanguage('en');
-I18n.putVocabularies(authScreenLabels);
-
 const defaults = {};
 const resolvers = {};
 const typeDefs = ``;
@@ -75,6 +72,9 @@ const appSyncLink = createAppSyncLink({
 const link = ApolloLink.from([stateLink, appSyncLink]);
 const client = new AWSAppSyncClient({disableOffline: true}, { link });
 
+I18n.setLanguage('en');
+I18n.putVocabularies(authScreenLabels);
+
 if(!!process.env.REACT_APP_sentry_url && !!process.env.REACT_APP_sentry_url.replace("<sentry-url>","")) {
   Sentry.enableInExpoDevelopment = false;
   Sentry.init({
@@ -84,37 +84,6 @@ if(!!process.env.REACT_APP_sentry_url && !!process.env.REACT_APP_sentry_url.repl
 
 Amplify.configure(awsmobile);
 
-const cognitoClient = () =>
-  Auth.currentCredentials()
-    .then(credentials =>
-      Promise.resolve(
-        new CognitoIdentityServiceProvider({
-          apiVersion: '2016-04-18',
-          credentials: Auth.essentialCredentials(credentials),
-          region: "us-east-1"
-        })
-      )
-    )
-
-const describeUserPool = userPoolId =>
-  cognitoClient()
-    .then(client =>
-      client.describeUserPool({
-        UserPoolId: userPoolId
-      })
-      .promise()  
-    )
-
-const addToGroup = (user, groupName) =>
-  cognitoClient()
-    .then(client =>
-      client.adminAddUserToGroup({
-        GroupName: groupName,
-        UserPoolId: user.pool.userPoolId,
-        Username: user.username
-      })
-      .promise()
-    )
 
 const App = () => {
   const [currentUser, setCurrentUser] = useState(undefined);
