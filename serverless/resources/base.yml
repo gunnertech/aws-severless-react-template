@@ -365,9 +365,9 @@ Resources:
         Fn::GetAtt:
           - VerifyDkimLambdaFunction
           - Arn
-  AdminUserCreation6:
+  AdminUserCreation:
     Condition: ShouldCreateAdminUserSecret
-    Type: Custom::AdminUserCreation6
+    Type: Custom::AdminUserCreation
     Properties:
       ServiceToken:
         Fn::GetAtt:

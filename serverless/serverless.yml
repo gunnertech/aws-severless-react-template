@@ -7,11 +7,11 @@ custom:
   environment: ${file(env.yml):${self:custom.stage}}
   secrets: ${file(secrets.yml):${self:custom.stage}}
   domainName: ${self:custom.environment.DOMAIN_NAME}
-  userPoolId: ${file(amplifyconfig.js):env.aws_user_pools_id}
+  userPoolId: ${file(amplify/config.js):env.aws_user_pools_id}
   guestUserName: ${self:custom.environment.GUEST_USER_NAME}
-  authRoleName: ${file(amplifycustom.js):custom.auth_role_name}
-  uploadBucketName: ${file(amplifyconfig.js):env.aws_user_files_s3_bucket}
-  stage: ${file(amplifystage.js):stage}
+  authRoleName: ${file(amplify/custom.js):custom.auth_role_name}
+  uploadBucketName: ${file(amplify/config.js):env.aws_user_files_s3_bucket}
+  stage: ${file(amplify/stage.js):stage}
   region: ${opt:region, self:provider.region}
   webpack:
     webpackConfig: ./webpack.config.js 
@@ -30,9 +30,9 @@ plugins:
 provider:
   name: aws
   runtime: nodejs10.x
-  stage: ${file(amplifystage.js):stage}
-  region: ${file(amplifyconfig.js):env.aws_project_region, 'us-east-1'}
-  profile: "${self:service.name}-${file(amplifystage.js):stage}developer"
+  stage: ${file(amplify/stage.js):stage}
+  region: ${file(amplify/config.js):env.aws_project_region, 'us-east-1'}
+  profile: "${self:service.name}-${file(amplify/stage.js):stage}developer"
   environment:
     AWS_ACCOUNT_ID: { Ref: AWS::AccountId }
     SYSTEM_EMAIL_ADDRESS: ${self:custom.environment.SYSTEM_EMAIL_ADDRESS}

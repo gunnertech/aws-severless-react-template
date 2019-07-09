@@ -1,4 +1,4 @@
-const awsconfig = require("./amplifyconfig")
+const awsconfig = require("./config")
 
 
 

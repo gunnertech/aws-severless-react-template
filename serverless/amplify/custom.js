@@ -1,5 +1,5 @@
 // const awsconfig = require("./amplifyconfig")
-const amplifystage = require("./amplifystage");
+const amplifystage = require("./stage");
 const AWS = require("aws-sdk");
 const fs = require('fs-extra');
 const yaml = require('js-yaml');
