@@ -134,6 +134,7 @@ export const createAdminUser = (event, context) =>
                   UserPoolId: awsmobile.aws_user_pools_id, /* required */
                   Username: User.Username /* required */
                 })
+                .promise()
           ]))
       )
       .then(() => 
