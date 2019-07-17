@@ -47,6 +47,7 @@ provider:
         - "ses:SendEmail"
         - "ses:VerifyEmailIdentity"
         - "ses:VerifyDomainIdentity"
+        - "ses:VerifyDomainDkim"
       Resource: "*"
     - Effect: "Allow"
       Action:
