@@ -1,17 +1,25 @@
 import 'cross-fetch/polyfill';
-import awsmobile from '../amplify/src/aws-exports';
-
 import AWS from 'aws-sdk';
+
 import { CognitoUserPool, AuthenticationDetails, CognitoUser } from 'amazon-cognito-identity-js';
 
 import AWSAppSyncClient from "aws-appsync";
+import awsmobile from '../amplify/src/aws-exports';
 
 
 AWS.config.update({
   region: awsmobile.aws_appsync_region
 });
 
-const secretsClient = new AWS.SecretsManager({
+const secrets = new AWS.SecretsManager({
+  region: awsmobile.aws_appsync_region
+});
+
+const sqs = new AWS.SQS({
+  region: awsmobile.aws_appsync_region
+});
+
+const ses = new AWS.SES({
   region: awsmobile.aws_appsync_region
 });
 
@@ -36,7 +44,7 @@ const jwtTokenForUser = (username, password) =>
 
 const AdminCredentials = {};
 
-const appSyncClient = new AWSAppSyncClient({
+const appsync = new AWSAppSyncClient({
   url: awsmobile.aws_appsync_graphqlEndpoint,
   region: awsmobile.aws_appsync_region,
   disableOffline: true,
@@ -45,7 +53,7 @@ const appSyncClient = new AWSAppSyncClient({
     jwtToken: async () => {
       try {
         if(!AdminCredentials.username) {
-          const secret = await secretsClient.getSecretValue({SecretId: 'AdminUserSecret'}).promise();
+          const secret = await secrets.getSecretValue({SecretId: 'AdminUserSecret'}).promise();
           const secretObject = JSON.parse(secret.SecretString)
           AdminCredentials.username = secretObject.username;
           AdminCredentials.password = secretObject.password;
@@ -62,4 +70,4 @@ const appSyncClient = new AWSAppSyncClient({
   },
 });
 
-export { appSyncClient, secretsClient };
+export { appsync, secrets, sqs, ses };
