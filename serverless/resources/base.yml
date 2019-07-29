@@ -278,7 +278,7 @@ Resources:
     Type: "AWS::Route53::HostedZone"
     Properties: 
       HostedZoneConfig: 
-        Comment: "My hosted zoned"
+        Comment: "My hosted zone"
       Name: 
         Ref: domainName
   CognitoAdminsRole:
@@ -311,6 +311,9 @@ Resources:
               - "cognito-idp:AdminRemoveUserFromGroup"
               - "cognito-idp:AdminSetUserPassword"
               - "cognito-idp:DescribeUserPool"
+              - "cognito-idp:AdminGetUser"
+              - "cognito-idp:AdminUpdateUserAttributes"
+              - "cognito-idp:AdminListGroupsForUser"
             Resource: "arn:aws:cognito-idp:*:*:userpool/*"
           - 
             Effect: "Allow"
