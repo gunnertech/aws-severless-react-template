@@ -314,6 +314,7 @@ Resources:
               - "cognito-idp:AdminGetUser"
               - "cognito-idp:AdminUpdateUserAttributes"
               - "cognito-idp:AdminListGroupsForUser"
+              - "cognito-idp:AdminCreateUser"
             Resource: "arn:aws:cognito-idp:*:*:userpool/*"
           - 
             Effect: "Allow"
