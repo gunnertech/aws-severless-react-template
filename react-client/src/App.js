@@ -7,10 +7,16 @@ import AWSAppSyncClient, { createAppSyncLink, createLinkWithCache } from "aws-ap
 import { ApolloLink } from 'apollo-link';
 import { withClientState } from 'apollo-link-state';
 import * as Sentry from '@sentry/browser';
+import { Cache } from 'aws-amplify';
+import moment from 'moment';
 
-import getCurrentUserFromCognitoUser from './Util/getCurrentUserFromCognitoUser'
+
+
+import getCurrentUserFromCognitoUser from './Util/getCurrentUserFromCognitoUser';
 
 import Router from "./Components/Router"
+import CurrentUserUpdater from "./Components/CurrentUserUpdater"
+
 
 import { CurrentUserProvider } from './Contexts/CurrentUser'
 import { NotificationsProvider } from './Contexts/Notifications'
@@ -54,13 +60,23 @@ const appSyncLink = createAppSyncLink({
     jwtToken: async () => {
       try {
         const session = await Auth.currentSession();
-        return session.getIdToken().getJwtToken();
+        return await session.getIdToken().getJwtToken();
       } catch(e) {
         if(!!process.env.REACT_APP_guest_user_name && !!process.env.REACT_APP_guest_password) {
+          const existingToken = await Cache.getItem('jwtToken');
+
+          if(existingToken) {        
+            return existingToken;
+          }
+
           await Auth.signIn(process.env.REACT_APP_guest_user_name, process.env.REACT_APP_guest_password);
           const session = await Auth.currentSession();
-          return session.getIdToken().getJwtToken();
+          const newToken = await session.getIdToken().getJwtToken();
+          await Cache.setItem('jwtToken', newToken, { expires: moment().add(10, 'minutes').toDate().getTime()});
+          await Auth.signOut();
+          return newToken;
         }
+
         return null;
 
       }
@@ -88,12 +104,13 @@ const App = () => {
   const [currentUser, setCurrentUser] = useState(undefined);
   const [cognitoUser, setCognitoUser] = useState(undefined);
   const [notifications, setNotifications] = useState([]);
+  const [shouldUpdateCurrentUser, setShouldUpdateCurrentUser] = useState(false);
 
   useEffect(() => {
     Auth.currentAuthenticatedUser()
       .then(cognitoUser => setCognitoUser(cognitoUser))
       .catch(err => setCognitoUser(null))
-  }, [1]);
+  }, []);
 
   useEffect(() => {
     const onAuthEvent = capsule => {
@@ -119,7 +136,7 @@ const App = () => {
 
     return () =>
       Hub.remove(('auth', onAuthEvent))
-  }, [1]);
+  }, []);
 
   useEffect(() => {
     
@@ -137,7 +154,7 @@ const App = () => {
         ])
     )
 
-  }, [cognitoUser])
+  }, [cognitoUser, shouldUpdateCurrentUser])
 
   return (
     <ApolloProvider client={client}>
@@ -145,6 +162,10 @@ const App = () => {
         <Rehydrated>
           <NotificationsProvider notifications={notifications}>
             <CurrentUserProvider currentUser={currentUser}>
+              {
+                !!currentUser && 
+                <CurrentUserUpdater currentUser={currentUser} onUpdate={setShouldUpdateCurrentUser} />
+              }
               {
                 typeof(currentUser) === 'undefined' ? (
                   null
