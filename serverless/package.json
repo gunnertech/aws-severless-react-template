@@ -29,6 +29,7 @@
     "graphql-tag": "latest",
     "js-yaml": "^3.13.1",
     "serverless-stack-output": "^0.2.3",
+    "shelljs": "^0.8.3",
     "source-map-support": "latest"
   }
 }
