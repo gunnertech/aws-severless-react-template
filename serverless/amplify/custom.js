@@ -3,16 +3,21 @@ const amplifystage = require("./stage");
 const AWS = require("aws-sdk");
 const fs = require('fs-extra');
 const yaml = require('js-yaml');
-
+const shell = require('shelljs')
 
 const awscreds = ({projectName, stage}) =>
-  fs.readFile(`${process.env['HOME']}/.aws/credentials`, 'utf8')
-    .then(contents => Promise.resolve( 
-        contents
-          .split(/( |\n|\r)/)
-          .find(line => line.includes(`role/${projectName}-${stage}`))
-          .replace(/role_arn *= */, "")
-    ))
+  Promise.resolve(
+    shell.exec(
+      `aws configure get role_arn --profile ${projectName}-${stage}developer`
+    ).stdout
+  )
+  // fs.readFile(`${process.env['HOME']}/.aws/credentials`, 'utf8')
+  //   .then(contents => Promise.resolve( 
+  //       contents
+  //         .split(/( |\n|\r)/)
+  //         .find(line => line.includes(`role/${projectName}-${stage}`))
+  //         .replace(/role_arn *= */, "")
+  //   ))
     .then(roleArn => Promise.resolve(
       new AWS.STS()
         .assumeRole({
