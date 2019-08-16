@@ -16,7 +16,7 @@ const PrivateRoute = ({ component: Component, location: {pathname}, ...rest }) =
         !!currentUser ? (
           <Component {...props} />
         ) : (
-          <AuthScreen onComplete={() => setAuthComplete(true)} />
+          <AuthScreen />
         )
       )
     }} />
