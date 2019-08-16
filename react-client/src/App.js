@@ -19,7 +19,6 @@ import CurrentUserUpdater from "./Components/CurrentUserUpdater"
 
 
 import { CurrentUserProvider } from './Contexts/CurrentUser'
-import { NotificationsProvider } from './Contexts/Notifications'
 import { ActionMenuProvider } from './Contexts/ActionMenu';
 
 
@@ -103,7 +102,6 @@ Amplify.configure(awsmobile);
 const App = () => {
   const [currentUser, setCurrentUser] = useState(undefined);
   const [cognitoUser, setCognitoUser] = useState(undefined);
-  const [notifications, setNotifications] = useState([]);
   const [shouldUpdateCurrentUser, setShouldUpdateCurrentUser] = useState(false);
 
   useEffect(() => {
@@ -121,8 +119,8 @@ const App = () => {
           break;
         case 'signIn_failure':
         case 'signUp_failure':
-          setNotifications([capsule.payload.data])
-          setTimeout(() => setNotifications([]), 4000)
+          // setNotifications([capsule.payload.data])
+          // setTimeout(() => setNotifications([]), 4000)
           break;
         case 'signIn':
             setCognitoUser(capsule.payload.data);
@@ -160,23 +158,21 @@ const App = () => {
     <ApolloProvider client={client}>
       <ApolloHooksProvider client={client}>
         <Rehydrated>
-          <NotificationsProvider notifications={notifications}>
-            <CurrentUserProvider currentUser={currentUser}>
-              {
-                !!currentUser && 
-                <CurrentUserUpdater currentUser={currentUser} onUpdate={setShouldUpdateCurrentUser} />
-              }
-              {
-                typeof(currentUser) === 'undefined' ? (
-                  null
-                ) : (
-                  <ActionMenuProvider>
-                    <Router />
-                  </ActionMenuProvider>
-                )
-              }
-            </CurrentUserProvider>
-          </NotificationsProvider>
+          <CurrentUserProvider currentUser={currentUser}>
+            {
+              !!currentUser && 
+              <CurrentUserUpdater currentUser={currentUser} onUpdate={setShouldUpdateCurrentUser} />
+            }
+            {
+              typeof(currentUser) === 'undefined' ? (
+                null
+              ) : (
+                <ActionMenuProvider>
+                  <Router />
+                </ActionMenuProvider>
+              )
+            }
+          </CurrentUserProvider>
         </Rehydrated>
       </ApolloHooksProvider>
     </ApolloProvider>
