@@ -12,10 +12,7 @@ import moment from 'moment';
 
 
 
-import getCurrentUserFromCognitoUser from './Util/getCurrentUserFromCognitoUser';
-
 import Router from "./Components/Router"
-import CurrentUserUpdater from "./Components/CurrentUserUpdater"
 
 
 import { CurrentUserProvider } from './Contexts/CurrentUser'
@@ -27,7 +24,7 @@ import { I18n } from 'aws-amplify';
 
 import awsmobile from './aws-exports';
 
-
+import HydrateCognitoUser from "./Components/HydrateCognitoUser"
 
 const authScreenLabels = {
   en: {
@@ -99,10 +96,10 @@ if(!!process.env.REACT_APP_sentry_url && !!process.env.REACT_APP_sentry_url.repl
 Amplify.configure(awsmobile);
 
 
+
+
 const App = () => {
-  const [currentUser, setCurrentUser] = useState(undefined);
   const [cognitoUser, setCognitoUser] = useState(undefined);
-  const [shouldUpdateCurrentUser, setShouldUpdateCurrentUser] = useState(false);
 
   useEffect(() => {
     Auth.currentAuthenticatedUser()
@@ -114,13 +111,10 @@ const App = () => {
     const onAuthEvent = capsule => {
       switch (capsule.payload.event) {
         case 'signOut':
-          setCurrentUser(null);
           setCognitoUser(null);
           break;
         case 'signIn_failure':
         case 'signUp_failure':
-          // setNotifications([capsule.payload.data])
-          // setTimeout(() => setNotifications([]), 4000)
           break;
         case 'signIn':
             setCognitoUser(capsule.payload.data);
@@ -136,43 +130,26 @@ const App = () => {
       Hub.remove(('auth', onAuthEvent))
   }, []);
 
-  useEffect(() => {
-    
-    !cognitoUser ? (
-      setCurrentUser(cognitoUser)
-    ) : cognitoUser.username === process.env.REACT_APP_guest_user_name || cognitoUser.attributes.email === process.env.REACT_APP_guest_user_name ? (
-      setCurrentUser(null)
-    ) : (
-      getCurrentUserFromCognitoUser(client, cognitoUser)
-        .then(currentUser => setCurrentUser({...currentUser, ...cognitoUser, groups: (cognitoUser.signInUserSession.accessToken.payload['cognito:groups'] || [])}))
-        .catch(err => [
-          console.log(err),
-          setCurrentUser(null),
-          setCognitoUser(null)
-        ])
-    )
-
-  }, [cognitoUser, shouldUpdateCurrentUser])
 
   return (
     <ApolloProvider client={client}>
       <ApolloHooksProvider client={client}>
         <Rehydrated>
-          <CurrentUserProvider currentUser={currentUser}>
-            {
-              !!currentUser && 
-              <CurrentUserUpdater currentUser={currentUser} onUpdate={setShouldUpdateCurrentUser} />
+          <HydrateCognitoUser cognitoUser={cognitoUser}>
+            {currentUser =>
+              <CurrentUserProvider currentUser={currentUser}>
+                {
+                  typeof(currentUser) === 'undefined' ? (
+                    null
+                  ) : (
+                    <ActionMenuProvider>
+                      <Router />
+                    </ActionMenuProvider>
+                  )
+                }
+              </CurrentUserProvider>
             }
-            {
-              typeof(currentUser) === 'undefined' ? (
-                null
-              ) : (
-                <ActionMenuProvider>
-                  <Router />
-                </ActionMenuProvider>
-              )
-            }
-          </CurrentUserProvider>
+          </HydrateCognitoUser>
         </Rehydrated>
       </ApolloHooksProvider>
     </ApolloProvider>
