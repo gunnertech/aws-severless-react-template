@@ -1,6 +1,3 @@
-import React from 'react'
-
-
 /* Custom imports go here*/
 import { useState, useEffect } from 'react';
 
@@ -61,7 +58,7 @@ const HydrateCognitoUser = ({cognitoUser, children}) => {
     ) : (
       console.log("nothing")
     )
-  }, [cognitoUser, !!user])
+  }, [cognitoUser, !!user, loading])
 
   /* Custom Logic ends goes here*/
 

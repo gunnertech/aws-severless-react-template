@@ -60,7 +60,7 @@ const ConfirmSignUp = ({
         .then(data => console.log(data) || [
           setLoading(false),
           setSubmitting(false),
-          onAuthStateChange('signedup')
+          onAuthStateChange('signin', {type: 'success', message: "Please sign in with your new account details"})
         ])
         .catch(e => console.log(e) || [
           e.code === 'CodeMismatchException' ? (

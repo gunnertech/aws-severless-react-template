@@ -5,6 +5,7 @@ import HomeScreen from "../Screens/Home";
 import SplashScreen from "../Screens/Splash";
 import PrivacyPolicyScreen from "../Screens/PrivacyPolicy";
 import SignOutScreen from "../Screens/SignOut";
+import SignInScreen from "../Screens/SignIn";
 
 import { LayoutProvider } from '../Contexts/Layout'
 
@@ -18,6 +19,7 @@ const Router = () =>
         <Route path='/sign-out' exact component={SignOutScreen} />
         <Route path='/privacy-policy' exact component={PrivacyPolicyScreen} />
         <PrivateRoute path='/home' exact component={HomeScreen} />
+        <PrivateRoute path='/sign-in' exact component={SignInScreen} />
       </Switch>
     </LayoutProvider>
   </BrowserRouter>

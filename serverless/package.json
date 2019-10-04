@@ -6,16 +6,17 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
+    "@babel/cli": "latest",
+    "@babel/core": "latest",
     "@babel/preset-env": "latest",
     "babel-loader": "latest",
     "babel-plugin-source-map-support": "latest",
-    "serverless-webpack": "latest",
-    "@babel/core": "latest",
-    "@babel/cli": "latest",
     "serverless": "latest",
+    "serverless-plugin-ifelse": "^1.0.4",
+    "serverless-webpack": "latest",
     "shelljs": "^0.8.3",
-    "webpack-node-externals": "latest",
-    "webpack": "latest"
+    "webpack": "latest",
+    "webpack-node-externals": "latest"
   },
   "author": "Gunner Technology",
   "license": "MIT",
@@ -29,7 +30,6 @@
     "graphql": "latest",
     "graphql-tag": "latest",
     "js-yaml": "^3.13.1",
-    "serverless-stack-output": "^0.2.3",
     "source-map-support": "latest"
   }
 }

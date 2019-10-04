@@ -1,14 +1,14 @@
 sendVerificationEmail:
-  handler: cfn.sendVerificationEmail
+  handler: handlers/cloudformation/sendVerificationEmail.js
 verifyDomain:
-  handler: cfn.verifyDomain
+  handler: handlers/cloudformation/verifyDomain.js
 verifyDkim:
   Condition: ShouldCreateHostedZone
-  handler: cfn.verifyDkim
+  handler: handlers/cloudformation/verifyDkim.js
 createAdminUser:
   Condition: ShouldCreateAdminUserSecret
-  handler: cfn.createAdminUser
+  handler: handlers/cloudformation/createAdminUser.js
 createIdentityPoolMapping:
-  handler: cfn.createIdentityPoolMapping
+  handler: handlers/cloudformation/createIdentityPoolMapping.js
   # getStackLastUpdatedTime:
   #   handler: cfn.getStackLastUpdatedTime

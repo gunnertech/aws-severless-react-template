@@ -65,7 +65,12 @@ const SignUp = ({
       username: usernameValue,
       password: passwordValue,
       attributes: {
-        ...customsValue
+        ...customsValue,
+        ...(
+          !!customsValue.phone_number ? ({
+            phone_number: `+${customsValue.phone_number.replace(/\D+/g,"")}`,
+          }) : ({})
+        )
       }
     })
       .then(data => [
@@ -73,7 +78,11 @@ const SignUp = ({
         setLoading(false),
         onAuthStateChange('confirmsignup', {type: 'info', message: "Enter the code sent to your device to confirm your account"})
       ])
-      .catch(console.log)
+      .catch(err => [
+        console.log(err),
+        setLoading(false),
+        window.alert(err.message)
+      ])
   }, [loading])
 
   return (

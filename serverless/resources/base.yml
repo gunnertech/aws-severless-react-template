@@ -1,5 +1,11 @@
 # Transform: "AWS::Serverless-2016-10-31"
 Parameters:
+  service:
+    Type: String
+    Default: ${self:custom.serviceName}
+  stage:
+    Type: String
+    Default: ${self:custom.stage}
   uploadBucketName:
     Type: String
     Default: ${self:custom.uploadBucketName}
@@ -278,7 +284,7 @@ Resources:
     Type: "AWS::Route53::HostedZone"
     Properties: 
       HostedZoneConfig: 
-        Comment: "My hosted zone"
+        Comment: "The hosted zone"
       Name: 
         Ref: domainName
   CognitoAdminsRole:
@@ -373,6 +379,7 @@ Resources:
     Condition: ShouldCreateAdminUserSecret
     Type: Custom::AdminUserCreation
     Properties:
+      TriggerVersion: 1
       ServiceToken:
         Fn::GetAtt:
           - CreateAdminUserLambdaFunction
@@ -380,6 +387,7 @@ Resources:
   AdminCognitoGroupMapping:
     Type: Custom::AdminCognitoGroupMapping
     Properties:
+      TriggerVersion: 1
       CognitoAdminsRoleArn: 
         Fn::GetAtt: [ CognitoAdminsRole, Arn ]
       ServiceToken:

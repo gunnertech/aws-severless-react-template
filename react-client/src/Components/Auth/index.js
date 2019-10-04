@@ -8,9 +8,63 @@ import Snackbar from "./Components/Snackbar"
 import queryString from 'query-string'
 import RequireNewPassword from './RequireNewPassword';
 
+const STATES = [
+  [ "Alabama", "AL" ], 
+  [ "Alaska", "AK" ], 
+  [ "Arizona", "AZ" ], 
+  [ "Arkansas", "AR" ], 
+  [ "California", "CA" ], 
+  [ "Colorado", "CO" ], 
+  [ "Connecticut", "CT" ], 
+  [ "Delaware", "DE" ], 
+  [ "District Of Columbia", "DC" ], 
+  [ "Florida", "FL" ], 
+  [ "Georgia", "GA" ], 
+  [ "Hawaii", "HI" ], 
+  [ "Idaho", "ID" ], 
+  [ "Illinois", "IL" ], 
+  [ "Indiana", "IN" ], 
+  [ "Iowa", "IA" ], 
+  [ "Kansas", "KS" ], 
+  [ "Kentucky", "KY" ], 
+  [ "Louisiana", "LA" ], 
+  [ "Maine", "ME" ], 
+  [ "Maryland", "MD" ], 
+  [ "Massachusetts", "MA" ], 
+  [ "Michigan", "MI" ], 
+  [ "Minnesota", "MN" ], 
+  [ "Mississippi", "MS" ], 
+  [ "Missouri", "MO" ], 
+  [ "Montana", "MT" ], 
+  [ "Nebraska", "NE" ], 
+  [ "Nevada", "NV" ], 
+  [ "New Hampshire", "NH" ], 
+  [ "New Jersey", "NJ" ], 
+  [ "New Mexico", "NM" ], 
+  [ "New York", "NY" ], 
+  [ "North Carolina", "NC" ], 
+  [ "North Dakota", "ND" ], 
+  [ "Ohio", "OH" ], 
+  [ "Oklahoma", "OK" ], 
+  [ "Oregon", "OR" ], 
+  [ "Pennsylvania", "PA" ], 
+  [ "Rhode Island", "RI" ], 
+  [ "South Carolina", "SC" ], 
+  [ "South Dakota", "SD" ], 
+  [ "Tennessee", "TN" ], 
+  [ "Texas", "TX" ], 
+  [ "Utah", "UT" ], 
+  [ "Vermont", "VT" ], 
+  [ "Virginia", "VA" ], 
+  [ "Washington", "WA" ], 
+  [ "West Virginia", "WV" ], 
+  [ "Wisconsin", "WI" ], 
+  [ "Wyoming", "WY" ]
+]
+
 const Complete = ({onComplete}) => {
   useEffect(() => {
-    onComplete()
+    onComplete && onComplete()
   }, []);
 
   return null
@@ -24,15 +78,85 @@ const Auth = ({
   initialUsernameValue = "",
   initialPasswordValue = "",
   customFields = {
-    "name": {
-      label: "Name",
+    "phone_number": {
+      label: "Mobile Phone",
+      required: true,
+      type: 'phone',
+      initialValue: "",
+      validations: {
+        "Valid phone number": /^\+\d[\d ][\d ]\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/
+      }
+    },
+    "family_name": {
+      label: "Last Name",
       required: true,
       type: 'text',
       initialValue: "",
       validations: {
         "Can't be blank": /^.+$/
       }
-    }    
+    },
+    "given_name": {
+      label: "First Name",
+      required: true,
+      type: 'text',
+      initialValue: "",
+      validations: {
+        "Can't be blank": /^.+$/
+      }
+    },
+    "address": {
+      label: "Address",
+      required: true,
+      type: 'text',
+      initialValue: "",
+      validations: {
+        "Can't be blank": /^.+$/
+      }
+    },
+    "birthdate": {
+      label: "Birthdate",
+      required: true,
+      type: 'text',
+      initialValue: "",
+      validations: {
+        "Can't be blank": /^.+$/
+      }
+    },
+    "custom:address2": {
+      label: "Address 2",
+      required: false,
+      type: 'text',
+      initialValue: "",
+      validations: {}
+    },
+    "custom:city": {
+      label: "City",
+      required: true,
+      type: 'text',
+      initialValue: "",
+      validations: {
+        "Can't be blank": /^.+$/
+      }
+    },
+    "custom:zip": {
+      label: "Zip",
+      required: true,
+      type: 'text',
+      initialValue: "",
+      validations: {
+        "Must be a valid zip code": /^\d{5}$|^\d{5}-\d{4}$/
+      }
+    },
+    "custom:state": {
+      label: "State",
+      required: true,
+      type: 'text',
+      initialValue: "",
+      validations: {},
+      options: STATES.map(([label, value]) => ({label, value}))
+    },
+      
   }
 }) => {
   const [authState, setAuthState] = useState(queryString.parse(search).authState || initialAuthState);
@@ -71,7 +195,7 @@ const Auth = ({
             initialUsernameValue={values.username}
             initialPasswordValue={values.password} 
             usernameField={usernameField}
-            order={['username', 'name', 'password']}
+            order={['username', 'password', 'phone_number', 'given_name', 'family_name', 'address', 'custom:address2', 'custom:city', 'custom:state', "custom:zip", "birthdate"]}
             customFields={customFields}
             onAuthStateChange={(authState, message) => [setAuthState(authState), setMessage(message)]}
             getValues={getValues}
@@ -117,7 +241,7 @@ const Auth = ({
             })}
             onAuthStateChange={(authState, message) => [setAuthState(authState), setMessage(message)]}
             usernameField={usernameField}
-            order={['username', 'name', 'password']}
+            order={['username', 'password']}
             customFields={customFields}
             authData={authData}
           />

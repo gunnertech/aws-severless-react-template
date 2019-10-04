@@ -10,8 +10,6 @@ import * as Sentry from '@sentry/browser';
 import { Cache } from 'aws-amplify';
 import moment from 'moment';
 
-
-
 import Router from "./Components/Router"
 
 

@@ -174,7 +174,7 @@ class MainNavigation extends React.Component {
             ) : (
               <ListItem 
                 component={Link} 
-                to={`/home/`} 
+                to={`/sign-in/`} 
                 button  
                 onClick={this.handleDrawerToggle}
               >

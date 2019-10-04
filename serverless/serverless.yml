@@ -2,6 +2,7 @@ service:
   name: ${self:custom.environment.SERVICE}
 
 custom:
+  serviceName: ${self:service.name}
   accountId: { Ref: AWS::AccountId }
   identifier: ${self:service.name}-${self:custom.stage}
   environment: ${file(env.yml):${self:custom.stage}}
@@ -16,16 +17,16 @@ custom:
   webpack:
     webpackConfig: ./webpack.config.js 
     includeModules: true
-  output:
-    handler: scripts/output.handler
-    file: .build/stack.yml
+  # output:
+  #   handler: scripts/output.handler
+  #   file: .build/stack.yml
 
 package:
-  individually: true
+  individually: false
 
 plugins:
   - serverless-webpack
-  - serverless-stack-output
+
 
 provider:
   name: aws
@@ -38,6 +39,12 @@ provider:
     SYSTEM_EMAIL_ADDRESS: ${self:custom.environment.SYSTEM_EMAIL_ADDRESS}
     DOMAIN_NAME: ${self:custom.environment.DOMAIN_NAME}
   iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:PutItem"
+        - "dynamodb:UpdateItem"
+        - "dynamodb:*"
+      Resource: "*"
     - Effect: "Allow"
       Action:
         - "cloudformation:describeStacks"

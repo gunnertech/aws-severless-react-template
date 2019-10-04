@@ -5,6 +5,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import MaskedInput from 'react-text-mask';
 
 import TextField from '@material-ui/core/TextField';
+import MenuItem from '@material-ui/core/MenuItem';
 import CheckIcon from 'mdi-material-ui/Check';
 import CloseIcon from 'mdi-material-ui/Close';
 
@@ -71,6 +72,32 @@ const TextMaskCustom = (props) => {
 }
 
 
+const PhoneField = ({customField, value, onValueChange, error, isValid}) => {
+
+  return (
+    <FormControl
+      disabled={!!customField.disabled}
+      required={!!customField.required}
+      margin="normal"
+      fullWidth
+      error={!!error || (!isValid && !!value)}
+    >
+      <InputLabel shrink>{customField.label}</InputLabel>
+      <Input
+        disabled={!!customField.disabled}
+        value={value || customField.initialValue || "1  "}
+        onChange={({target: {value}}) => onValueChange(value.toLowerCase())}
+        inputComponent={TextMaskCustom}
+      />
+      {
+        !!error &&
+        <FormHelperText>{error}</FormHelperText>
+      }
+    </FormControl>
+  )
+}
+
+
 const UsernameField = ({disabled = false, value, usernameField, onValueChange, onValidChange, error, showValidators = false}) => {
   const [isValid, setIsValid] = useState(false);
 
@@ -90,26 +117,18 @@ const UsernameField = ({disabled = false, value, usernameField, onValueChange, o
     <>
       {
         usernameField === UsernameAttributes.PHONE_NUMBER ? (
-          <FormControl
-            disabled={disabled}
-            required
-            margin="normal"
-            fullWidth
-            error={!!error || (!isValid && !!value)}
-          >
-            <InputLabel shrink htmlFor="username">{UsernameLabels[usernameField]}</InputLabel>
-            <Input
-              disabled={disabled}
-              value={value || "1  "}
-              onChange={({target: {value}}) => onValueChange(value.toLowerCase())}
-              id="username"
-              inputComponent={TextMaskCustom}
-            />
-            {
-              !!error &&
-              <FormHelperText>{error}</FormHelperText>
-            }
-          </FormControl>
+          <PhoneField
+            customField={{
+              disabled,
+              required: true,
+              label: UsernameLabels[usernameField]
+            }}
+            value={value}
+            onValueChange={onValueChange}
+            error={error}
+            showValidators={showValidators}
+            isValid={isValid}
+          />
         ) : (
           <TextField
             disabled={disabled}
@@ -290,18 +309,37 @@ const CustomField = ({customField, value, onValueChange, onValidChange, error, s
   
   return (
     <>
-      <TextField
-        required={!!customField.required}
-        type={customField.type || 'text'}
-        onChange={({target: {value}}) => onValueChange(value)}
-        label={customField.label}
-        value={value || customField.initialValue || ""}
-        margin="normal"
-        fullWidth
-        error={!!error || (!isValid && !!value)}
-        helperText={error || ""}
-      />
-        
+      {
+        customField.type === 'phone' ? (
+          <PhoneField
+            customField={customField}
+            value={value}
+            onValueChange={onValueChange}
+            error={error}
+            showValidators={showValidators}
+            isValid={isValid}
+          />
+        ) : (
+          <TextField
+            required={!!customField.required}
+            type={customField.type || 'text'}
+            onChange={({target: {value}}) => onValueChange(value)}
+            label={customField.label}
+            value={value || customField.initialValue || ""}
+            margin="normal"
+            fullWidth
+            error={!!error || (!isValid && !!value)}
+            helperText={error || ""}
+            select={!!customField.options}
+          >
+            {
+              (customField.options||[]).map(({label, value}) =>
+                <MenuItem key={value} value={value}>{label}</MenuItem>
+              )
+            }
+          </TextField>
+        )
+      }  
       {
         showValidators &&
         <List dense>
