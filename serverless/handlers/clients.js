@@ -1,27 +1,53 @@
 import 'cross-fetch/polyfill';
-import AWS from 'aws-sdk';
+import SecretsManager from 'aws-sdk/clients/secretsmanager';
+import SQS from 'aws-sdk/clients/sqs';
+import SES from 'aws-sdk/clients/ses';
+import DynamoDB from 'aws-sdk/clients/dynamodb';
+import CloudFormation from 'aws-sdk/clients/cloudformation';
+import CognitoIdentityServiceProvider  from 'aws-sdk/clients/cognitoidentityserviceprovider';
+import IAM  from 'aws-sdk/clients/iam';
+import CognitoIdentity  from 'aws-sdk/clients/cognitoidentity';
 
 import { CognitoUserPool, AuthenticationDetails, CognitoUser } from 'amazon-cognito-identity-js';
 
 import AWSAppSyncClient from "aws-appsync";
-import awsmobile from '../amplify/src/aws-exports';
 
+import awsmobile from '../../amplify/src/aws-exports';
 
-AWS.config.update({
+const cognitoidentity = new CognitoIdentity({
+  region: awsmobile.aws_appsync_region,
+})
+
+const cloudformation = new CloudFormation({
+  region: awsmobile.aws_appsync_region
+})
+
+const secrets = new SecretsManager({
   region: awsmobile.aws_appsync_region
 });
 
-const secrets = new AWS.SecretsManager({
+const sqs = new SQS({
   region: awsmobile.aws_appsync_region
 });
 
-const sqs = new AWS.SQS({
+const ses = new SES({
   region: awsmobile.aws_appsync_region
 });
 
-const ses = new AWS.SES({
+const dynamodb = new DynamoDB({
+  apiVersion: '2012-08-10',
   region: awsmobile.aws_appsync_region
 });
+
+const cognito = new CognitoIdentityServiceProvider({
+  region: awsmobile.aws_appsync_region,
+  apiVersion: '2016-04-18'
+})
+
+const iam = new IAM({
+  region: awsmobile.aws_appsync_region,
+})
+
 
 
 const jwtTokenForUser = (username, password) => 
@@ -70,4 +96,4 @@ const appsync = new AWSAppSyncClient({
   },
 });
 
-export { appsync, secrets, sqs, ses };
+export { appsync, secrets, sqs, ses, dynamodb, cloudformation, cognito, iam, cognitoidentity };
