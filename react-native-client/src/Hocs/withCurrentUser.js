@@ -5,11 +5,11 @@ import { CurrentUserConsumer } from '../Contexts/CurrentUser';
 
 const withCurrentUser = () => {
   return WrappedComponent => {
-    class CurrentUserComponent extends React.PureComponent {
+    class CurrentUserComponent extends React.Component {
       render() {
         return (
           <CurrentUserConsumer>
-            {({currentUser}) => <WrappedComponent {...this.props} currentUser={currentUser} />}
+            {value => <WrappedComponent {...this.props} currentUser={value} />}
           </CurrentUserConsumer>
         );
       }

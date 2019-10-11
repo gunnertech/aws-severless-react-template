@@ -3,27 +3,27 @@ import React from 'react';
 const CurrentUser = React.createContext({
 });
 
-export class CurrentUserProvider extends React.PureComponent {
+export class CurrentUserProvider extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      currentUser: this.props.currentUser || null
+      currentUser: props.currentUser || null
     };
   }
 
-
   render() {
+    const { currentUser, children } = this.props;
     return (
       <CurrentUser.Provider
-        value={{
-          currentUser: this.props.currentUser
-        }}
+        value={currentUser}
       >      
-        {this.props.children}
+        {children}
       </CurrentUser.Provider>
     );
   }
 }
 
 export const CurrentUserConsumer = CurrentUser.Consumer;
+
+export const CurrentUserContext = CurrentUser;

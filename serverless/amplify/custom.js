@@ -1,16 +1,12 @@
-// const awsconfig = require("./amplifyconfig")
+const awsconfig = require("./config")
 const amplifystage = require("./stage");
 const AWS = require("aws-sdk");
 const fs = require('fs-extra');
 const yaml = require('js-yaml');
-const shell = require('shelljs')
+const shell = require('shelljs');
+
 
 const awscreds = ({projectName, stage}) =>
-  Promise.resolve(
-    shell.exec(
-      `aws configure get role_arn --profile ${projectName}-${stage}developer`
-    ).stdout
-  )
   // fs.readFile(`${process.env['HOME']}/.aws/credentials`, 'utf8')
   //   .then(contents => Promise.resolve( 
   //       contents
@@ -18,6 +14,11 @@ const awscreds = ({projectName, stage}) =>
   //         .find(line => line.includes(`role/${projectName}-${stage}`))
   //         .replace(/role_arn *= */, "")
   //   ))
+  Promise.resolve(
+    shell.exec(
+      `aws configure get role_arn --profile ${projectName}-${stage}developer`
+    ).stdout
+  )
     .then(roleArn => Promise.resolve(
       new AWS.STS()
         .assumeRole({
@@ -57,6 +58,27 @@ const getStreams = params =>
       }))
     )
 
+const getTableNames = params =>
+  awscreds({stage: params.stage, projectName: params.projectName})
+    .then(credentials =>
+      Promise.resolve(new AWS.DynamoDB({
+        credentials,
+        region: 'us-east-1'
+      }))
+      .then(dynamodb =>
+        dynamodb
+          .listTables()
+          .promise()
+          .then(({TableNames}) => Promise.resolve(
+            TableNames
+              .reduce((accumulator, currentValue) => ({
+                ...accumulator,
+                [currentValue.split('-')[0]]: currentValue
+              }), {})
+          ))
+      )
+    )
+
 const getAuthRoleName = params => (
   awscreds({stage: params.stage, projectName: params.projectName})
     .then(credentials =>
@@ -71,6 +93,20 @@ const getAuthRoleName = params => (
     )
 )
 
+const getUserPoolName = params => (
+  awscreds({stage: params.stage, projectName: params.projectName})
+    .then(credentials =>
+      (new AWS.CognitoIdentityServiceProvider({
+        credentials,
+        region: 'us-east-1'
+      }))
+      .describeUserPool({UserPoolId: awsconfig.env().aws_user_pools_id})
+      .promise()
+      .then(({UserPool: {Name}}) => Promise.resolve(Name))
+      .catch(console.log)
+    )
+)
+
 module.exports.custom = () => {
   const doc = yaml.safeLoad(fs.readFileSync('./env.yml', 'utf8'));
   const secrets = yaml.safeLoad(fs.readFileSync('./secrets.yml', 'utf8'));
@@ -78,9 +114,13 @@ module.exports.custom = () => {
   return Promise.all([
     getAuthRoleName({stage: stage, projectName: doc[stage].SERVICE, env: doc, secrets: secrets}),
     getStreams({stage: stage, projectName: doc[stage].SERVICE, env: doc, secrets: secrets}),
+    getUserPoolName({stage: stage, projectName: doc[stage].SERVICE, env: doc, secrets: secrets}),
+    getTableNames({stage: stage, projectName: doc[stage].SERVICE, env: doc, secrets: secrets}),
   ])
     .then(arr => Promise.resolve({
       auth_role_name: arr[0],
-      streams: arr[1]
+      streams: arr[1],
+      user_pool_name: arr[2],
+      tableNames: arr[3]
     }))
 }

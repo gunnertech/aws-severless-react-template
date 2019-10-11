@@ -1,29 +1,24 @@
 import React from 'react';
+import hoistNonReactStatics from 'hoist-non-react-statics';
 
-const CurrentUser = React.createContext({
-});
+import { CurrentUserConsumer } from '../Contexts/CurrentUser';
 
-export class CurrentUserProvider extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      currentUser: props.currentUser || null
-    };
-  }
-
-  render() {
-    const { currentUser, children } = this.props;
-    return (
-      <CurrentUser.Provider
-        value={currentUser}
-      >      
-        {children}
-      </CurrentUser.Provider>
-    );
+const withCurrentUser = () => {
+  return WrappedComponent => {
+    class CurrentUserComponent extends React.Component {
+      render() {
+        return (
+          <CurrentUserConsumer>
+            {value => <WrappedComponent {...this.props} currentUser={value} />}
+          </CurrentUserConsumer>
+        );
+      }
+    }
+  
+    hoistNonReactStatics(CurrentUserComponent, WrappedComponent);
+  
+    return CurrentUserComponent;
   }
 }
 
-export const CurrentUserConsumer = CurrentUser.Consumer;
-
-export const CurrentUserContext = CurrentUser;
+export default withCurrentUser;
