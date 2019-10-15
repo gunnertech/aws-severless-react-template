@@ -1,4 +1,4 @@
-import AWS from 'aws-sdk';
+import { ses } from '../clients'
 
 import {
   sendResponse
@@ -10,7 +10,7 @@ export const js = async (event, context) => (
   event.RequestType === "Delete" ? (
     sendResponse(event, context, "SUCCESS")
   ) : (
-    new AWS.SES()
+    ses
       .verifyDomainDkim({Domain: process.env.DOMAIN_NAME})
       .promise()
       .then(data => ({

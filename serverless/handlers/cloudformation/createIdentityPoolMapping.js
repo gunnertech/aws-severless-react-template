@@ -1,4 +1,5 @@
 import awsmobile from '../../../amplify/src/aws-exports';
+import { iam, cognitoidentity } from "../clients"
 
 import {
   sendResponse,
@@ -11,7 +12,7 @@ export const js = (event, context) =>
   event.RequestType === "Delete" ? (
     sendResponse(event, context, "SUCCESS")
   ) : (
-    iamClient
+    iam
       .listRoles()
       .promise()
       .then(({Roles}) => Promise.resolve({
@@ -19,12 +20,12 @@ export const js = (event, context) =>
         unauthRoleArn: Roles.find(role => role.RoleName.endsWith('-unauthRole')).Arn
       }))
       .then(({authRoleArn, unauthRoleArn}) =>
-        cognitoIdentityClient
+        cognitoidentity
           .listIdentityPools({MaxResults: 10})
           .promise()
           .then(({IdentityPools}) => IdentityPools[0].IdentityPoolName)
           .then(identityPoolName => 
-            cognitoIdentityClient
+            cognitoidentity
               .setIdentityPoolRoles({
                 IdentityPoolId: awsmobile.aws_cognito_identity_pool_id, /* required */
                 Roles: { /* required */

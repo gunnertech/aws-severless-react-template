@@ -1,8 +1,8 @@
-import AWS from 'aws-sdk';
+import { cloudformation } from '../clients'
 
 // eslint-disable-next-line import/prefer-default-export
 export const js = (event, context) => 
-  new AWS.CloudFormation().describeStacks({
+  cloudformation.describeStacks({
     StackName: event.params.stackName
   })
     .promise()

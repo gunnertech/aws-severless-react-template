@@ -1,25 +1,9 @@
-import AWS from 'aws-sdk';
+
 import axios from 'axios';
+
 import awsmobile from '../../../amplify/src/aws-exports';
 
 const providerName = `cognito-idp.us-east-1.amazonaws.com/${awsmobile.aws_user_pools_id}:${awsmobile.aws_user_pools_web_client_id}`;
-
-const secretsClient = new AWS.SecretsManager({
-  region: awsmobile.aws_appsync_region
-});
-
-const cognitoClient = () => new AWS.CognitoIdentityServiceProvider({
-  region: awsmobile.aws_appsync_region,
-  apiVersion: '2016-04-18'
-})
-
-const iamClient = new AWS.IAM({
-  region: awsmobile.aws_appsync_region,
-})
-
-const cognitoIdentityClient = new AWS.CognitoIdentity({
-  region: awsmobile.aws_appsync_region,
-})
 
 const getUserAttributes = ({username, email, phone}) => {
   const attributes = [
@@ -92,9 +76,5 @@ const sendResponse = async (
 export {
   sendResponse,
   getUserAttributes,
-  iamClient,
-  secretsClient,
   providerName,
-  cognitoClient,
-  cognitoIdentityClient
 }
