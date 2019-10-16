@@ -9,6 +9,8 @@ import SignInScreen from "../Screens/SignIn";
 
 import { LayoutProvider } from '../Contexts/Layout'
 
+import { useTracker } from '../Hooks/useTracker';
+
 import PrivateRoute from './PrivateRoute'
 
 const Router = () => 
