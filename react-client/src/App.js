@@ -9,6 +9,7 @@ import { withClientState } from 'apollo-link-state';
 import * as Sentry from '@sentry/browser';
 import { Cache } from 'aws-amplify';
 import moment from 'moment';
+import ReactGA from 'react-ga';
 
 import Router from "./Components/Router"
 
@@ -89,6 +90,10 @@ if(!!process.env.REACT_APP_sentry_url && !!process.env.REACT_APP_sentry_url.repl
   Sentry.init({
     dsn: process.env.REACT_APP_sentry_url
   });
+}
+
+if(!!process.env.REACT_APP_GA) {
+  ReactGA.initialize(process.env.REACT_APP_GA);
 }
 
 Amplify.configure(awsmobile);
