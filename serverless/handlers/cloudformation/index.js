@@ -1,7 +1,7 @@
 
 import axios from 'axios';
 
-import awsmobile from '../../../amplify/src/aws-exports';
+import awsmobile from '../../aws-exports';
 
 const providerName = `cognito-idp.us-east-1.amazonaws.com/${awsmobile.aws_user_pools_id}:${awsmobile.aws_user_pools_web_client_id}`;
 

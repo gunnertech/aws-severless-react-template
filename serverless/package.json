@@ -21,15 +21,18 @@
   "author": "Gunner Technology",
   "license": "MIT",
   "dependencies": {
+    "amazon-cognito-identity-js": "3.0.12",
+    "aws-appsync": "1.8.0",
     "aws-sdk": "^2.399.0",
-    "amazon-cognito-identity-js": "latest",
-    "aws-appsync": "latest",
-    "axios": "^0.19.0",
-    "cross-fetch": "^3.0.2",
+    "axios": "0.19.0",
+    "cross-fetch": "3.0.2",
     "fs-extra": "^8.0.1",
-    "graphql": "latest",
-    "graphql-tag": "latest",
+    "graphql": "14.3.1",
+    "graphql-tag": "2.10.1",
     "js-yaml": "^3.13.1",
-    "source-map-support": "latest"
+    "node-fetch": "^2.6.0",
+    "serverless-stack-output": "^0.2.3",
+    "source-map-support": "latest",
+    "uuid-v4": "^0.1.0"
   }
 }

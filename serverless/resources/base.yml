@@ -48,6 +48,9 @@ Parameters:
   systemEmailAddress:
     Type: String
     Default: ${self:custom.environment.SYSTEM_EMAIL_ADDRESS, ""}
+  errorQueueName:
+    Type: String
+    Default: ${self:custom.environment.ERROR_QUEUE_NAME}
 
 Conditions:
   HasClusterUserName:
@@ -109,11 +112,34 @@ Outputs:
       "Fn::GetAtt": [ CDN, DomainName ]
 
 Resources:
+  ErrorQueue:
+    Type: "AWS::SQS::Queue"
+    DependsOn: ErrorDeadLetterQueue
+    Properties:
+      QueueName: 
+        Ref: errorQueueName
+      VisibilityTimeout: 60
+      DelaySeconds: 5
+      RedrivePolicy:
+        deadLetterTargetArn:
+          "Fn::GetAtt":
+            - ErrorDeadLetterQueue
+            - Arn
+        maxReceiveCount: 10
+  ErrorDeadLetterQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      QueueName: 
+        Fn::Join: [ "", [ {Ref: errorQueueName}, "DeadLetter" ] ]
+      MessageRetentionPeriod: 1209600
+
   ErrorLogNotificationSns:
     Type: "AWS::SNS::Topic"
+    Condition: ShouldSendVerificationEmail
     Properties:
       Subscription:
-      - Endpoint: "support@gunnertech.com"
+      - Endpoint:
+          Ref: systemEmailAddress
         Protocol: email
   LambdaErrorAlarm:
     Type: AWS::CloudWatch::Alarm
@@ -132,7 +158,7 @@ Resources:
       EvaluationPeriods: 1
       AlarmActions:
         - Ref: ErrorLogNotificationSns
-        
+
   AdminUserSecret:
     Condition: ShouldCreateAdminUserSecret
     Type: "AWS::SecretsManager::Secret"

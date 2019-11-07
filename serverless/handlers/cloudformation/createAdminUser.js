@@ -1,4 +1,4 @@
-import awsmobile from '../../../amplify/src/aws-exports';
+import awsmobile from '../../aws-exports';
 
 import { secrets, cognito } from "../clients"
 
