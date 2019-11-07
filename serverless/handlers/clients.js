@@ -1,4 +1,5 @@
 import 'cross-fetch/polyfill';
+import gql from 'graphql-tag';
 import SecretsManager from 'aws-sdk/clients/secretsmanager';
 import SQS from 'aws-sdk/clients/sqs';
 import SES from 'aws-sdk/clients/ses';
