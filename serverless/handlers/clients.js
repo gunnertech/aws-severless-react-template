@@ -12,7 +12,7 @@ import { CognitoUserPool, AuthenticationDetails, CognitoUser } from 'amazon-cogn
 
 import AWSAppSyncClient from "aws-appsync";
 
-import awsmobile from '../../amplify/src/aws-exports';
+import awsmobile from '../aws-exports';
 
 const cognitoidentity = new CognitoIdentity({
   region: awsmobile.aws_appsync_region,
