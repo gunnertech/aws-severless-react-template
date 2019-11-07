@@ -1,17 +1,17 @@
-import { sqs, appsync } from './clients';
+import { sqs } from './clients';
 
-const queueErrorMessage = ({action, data}) =>
+const queueMessage = ({action, data, queueName = process.env.ERROR_QUEUE_NAME}) =>
   sqs.sendMessage({
     MessageBody: JSON.stringify({
       action,
       data
     }),
-    QueueUrl: `https://sqs.${process.env.AWS_REGION}.amazonaws.com/${process.env.AWS_ACCOUNT_ID}/${process.env.ERROR_QUEUE_NAME}`
+    QueueUrl: `https://sqs.${process.env.AWS_REGION}.amazonaws.com/${process.env.AWS_ACCOUNT_ID}/${queueName}`
   })
     .promise()
     .catch(console.log)
 
 
   export {
-    queueErrorMessage,
+    queueMessage,
   }
