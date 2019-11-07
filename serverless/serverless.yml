@@ -39,6 +39,7 @@ provider:
     AWS_ACCOUNT_ID: { Ref: AWS::AccountId }
     SYSTEM_EMAIL_ADDRESS: ${self:custom.environment.SYSTEM_EMAIL_ADDRESS}
     DOMAIN_NAME: ${self:custom.environment.DOMAIN_NAME}
+    ERROR_QUEUE_NAME: ${self:custom.environment.ERROR_QUEUE_NAME}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
