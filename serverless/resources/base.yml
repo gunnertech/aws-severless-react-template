@@ -141,10 +141,11 @@ Resources:
       - Endpoint: 
           Ref: systemEmailAddress
         Protocol: email
-        
+
   LambdaErrorAlarm:
     DependsOn: ErrorLogNotificationSns
     Type: AWS::CloudWatch::Alarm
+    Condition: ShouldSendVerificationEmail
     Properties:
       AlarmName: ErrorLogNotification
       AlarmDescription: When Lambda error occurs it will be notified through SNS
