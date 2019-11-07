@@ -1,32 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import * as Font from 'expo-font';
-import Branch from 'react-native-branch'
-import { ThemeContext, getTheme } from 'react-native-material-ui';
 import Amplify, { Auth, Hub } from 'aws-amplify';
-import { Rehydrated } from 'aws-appsync-react';
+// import { Rehydrated } from 'aws-appsync-react';
 import { ApolloProvider } from 'react-apollo';
-import { ApolloProvider as ApolloHooksProvider } from 'react-apollo-hooks';
-import AWSAppSyncClient, { createAppSyncLink, createLinkWithCache } from "aws-appsync";
-import { ApolloLink } from 'apollo-link';
+
+import * as Font from 'expo-font';
 import Sentry from 'sentry-expo';
-import { withClientState } from 'apollo-link-state';
 import { ThemeProvider } from 'react-native-elements';
-import { Cache } from 'aws-amplify';
-
-import CurrentUserUpdater from "./src/Components/CurrentUserUpdater"
-
 import AppNavigator from './src/Navigators/App'
-
-import getCurrentUserFromCognitoUser from './src/Util/getCurrentUserFromCognitoUser';
-
-import muiTheme from './src/Styles/muiTheme'
+import muiTheme from './src/Styles/combinedTheme'
 import getElementsTheme from './src/Styles/elementsTheme'
 import ENV from './src/environment'
+import { MemoryStorageNew } from './MemoryStorageNew';
+
 
 import { CurrentUserProvider } from './src/Contexts/CurrentUser'
 
 import { I18n } from 'aws-amplify';
 import awsmobile from './aws-exports';
+import useAppSyncClient from './src/Hooks/useAppSyncClient';
+import HydrateCognitoUser from "./src/Components/HydrateCognitoUser"
+
+
+Amplify.configure({
+  ...awsmobile,
+  storage: MemoryStorageNew
+});
 
 const authScreenLabels = {
     en: {
@@ -38,58 +36,14 @@ const authScreenLabels = {
     }
 };
 
-const defaults = {};
-const resolvers = {};
-const typeDefs = ``;
-
-const stateLink = createLinkWithCache(cache => withClientState({ 
-  resolvers, 
-  defaults, 
-  cache, 
-  typeDefs 
-}));
 
 
-const appSyncLink = createAppSyncLink({
-  url: awsmobile.aws_appsync_graphqlEndpoint,
-  region: awsmobile.aws_appsync_region,
-  auth: {
-    type: "AMAZON_COGNITO_USER_POOLS",
-    jwtToken: async () => {
-      try {
-        const session = await Auth.currentSession();
-        return await session.getIdToken().getJwtToken();
-      } catch(e) {
-        if(!!process.env.REACT_APP_guest_user_name && !!process.env.REACT_APP_guest_password) {
-          const existingToken = await Cache.getItem('jwtToken');
 
-          if(existingToken) {        
-            return existingToken;
-          }
-
-          await Auth.signIn(process.env.REACT_APP_guest_user_name, process.env.REACT_APP_guest_password);
-          const session = await Auth.currentSession();
-          const newToken = await session.getIdToken().getJwtToken();
-          await Cache.setItem('jwtToken', newToken, { expires: moment().add(10, 'minutes').toDate().getTime()});
-          await Auth.signOut();
-          return newToken;
-        }
-
-        return null;
-
-      }
-    },
-  },
-});
-
-const link = ApolloLink.from([stateLink, appSyncLink]);
-const client = new AWSAppSyncClient({disableOffline: true}, { link });
-
-Branch.subscribe(bundle =>
-  bundle && bundle.params && !bundle.error && bundle.params && bundle.params.user && (
-    Cache.setItem('inviteInputs', bundle.params.user)
-  )
-)
+// Branch.subscribe(bundle =>
+//   bundle && bundle.params && !bundle.error && bundle.params && bundle.params.user && (
+//     Cache.setItem('inviteInputs', bundle.params.user)
+//   )
+// )
 
 I18n.setLanguage('en');
 I18n.putVocabularies(authScreenLabels);
@@ -102,15 +56,13 @@ if(!!ENV.sentry_url && !!ENV.sentry_url.replace("<sentry-url>","")) {
 
 console.disableYellowBox = true;
 
-Amplify.configure(awsmobile);
 
 
 
 const App = () => {
-  const [currentUser, setCurrentUser] = useState(undefined);
   const [cognitoUser, setCognitoUser] = useState(undefined);
-  const [shouldUpdateCurrentUser, setShouldUpdateCurrentUser] = useState(false);
   const [fontLoaded, setFontLoaded] = useState(false);
+  const client = useAppSyncClient();
 
   useEffect(() => {
     Font.loadAsync({
@@ -122,20 +74,17 @@ const App = () => {
   useEffect(() => {
     Auth.currentAuthenticatedUser()
       .then(cognitoUser => setCognitoUser(cognitoUser))
-      .catch(err => setCognitoUser(null))
+      .catch(err => console.log(err) || setCognitoUser(null))
   }, []);
 
   useEffect(() => {
     const onAuthEvent = capsule => {
       switch (capsule.payload.event) {
         case 'signOut':
-          setCurrentUser(null);
           setCognitoUser(null);
           break;
         case 'signIn_failure':
         case 'signUp_failure':
-          setNotifications([capsule.payload.data])
-          setTimeout(() => setNotifications([]), 4000)
           break;
         case 'signIn':
             setCognitoUser(capsule.payload.data);
@@ -151,48 +100,26 @@ const App = () => {
       Hub.remove(('auth', onAuthEvent))
   }, []);
 
-  useEffect(() => {
-    
-    !cognitoUser ? (
-      setCurrentUser(cognitoUser)
-    ) : cognitoUser.username === process.env.REACT_APP_guest_user_name || cognitoUser.attributes.email === process.env.REACT_APP_guest_user_name ? (
-      setCurrentUser(null)
-    ) : (
-      getCurrentUserFromCognitoUser(client, cognitoUser)
-        .then(currentUser => setCurrentUser({...currentUser, ...cognitoUser, groups: (cognitoUser.signInUserSession.accessToken.payload['cognito:groups'] || [])}))
-        .catch(err => [
-          console.log(err),
-          setCurrentUser(null),
-          setCognitoUser(null)
-        ])
-    )
-
-  }, [cognitoUser, shouldUpdateCurrentUser])
-
   return (
     !fontLoaded ? null :
     <ApolloProvider client={client}>
-      <ApolloHooksProvider client={client}>
-        <Rehydrated>
+      {/* <Rehydrated> */}
+      <HydrateCognitoUser cognitoUser={cognitoUser}>
+        {currentUser =>
           <CurrentUserProvider currentUser={currentUser}>
-            <ThemeProvider theme={getElementsTheme(getTheme(muiTheme))}>
-              <ThemeContext.Provider value={getTheme(muiTheme)}>
-                {
-                  !!currentUser && 
-                  <CurrentUserUpdater currentUser={currentUser} onUpdate={setShouldUpdateCurrentUser} />
-                }
-                {
-                  typeof(currentUser) === 'undefined' ? (
-                    null
-                  ) : (
-                    <AppNavigator />
-                  )
-                }
-              </ThemeContext.Provider>
+            <ThemeProvider theme={getElementsTheme(muiTheme)}>
+              {
+                typeof(currentUser) === 'undefined' ? (
+                  <></>
+                ) : (
+                  <AppNavigator />
+                )
+              }
             </ThemeProvider>
           </CurrentUserProvider>
-        </Rehydrated>
-      </ApolloHooksProvider>
+        }
+      </HydrateCognitoUser>
+      {/* </Rehydrated> */}
     </ApolloProvider>
   );
 }

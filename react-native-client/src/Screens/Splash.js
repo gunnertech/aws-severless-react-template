@@ -1,58 +1,57 @@
-import React from 'react'
-import { View } from 'react-native'
+import React, { useContext, useEffect } from 'react'
+import { View, StyleSheet } from 'react-native'
 import { Text } from 'react-native-elements'
-import {
-  Button,
-  // Card,
-} from 'react-native-material-ui';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { Card } from 'react-native-elements'
 
-import { withMuiTheme } from '../Styles/muiTheme';
+import { Card, Button } from 'react-native-elements'
+
 import Container from '../Components/Container'
-import withCurrentUser from '../Hocs/withCurrentUser'
 
-import ENV from '../environment'
+import { CurrentUserContext } from '../Contexts/CurrentUser';
+import makeStyles from '../Hooks/makeStyles';
 
-const styles = theme => ({
-  commentButtonContainer: {
-    marginTop: theme.spacing.xl
+const useStyles = makeStyles(theme => StyleSheet.create({
+  welcomeContainer: {
+    marginBottom: theme.spacing.xl,
   }
-});
+}));
 
-class Splash extends React.Component {
 
-  componentDidMount() {
-    if(this.props.currentUser) {
-      this.props.navigation.navigate("Gated")
-    }
-  }
 
-  componentDidUpdate(prevProps) {
-    if(this.props.currentUser) {
-      this.props.navigation.navigate("Gated")
-    }
-  }
+export default Splash = ({navigation}) => {
+  const currentUser = useContext(CurrentUserContext);
+  const classes = useStyles();
 
-  render() {
-    const { classes, theme } = this.props;
-    return (
-      <Container>
-        <Card>
-          <View>
-            <Text style={{paddingBottom: theme.spacing.sm}}>Welcome! Please sign in or create an account!</Text>
-          </View>
-          <Button onPress={() => this.props.navigation.navigate("Gated")} style={{container: classes.commentButtonContainer}} primary text="Sign In" iconSet="FontAwesome" icon="sign-in" raised />
-          <Button 
-            text='Privacy Policy'
-            onPress={ () =>
-              this.props.navigation.navigate('Privacy')
-            }
-          />
-        </Card>
-      </Container>
-    )
-  }
+  useEffect(() => {
+    !!currentUser &&
+    navigation.navigate("Gated")
+  }, [currentUser])
+  
+  return (
+    <Container>
+      <Card>
+        <View style={classes.welcomeContainer}>
+          <Text>Welcome! Please sign in or create an account!</Text>
+        </View>
+        <Button 
+          onPress={() => navigation.navigate("Gated")} 
+          primary 
+          title="Sign In" 
+          icon={
+            <Icon
+              name="sign-in"
+              color="white"
+            />
+          }
+          raised
+        />
+        <Button 
+          type="clear"
+          title='Privacy Policy'
+          onPress={() => navigation.navigate('Privacy')}
+        />
+      </Card>
+    </Container>
+  )
 }
-
-export default withCurrentUser()(withMuiTheme(styles)(Splash))

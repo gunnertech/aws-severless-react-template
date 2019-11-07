@@ -1,25 +1,22 @@
-import React, { Component } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { Auth } from 'aws-amplify';
 
-class DoSignOut extends Component {
-  async componentDidMount() {
-    try {
-      await Auth.signOut();
-    } catch(e) { 
-      console.log("Error", e);
-    }
+import { CurrentUserContext } from '../Contexts/CurrentUser';
 
-    this.props.navigation.popToTop();
+export default SignOut = ({navigation}) => {
 
-  }
-  render = () => null
+  const currentUser = useContext(CurrentUserContext)
+
+  useEffect(() => {
+    !currentUser ? (
+      navigation.popToTop()
+    ) : (
+      Auth.signOut()
+    )
+    
+  }, [!!currentUser]);
+
+  return (
+    null
+  )
 }
-
-
-class SignOut extends Component {
-  render() {
-    return <DoSignOut navigation={this.props.navigation} />
-  }
-}
-
-export default SignOut;

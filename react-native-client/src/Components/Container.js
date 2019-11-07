@@ -1,21 +1,26 @@
 import React from 'react';
 import { SafeAreaView } from 'react-navigation'
 
-import { withMuiTheme } from '../Styles/muiTheme';
+import { StyleSheet } from 'react-native'
+import makeStyles from '../Hooks/makeStyles';
 
-const styles = theme => ({
+
+
+const useStyles = makeStyles(theme => StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'center',
     alignItems: 'stretch',
     backgroundColor: theme.palette.canvasColor
   }
-});
+}));
 
-const Container = props =>
-  <SafeAreaView style={props.classes.container}>
-    {props.children}
-  </SafeAreaView>
+export default Container = ({children}) => {
+  const classes = useStyles();
+  return (
+    <SafeAreaView style={classes.container}>
+      {children}
+    </SafeAreaView>
+  )
+}
 
 
-export default withMuiTheme(styles)(Container);

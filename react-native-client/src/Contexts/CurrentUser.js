@@ -1,29 +1,11 @@
 import React from 'react';
 
-const CurrentUser = React.createContext({
-});
+const CurrentUserContext = React.createContext();
 
-export class CurrentUserProvider extends React.Component {
-  constructor(props) {
-    super(props);
+const CurrentUserProvider = ({children, currentUser}) => 
+  <CurrentUserContext.Provider value={currentUser}>      
+    {children}
+  </CurrentUserContext.Provider>
 
-    this.state = {
-      currentUser: props.currentUser || null
-    };
-  }
+export { CurrentUserContext, CurrentUserProvider };
 
-  render() {
-    const { currentUser, children } = this.props;
-    return (
-      <CurrentUser.Provider
-        value={currentUser}
-      >      
-        {children}
-      </CurrentUser.Provider>
-    );
-  }
-}
-
-export const CurrentUserConsumer = CurrentUser.Consumer;
-
-export const CurrentUserContext = CurrentUser;

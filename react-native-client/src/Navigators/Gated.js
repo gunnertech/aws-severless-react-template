@@ -1,15 +1,9 @@
 import React from 'react';
-import { createStackNavigator, createDrawerNavigator, SafeAreaView } from 'react-navigation';
-import { Drawer } from 'react-native-material-ui';
-// import { withAuthenticator } from 'aws-amplify-react-native';
-import { ConfirmSignIn, ConfirmSignUp, ForgotPassword, RequireNewPassword, VerifyContact, withAuthenticator } from 'aws-amplify-react-native';
-
-// import AmplifyTheme from '../Styles/amplifyTheme'; theme={AmplifyTheme}
+import { createStackNavigator, createDrawerNavigator } from 'react-navigation';
+import { SignUp, SignIn, ConfirmSignIn, ConfirmSignUp, ForgotPassword, RequireNewPassword, VerifyContact, withAuthenticator } from 'aws-amplify-react-native';
 import Home from '../Screens/Home';
 import SignOut from '../Screens/SignOut';
-import SignUp from '../Screens/SignUp'
-import SignIn from '../Screens/SignIn'
-import theme from '../Styles/muiTheme'
+import theme from '../Styles/combinedTheme'
 
 
 const screens = {
@@ -21,53 +15,13 @@ const screens = {
   SignOut
 }
 
-class DrawerComponent extends React.Component {
-  state = {
-    active: 'Home'
-  }
-
-  mapNavItem(item) {
-    return (
-      Object.assign(({
-        "Home": { icon: 'home', value: 'Home' },
-        "SignOut": { icon: 'exit-to-app', value: 'Sign Out' },
-      }[item.key] || {}), {
-        onPress: () => 
-          this.setState({
-            active: item.key
-          }, () => this.props.navigation.navigate(item.key) )
-        ,
-        active: (this.state.active === item.key)
-      })
-    )
-  }
-
-  render() {
-    return (
-      <SafeAreaView style={{flex: 1}}>
-        <Drawer>
-          <Drawer.Section
-            items={this.props.items.map(item => this.mapNavItem(item)).filter(item => !!item.value)}
-          />
-        </Drawer>
-      </SafeAreaView>
-      );
-  }
-}
-
-class GatedComponent extends React.Component {
-  render() {
-    return (
-      this.props.children
-    )
-  }
-}
-
 const DrawerNavigator = createDrawerNavigator(screens, {
-  contentComponent: DrawerComponent,
   drawerWidth: 300,
   initialRouteName: 'Home'
 });
+
+
+const GatedComponent = ({children}) => children
 
 const GatedComponentWithAuth = withAuthenticator(GatedComponent, false, [
   <SignIn />,
@@ -78,7 +32,7 @@ const GatedComponentWithAuth = withAuthenticator(GatedComponent, false, [
       hideAllDefaults: true,
       signUpFields: [
         {
-          key: 'email',
+          key: 'username',
           type: 'email',
           required: true,
           label: 'Email',
@@ -109,20 +63,11 @@ const GatedComponentWithAuth = withAuthenticator(GatedComponent, false, [
   <RequireNewPassword />
 ], false, theme.amplify);
 
-class GatedNavigator extends React.Component {
-  static router = DrawerNavigator.router;
+const GatedNavigator = ({navigation}) => 
+  <GatedComponentWithAuth>
+    <DrawerNavigator navigation={navigation} />
+  </GatedComponentWithAuth>
 
-  render() {
-    return (
-      <GatedComponentWithAuth
-        
-      >
-        <DrawerNavigator
-          navigation={this.props.navigation}
-        />
-      </GatedComponentWithAuth>
-    );
-  }
-}
+GatedNavigator.router = DrawerNavigator.router;
 
 export default GatedNavigator;

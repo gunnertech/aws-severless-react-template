@@ -1,5 +1,5 @@
 import React from 'react';
-import { COLOR, ThemeContext, getTheme } from 'react-native-material-ui';
+// import { COLOR, ThemeContext, getTheme } from 'react-native-material-ui';
 import { ifIphoneX } from 'react-native-iphone-x-helper';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import { StyleSheet, Dimensions } from 'react-native';
@@ -38,8 +38,8 @@ const spacing = {
 const uiTheme = {
   palette: {
     primaryColor: "#b78df9", //COLOR.blue700,
-    accentColor: COLOR.lightBlue300,
-    canvasColor: COLOR.grey100
+    // accentColor: COLOR.lightBlue300,
+    // canvasColor: COLOR.grey100
   },
   dimensions: {
     ...dimensions
@@ -52,7 +52,7 @@ const uiTheme = {
   },
   card: {
     container: {
-      backgroundColor: COLOR.white
+      // backgroundColor: COLOR.white
     }
   },
   toolbar: {
@@ -64,30 +64,11 @@ const uiTheme = {
 
 const combinedTheme = {
   ...uiTheme,
-  ...getAmplifyTheme(getElementsTheme(getTheme(uiTheme))),
+  ...getAmplifyTheme(getElementsTheme(uiTheme)),
 }
 
-const withMuiTheme = styles => {
-  return WrappedComponent => {
-    class ThemedComponent extends React.PureComponent {
-      render() {
-        return (
-          <ThemeContext.Consumer>
-            {theme => <WrappedComponent {...this.props} classes={StyleSheet.create(styles(combinedTheme))} theme={combinedTheme} />}
-          </ThemeContext.Consumer>
-        );
-      }
-    }
-  
-    hoistNonReactStatics(ThemedComponent, WrappedComponent);
-  
-    return ThemedComponent;
-  }
-}
 
 export default combinedTheme;
-
-export { withMuiTheme };
 
 
 
