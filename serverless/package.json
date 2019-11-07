@@ -12,6 +12,7 @@
     "babel-loader": "latest",
     "babel-plugin-source-map-support": "latest",
     "serverless": "latest",
+    "serverless-iam-roles-per-function": "^2.0.2",
     "serverless-plugin-ifelse": "^1.0.4",
     "serverless-webpack": "latest",
     "shelljs": "^0.8.3",

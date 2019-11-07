@@ -26,6 +26,7 @@ package:
 
 plugins:
   - serverless-webpack
+  - serverless-iam-roles-per-function
 
 
 provider:
