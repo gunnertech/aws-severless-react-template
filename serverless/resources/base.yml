@@ -141,7 +141,9 @@ Resources:
       - Endpoint: 
           Ref: systemEmailAddress
         Protocol: email
+        
   LambdaErrorAlarm:
+    DependsOn: ErrorLogNotificationSns
     Type: AWS::CloudWatch::Alarm
     Properties:
       AlarmName: ErrorLogNotification
