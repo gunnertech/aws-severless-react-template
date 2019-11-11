@@ -2,7 +2,7 @@ import React from 'react';
 import { SafeAreaView } from 'react-navigation'
 
 import { StyleSheet } from 'react-native'
-import makeStyles from '../Hooks/makeStyles';
+import makeStyles from '../../Hooks/makeStyles';
 
 
 

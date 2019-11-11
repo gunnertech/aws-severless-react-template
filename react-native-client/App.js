@@ -15,10 +15,12 @@ import { MemoryStorageNew } from './MemoryStorageNew';
 
 import { CurrentUserProvider } from './src/Contexts/CurrentUser'
 
+
 import { I18n } from 'aws-amplify';
 import awsmobile from './aws-exports';
 import useAppSyncClient from './src/Hooks/useAppSyncClient';
-import HydrateCognitoUser from "./src/Components/HydrateCognitoUser"
+import userCurrentUser from './src/Hooks/useCurrentUser';
+
 
 
 Amplify.configure({
@@ -63,6 +65,7 @@ const App = () => {
   const [cognitoUser, setCognitoUser] = useState(undefined);
   const [fontLoaded, setFontLoaded] = useState(false);
   const client = useAppSyncClient();
+  const currentUser = userCurrentUser(cognitoUser);
 
   useEffect(() => {
     Font.loadAsync({
@@ -104,21 +107,17 @@ const App = () => {
     !fontLoaded ? null :
     <ApolloProvider client={client}>
       {/* <Rehydrated> */}
-      <HydrateCognitoUser cognitoUser={cognitoUser}>
-        {currentUser =>
-          <CurrentUserProvider currentUser={currentUser}>
-            <ThemeProvider theme={getElementsTheme(muiTheme)}>
-              {
-                typeof(currentUser) === 'undefined' ? (
-                  <></>
-                ) : (
-                  <AppNavigator />
-                )
-              }
-            </ThemeProvider>
-          </CurrentUserProvider>
-        }
-      </HydrateCognitoUser>
+        <CurrentUserProvider currentUser={currentUser}>
+          <ThemeProvider theme={getElementsTheme(muiTheme)}>
+            {
+              typeof(currentUser) === 'undefined' ? (
+                <></>
+              ) : (
+                <AppNavigator />
+              )
+            }
+          </ThemeProvider>
+        </CurrentUserProvider>
       {/* </Rehydrated> */}
     </ApolloProvider>
   );
