@@ -6,10 +6,10 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { Card, Button } from 'react-native-elements'
 
-import Container from '../Components/Container'
+import Container from '../../Components/Container'
 
-import { CurrentUserContext } from '../Contexts/CurrentUser';
-import makeStyles from '../Hooks/makeStyles';
+import { CurrentUserContext } from '../../Contexts/CurrentUser';
+import makeStyles from '../../Hooks/makeStyles';
 
 const useStyles = makeStyles(theme => StyleSheet.create({
   welcomeContainer: {

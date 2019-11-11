@@ -4,9 +4,9 @@ import { View, ScrollView, StyleSheet } from 'react-native'
 import { Header, Card, Text  } from 'react-native-elements';
 
 
-import Container from '../Components/Container'
-import makeStyles from '../Hooks/makeStyles';
-import { CurrentUserContext } from '../Contexts/CurrentUser';
+import Container from '../../Components/Container'
+import makeStyles from '../../Hooks/makeStyles';
+import { CurrentUserContext } from '../../Contexts/CurrentUser';
 
 
 const useStyles = makeStyles(theme => StyleSheet.create({
@@ -25,12 +25,11 @@ const Home = ({navigation}) => {
   return !currentUser ? null : (
     <Container>
       <ScrollView>
-
-      <Card style={{container: classes.cardContainer}}>
-        <View>
-          <Text>Welcome to your new project, {currentUser.attributes.name}</Text>
-        </View>
-      </Card>
+        <Card style={{container: classes.cardContainer}}>
+          <View>
+            <Text>Welcome to your new project, {currentUser.attributes.name}</Text>
+          </View>
+        </Card>
       </ScrollView>
     </Container>
   )

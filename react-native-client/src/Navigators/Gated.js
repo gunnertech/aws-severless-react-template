@@ -1,5 +1,6 @@
 import React from 'react';
-import { createStackNavigator, createDrawerNavigator } from 'react-navigation';
+import { createDrawerNavigator } from 'react-navigation-drawer';
+import { createStackNavigator } from 'react-navigation-stack';
 import { SignUp, SignIn, ConfirmSignIn, ConfirmSignUp, ForgotPassword, RequireNewPassword, VerifyContact, withAuthenticator } from 'aws-amplify-react-native';
 import Home from '../Screens/Home';
 import SignOut from '../Screens/SignOut';

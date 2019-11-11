@@ -22,7 +22,16 @@ staging: {
     guest_user_name: null,
     guest_password: null
   },
+  
+dary: {
+    cdn: 'd318wd2uqf9jsy.cloudfront.net',
+    base_url: "https://dary.d35g4cufl7b8q9.amplifyapp.com",
+    sentry_url: '<sentry-url>',
+    guest_user_name: null,
+    guest_password: null
+  },
   //<new-environment>
+
 
 
 }
