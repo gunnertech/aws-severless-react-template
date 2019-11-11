@@ -1,21 +1,12 @@
 import React from 'react';
 import { SafeAreaView } from 'react-navigation'
-
-import { StyleSheet } from 'react-native'
-import makeStyles from '../../Hooks/makeStyles';
+import useContainerStyles from './ContainerStyles';
 
 
 
-const useStyles = makeStyles(theme => StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'stretch',
-    backgroundColor: theme.palette.canvasColor
-  }
-}));
 
 export default Container = ({children}) => {
-  const classes = useStyles();
+  const classes = useContainerStyles();
   return (
     <SafeAreaView style={classes.container}>
       {children}
