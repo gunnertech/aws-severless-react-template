@@ -24,7 +24,6 @@ const region = appSyncConfig.aws_appsync_region;
 const auth = {
   type: appSyncConfig.aws_appsync_authenticationType,
   jwtToken: async () => {
-    console.log("OK OK OK")
     try {
       const session = await Auth.currentSession();
       return await session.getIdToken().getJwtToken();
