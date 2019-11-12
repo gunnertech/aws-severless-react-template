@@ -58,14 +58,17 @@ if(!!ENV.sentry_url && !!ENV.sentry_url.replace("<sentry-url>","")) {
 
 console.disableYellowBox = true;
 
+const CurrentUser = ({cognitoUser, children}) => {
+  const currentUser = userCurrentUser(cognitoUser);
 
+  return children(currentUser)
+}
 
 
 const App = () => {
   const [cognitoUser, setCognitoUser] = useState(undefined);
   const [fontLoaded, setFontLoaded] = useState(false);
   const client = useAppSyncClient();
-  const currentUser = userCurrentUser(cognitoUser);
 
   useEffect(() => {
     Font.loadAsync({
@@ -107,17 +110,21 @@ const App = () => {
     !fontLoaded ? null :
     <ApolloProvider client={client}>
       {/* <Rehydrated> */}
-        <CurrentUserProvider currentUser={currentUser}>
-          <ThemeProvider theme={getElementsTheme(muiTheme)}>
-            {
-              typeof(currentUser) === 'undefined' ? (
-                <></>
-              ) : (
-                <AppNavigator />
-              )
-            }
-          </ThemeProvider>
-        </CurrentUserProvider>
+      <CurrentUser cognitoUser={cognitoUser}>
+        {currentUser =>
+          <CurrentUserProvider currentUser={currentUser}>
+            <ThemeProvider theme={getElementsTheme(muiTheme)}>
+              {
+                typeof(currentUser) === 'undefined' ? (
+                  <></>
+                ) : (
+                  <AppNavigator />
+                )
+              }
+            </ThemeProvider>
+          </CurrentUserProvider>
+        }
+      </CurrentUser>
       {/* </Rehydrated> */}
     </ApolloProvider>
   );
