@@ -3,6 +3,7 @@ import gql from 'graphql-tag';
 import SecretsManager from 'aws-sdk/clients/secretsmanager';
 import SQS from 'aws-sdk/clients/sqs';
 import SES from 'aws-sdk/clients/ses';
+import Textract from 'aws-sdk/clients/textract';
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 import CloudFormation from 'aws-sdk/clients/cloudformation';
 import CognitoIdentityServiceProvider  from 'aws-sdk/clients/cognitoidentityserviceprovider';
@@ -14,6 +15,11 @@ import { CognitoUserPool, AuthenticationDetails, CognitoUser } from 'amazon-cogn
 import AWSAppSyncClient from "aws-appsync";
 
 import awsmobile from '../aws-exports';
+
+const textract = new Textract({
+  apiVersion: '2018-06-27',
+  region: awsmobile.aws_appsync_region,
+})
 
 const cognitoidentity = new CognitoIdentity({
   region: awsmobile.aws_appsync_region,
@@ -97,4 +103,15 @@ const appsync = new AWSAppSyncClient({
   },
 });
 
-export { appsync, secrets, sqs, ses, dynamodb, cloudformation, cognito, iam, cognitoidentity };
+export { 
+  appsync, 
+  secrets, 
+  sqs, 
+  ses, 
+  dynamodb, 
+  cloudformation, 
+  cognito, 
+  iam, 
+  cognitoidentity,
+  textract
+};
