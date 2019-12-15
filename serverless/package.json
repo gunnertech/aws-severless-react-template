@@ -1,5 +1,5 @@
 {
-  "name": "betreader",
+  "name": "<project-name>",
   "version": "1.0.0",
   "description": "Gunner Technology Serverless Starter Pack",
   "scripts": {
@@ -12,6 +12,7 @@
     "babel-loader": "latest",
     "babel-plugin-source-map-support": "latest",
     "serverless": "latest",
+    "serverless-prune-plugin": "^1.4.1",
     "serverless-iam-roles-per-function": "^2.0.2",
     "serverless-plugin-ifelse": "^1.0.4",
     "serverless-webpack": "latest",
@@ -22,7 +23,6 @@
   "author": "Gunner Technology",
   "license": "MIT",
   "dependencies": {
-    "aws-sdk": "^2.399.0",
     "amazon-cognito-identity-js": "latest",
     "aws-appsync": "latest",
     "axios": "^0.19.0",

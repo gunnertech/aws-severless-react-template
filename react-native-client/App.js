@@ -10,7 +10,7 @@ import AppNavigator from './src/Navigators/App'
 import muiTheme from './src/Styles/combinedTheme'
 import getElementsTheme from './src/Styles/elementsTheme'
 import ENV from './src/environment'
-import { MemoryStorageNew } from './MemoryStorageNew';
+// import { MemoryStorageNew } from './MemoryStorageNew';
 
 
 import { CurrentUserProvider } from './src/Contexts/CurrentUser'
@@ -25,17 +25,17 @@ import userCurrentUser from './src/Hooks/useCurrentUser';
 
 Amplify.configure({
   ...awsmobile,
-  storage: MemoryStorageNew
+  // storage: MemoryStorageNew
 });
 
 const authScreenLabels = {
-    en: {
-        "Username": "Email",
-        "Enter your username": "Enter your email",
-        'Sign Up': 'Create new account',
-        'Sign Up Account': 'Create a new account',
-        'Confirm Sign Up': 'Confirm Sign Up by entering the code that was sent to your email address'
-    }
+  en: {
+    "Username": "Email",
+    "Enter your username": "Enter your email",
+    'Sign Up': 'Create new account',
+    'Sign Up Account': 'Create a new account',
+    'Confirm Sign Up': 'Confirm Sign Up by entering the code that was sent to your email address'
+  }
 };
 
 

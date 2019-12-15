@@ -14,6 +14,9 @@ custom:
   uploadBucketName: ${file(amplify/config.js):env.aws_user_files_s3_bucket}
   stage: ${file(amplify/stage.js):stage}
   region: ${opt:region, self:provider.region}
+  prune:
+    automatic: true
+    number: 3
   webpack:
     webpackConfig: ./webpack.config.js 
     includeModules: true
@@ -31,7 +34,10 @@ plugins:
 
 provider:
   name: aws
-  runtime: nodejs10.x
+  runtime: nodejs12.x
+  tracing:
+    apiGateway: true
+    lambda: true
   stage: ${file(amplify/stage.js):stage}
   region: ${file(amplify/config.js):env.aws_project_region, 'us-east-1'}
   profile: "${self:service.name}-${file(amplify/stage.js):stage}developer"
@@ -93,6 +99,11 @@ provider:
       Action:
         - "cognito-identity:SetIdentityPoolRoles"
         - "cognito-identity:ListIdentityPools"
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - "firehose:PutRecord"
+        - "firehose:PutRecordBatch"
       Resource: "*"
  
 resources:
