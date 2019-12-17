@@ -38,30 +38,7 @@ const SignIn = ({
 
   const [isValid, setIsValid] = useState(false);
 
-  useEffect(() => {
-    onValueChange('username', usernameValue)
-  }, [usernameValue])
-
-  useEffect(() => {
-    onValueChange('password', passwordValue)
-  }, [passwordValue])
-
-  useEffect(() => {
-    Object.entries(customsValue).forEach(([key, value]) => 
-      onValueChange(key, value)
-    )
-  }, [JSON.stringify(customsValue)])
-
-  useEffect(() => {
-    setIsValid(
-      usernameValid && 
-      passwordValid &&
-      Object.values(customsValid).every(value => !!value)
-    );
-  }, [usernameValid, passwordValid, JSON.stringify(customsValid)]);
-
-  useEffect(() => {
-    !!loading &&
+  const doSignIn = (username, password) => 
     Auth.signIn(usernameValue, passwordValue)
       .then(user => (
         user.challengeName === 'SMS_MFA' || user.challengeName === 'SOFTWARE_TOKEN_MFA' ? (
@@ -90,7 +67,39 @@ const SignIn = ({
         setUsernameError(e.message),
         setLoading(false)
       ])
-  }, [loading])
+
+  useEffect(() => {
+    onValueChange('username', usernameValue)
+  }, [usernameValue])
+
+  useEffect(() => {
+    onValueChange('password', passwordValue)
+  }, [passwordValue])
+
+  useEffect(() => {
+    Object.entries(customsValue).forEach(([key, value]) => 
+      onValueChange(key, value)
+    )
+  }, [JSON.stringify(customsValue)])
+
+  useEffect(() => {
+    setIsValid(
+      usernameValid && 
+      passwordValid &&
+      Object.values(customsValid).every(value => !!value)
+    );
+  }, [usernameValid, passwordValid, JSON.stringify(customsValid)]);
+
+  useEffect(() => {
+    !!loading &&
+    doSignIn(usernameValue, passwordValue)
+  }, [loading, usernameValue, passwordValue])
+
+  useEffect(() => {
+    initialUsernameValue &&
+    initialPasswordValue &&
+    doSignIn(initialUsernameValue, initialPasswordValue)
+  }, [initialUsernameValue, initialPasswordValue])
 
   return (
     <form noValidate autoComplete="off">

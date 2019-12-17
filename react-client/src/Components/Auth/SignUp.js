@@ -9,6 +9,11 @@ import Typography from '@material-ui/core/Typography';
 
 import { PasswordField, CustomField, UsernameField } from "./Fields"
 
+const withoutBlanks = object =>
+  Object.entries(object).reduce((obj, [key, value]) => value === "" || value === null || value === undefined ? obj : ({
+    ...obj,
+    [key]: value
+  }), {})
 
   
 
@@ -66,14 +71,16 @@ const SignUp = ({
     Auth.signUp({
       username: usernameValue,
       password: passwordValue,
-      attributes: {
+      attributes: withoutBlanks({
         ...customsValue,
         ...(
-          !!customsValue.phone_number ? ({
+          !!(customsValue.phone_number||"").replace(/\D+/g,"") ? ({
             phone_number: `+${customsValue.phone_number.replace(/\D+/g,"")}`,
-          }) : ({})
+          }) : ({
+            phone_number: ""
+          })
         )
-      }
+      })
     })
       .then(data => [
         console.log(data),

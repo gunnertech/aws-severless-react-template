@@ -297,6 +297,8 @@ const CustomField = ({customField, value, onValueChange, onValidChange, error, s
       ) 
     ) : (
       setIsValid(
+        !value ||
+        !(value||"").replace(/\D/g, "") ||
         Object.entries(customField.validations || []).every(([key, regex]) =>
           regex.test(value)
         )
