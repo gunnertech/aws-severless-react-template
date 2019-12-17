@@ -19,7 +19,7 @@ import { CurrentUserProvider } from './src/Contexts/CurrentUser'
 import { I18n } from 'aws-amplify';
 import awsmobile from './aws-exports';
 import useAppSyncClient from './src/Hooks/useAppSyncClient';
-import userCurrentUser from './src/Hooks/useCurrentUser';
+import useCurrentUser from './src/Hooks/useCurrentUser';
 
 
 
@@ -59,7 +59,7 @@ if(!!ENV.sentry_url && !!ENV.sentry_url.replace("<sentry-url>","")) {
 console.disableYellowBox = true;
 
 const CurrentUser = ({cognitoUser, children}) => {
-  const currentUser = userCurrentUser(cognitoUser);
+  const currentUser = useCurrentUser(cognitoUser);
 
   return children(currentUser)
 }
@@ -68,7 +68,7 @@ const CurrentUser = ({cognitoUser, children}) => {
 const App = () => {
   const [cognitoUser, setCognitoUser] = useState(undefined);
   const [fontLoaded, setFontLoaded] = useState(false);
-  const client = useAppSyncClient();
+  const client = useAppSyncClient(cognitoUser);
 
   useEffect(() => {
     Font.loadAsync({

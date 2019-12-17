@@ -6,7 +6,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks'
 
 /* Custom imports end here */
 
-const userCurrentUser = cognitoUser => {
+const useCurrentUser = cognitoUser => {
   const [currentUser, setCurrentUser] = useState(undefined);
 
 
@@ -37,8 +37,6 @@ const userCurrentUser = cognitoUser => {
   useEffect(() => {
     !cognitoUser ? (
       setCurrentUser(null)
-    ) : cognitoUser.username === process.env.REACT_APP_guest_user_name || cognitoUser.attributes.email === process.env.REACT_APP_guest_user_name ? (
-      setCurrentUser(null)
     ) : !loading && !user ? (
       _createUser()
     ) : !loading && !!user ? (
@@ -62,4 +60,4 @@ const userCurrentUser = cognitoUser => {
 }
 
 
-export default userCurrentUser;
+export default useCurrentUser;

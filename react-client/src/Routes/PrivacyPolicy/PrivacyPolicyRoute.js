@@ -1,16 +1,7 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
 
-const styles = theme => ({
-  root: {
-    flexGrow: 1,
-  },
-});
-
-const PrivacyPolicy = props => {
-  const { classes } = props;
-  return (
-    <div className={classes.root}>
+const PrivacyPolicyRoute = () =>
+    <div style={{flexGrow: 1}}>
       <h1>Privacy Policy</h1>
 
 
@@ -125,7 +116,5 @@ const PrivacyPolicy = props => {
           
         </ul>
     </div>
-  );
-}
 
-export default withStyles(styles)(PrivacyPolicy);
+export default PrivacyPolicyRoute;

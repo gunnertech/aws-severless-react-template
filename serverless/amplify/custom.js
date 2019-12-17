@@ -93,6 +93,20 @@ const getAuthRoleName = params => (
     )
 )
 
+const getUnAuthRoleName = params => (
+  awscreds({stage: params.stage, projectName: params.projectName})
+    .then(credentials =>
+      (new AWS.IAM({
+        credentials,
+        region: 'us-east-1'
+      }))
+      .listRoles()
+      .promise()
+      .then(data => Promise.resolve(data.Roles.find(role => role.RoleName.endsWith('-unauthRole')).RoleName))
+      .catch(console.log)
+    )
+)
+
 const getUserPoolName = params => (
   awscreds({stage: params.stage, projectName: params.projectName})
     .then(credentials =>
@@ -116,11 +130,13 @@ module.exports.custom = () => {
     getStreams({stage: stage, projectName: doc[stage].SERVICE, env: doc, secrets: secrets}),
     getUserPoolName({stage: stage, projectName: doc[stage].SERVICE, env: doc, secrets: secrets}),
     getTableNames({stage: stage, projectName: doc[stage].SERVICE, env: doc, secrets: secrets}),
+    getUnAuthRoleName({stage: stage, projectName: doc[stage].SERVICE, env: doc, secrets: secrets}),
   ])
     .then(arr => Promise.resolve({
       auth_role_name: arr[0],
       streams: arr[1],
       user_pool_name: arr[2],
-      tableNames: arr[3]
+      tableNames: arr[3],
+      unauth_role_name: arr[4],
     }))
 }

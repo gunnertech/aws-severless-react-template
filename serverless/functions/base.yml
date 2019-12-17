@@ -5,9 +5,6 @@ verifyDomain:
 verifyDkim:
   Condition: ShouldCreateHostedZone
   handler: handlers/cloudformation/verifyDkim.js
-createAdminUser:
-  Condition: ShouldCreateAdminUserSecret
-  handler: handlers/cloudformation/createAdminUser.js
 createIdentityPoolMapping:
   handler: handlers/cloudformation/createIdentityPoolMapping.js
   # getStackLastUpdatedTime:

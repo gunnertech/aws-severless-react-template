@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React, { useState, useEffect } from 'react';
 import SignUp from "./SignUp"
 import SignIn from "./SignIn"
@@ -80,82 +82,82 @@ const Auth = ({
   customFields = {
     "phone_number": {
       label: "Mobile Phone",
-      required: true,
+      required: false,
       type: 'phone',
       initialValue: "",
       validations: {
         "Valid phone number": /^\+\d[\d ][\d ]\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/
       }
     },
-    "family_name": {
-      label: "Last Name",
-      required: true,
-      type: 'text',
-      initialValue: "",
-      validations: {
-        "Can't be blank": /^.+$/
-      }
-    },
-    "given_name": {
-      label: "First Name",
-      required: true,
-      type: 'text',
-      initialValue: "",
-      validations: {
-        "Can't be blank": /^.+$/
-      }
-    },
-    "address": {
-      label: "Address",
-      required: true,
-      type: 'text',
-      initialValue: "",
-      validations: {
-        "Can't be blank": /^.+$/
-      }
-    },
-    "birthdate": {
-      label: "Birthdate",
-      required: true,
-      type: 'text',
-      initialValue: "",
-      validations: {
-        "Can't be blank": /^.+$/
-      }
-    },
-    "custom:address2": {
-      label: "Address 2",
-      required: false,
-      type: 'text',
-      initialValue: "",
-      validations: {}
-    },
-    "custom:city": {
-      label: "City",
-      required: true,
-      type: 'text',
-      initialValue: "",
-      validations: {
-        "Can't be blank": /^.+$/
-      }
-    },
-    "custom:zip": {
-      label: "Zip",
-      required: true,
-      type: 'text',
-      initialValue: "",
-      validations: {
-        "Must be a valid zip code": /^\d{5}$|^\d{5}-\d{4}$/
-      }
-    },
-    "custom:state": {
-      label: "State",
-      required: true,
-      type: 'text',
-      initialValue: "",
-      validations: {},
-      options: STATES.map(([label, value]) => ({label, value}))
-    },
+    // "family_name": {
+    //   label: "Last Name",
+    //   required: true,
+    //   type: 'text',
+    //   initialValue: "",
+    //   validations: {
+    //     "Can't be blank": /^.+$/
+    //   }
+    // },
+    // "given_name": {
+    //   label: "First Name",
+    //   required: true,
+    //   type: 'text',
+    //   initialValue: "",
+    //   validations: {
+    //     "Can't be blank": /^.+$/
+    //   }
+    // },
+    // "address": {
+    //   label: "Address",
+    //   required: true,
+    //   type: 'text',
+    //   initialValue: "",
+    //   validations: {
+    //     "Can't be blank": /^.+$/
+    //   }
+    // },
+    // "birthdate": {
+    //   label: "Birthdate",
+    //   required: true,
+    //   type: 'text',
+    //   initialValue: "",
+    //   validations: {
+    //     "Can't be blank": /^.+$/
+    //   }
+    // },
+    // "custom:address2": {
+    //   label: "Address 2",
+    //   required: false,
+    //   type: 'text',
+    //   initialValue: "",
+    //   validations: {}
+    // },
+    // "custom:city": {
+    //   label: "City",
+    //   required: true,
+    //   type: 'text',
+    //   initialValue: "",
+    //   validations: {
+    //     "Can't be blank": /^.+$/
+    //   }
+    // },
+    // "custom:zip": {
+    //   label: "Zip",
+    //   required: true,
+    //   type: 'text',
+    //   initialValue: "",
+    //   validations: {
+    //     "Must be a valid zip code": /^\d{5}$|^\d{5}-\d{4}$/
+    //   }
+    // },
+    // "custom:state": {
+    //   label: "State",
+    //   required: true,
+    //   type: 'text',
+    //   initialValue: "",
+    //   validations: {},
+    //   options: STATES.map(([label, value]) => ({label, value}))
+    // },
       
   }
 }) => {
@@ -195,7 +197,7 @@ const Auth = ({
             initialUsernameValue={values.username}
             initialPasswordValue={values.password} 
             usernameField={usernameField}
-            order={['username', 'password', 'phone_number', 'given_name', 'family_name', 'address', 'custom:address2', 'custom:city', 'custom:state', "custom:zip", "birthdate"]}
+            order={['username', 'password', 'phone_number']}
             customFields={customFields}
             onAuthStateChange={(authState, message) => [setAuthState(authState), setMessage(message)]}
             getValues={getValues}

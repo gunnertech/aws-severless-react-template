@@ -11,24 +11,18 @@ cody: {
     cdn: 'd39auyp1deqjks.cloudfront.net',
     base_url: "https://cody.demxohd6gpgdd.amplifyapp.com",
     sentry_url: '<sentry-url>',
-    guest_user_name: null,
-    guest_password: null
   },
   
 staging: {
     cdn: 'dr7rwb9vnk0kt.cloudfront.net',
     base_url: "https://staging.d39zc1b92k60o6.amplifyapp.com",
     sentry_url: '<sentry-url>',
-    guest_user_name: null,
-    guest_password: null
   },
   
 dary: {
     cdn: 'd318wd2uqf9jsy.cloudfront.net',
     base_url: "https://dary.d35g4cufl7b8q9.amplifyapp.com",
     sentry_url: '<sentry-url>',
-    guest_user_name: null,
-    guest_password: null
   },
   //<new-environment>
 

@@ -1,44 +1,28 @@
-import React from 'react';
-import LayoutComponent from '../Components/Layout'
+import React, { useState } from 'react';
+import LayoutComponent from '../Components/Layout/index'
 
 const Layout = React.createContext({
   showNav: () => null,
   hideNav: () => null
 });
 
-export class LayoutProvider extends React.Component {
-  constructor(props) {
-    super(props);
+const LayoutProvider = ({children}) => {
+  const [showNav, setShowNav] = useState(true);
 
-    this.state = {
-      showNav: this.props.showNav
-    };
-  }
-
-  showNav = () => 
-    this.setState({
-      showNav: true
-    });
-  
-  hideNav = () => 
-    this.setState({
-      showNav: false
-    });
-
-  render() {
-    return (
-      <Layout.Provider
-        value={{
-          showNav: this.showNav,
-          hideNav: this.hideNav
-        }}
-      >
-        <LayoutComponent showNav={this.state.showNav}>
-          {this.props.children}
-        </LayoutComponent>
-      </Layout.Provider>
-    );
-  }
+  return (
+    <Layout.Provider
+      value={{
+        showNav: () => setShowNav(true),
+        hideNav: () => setShowNav(false)
+      }}
+    >
+      <LayoutComponent showNav={showNav}>
+        {children}
+      </LayoutComponent>
+    </Layout.Provider>
+  );
 }
 
-export const LayoutConsumer = Layout.Consumer;
+const LayoutConsumer = Layout.Consumer;
+
+export { LayoutProvider, LayoutConsumer };

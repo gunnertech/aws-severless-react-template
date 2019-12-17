@@ -27,24 +27,12 @@ Parameters:
   userPoolId:
     Type: String
     Default: ${self:custom.userPoolId, 'NONE'}
-  guestUserName:
-    Type: String
-    Default: ${self:custom.guestUserName, 'NONE'}
-  adminUserName:
-    Type: String
-    Default: ${self:custom.secrets.ADMIN_USERNAME, ''}
-  adminUserEmail:
-    Type: String
-    Default: ${self:custom.secrets.ADMIN_EMAIL, ''}
-  adminUserPhone:
-    Type: String
-    Default: ${self:custom.secrets.ADMIN_PHONE, ''}
-  adminUserPassword:
-    Type: String
-    Default: ${self:custom.secrets.ADMIN_PASSWORD, ''}
   authRoleName:
     Type: String
     Default: ${self:custom.authRoleName, 'NONE'}
+  unAuthRoleName:
+    Type: String
+    Default: ${self:custom.unAuthRoleName, 'NONE'}
   systemEmailAddress:
     Type: String
     Default: ${self:custom.environment.SYSTEM_EMAIL_ADDRESS, ""}
@@ -73,19 +61,6 @@ Conditions:
           - ""
       - Condition: HasClusterUserName
 
-  ShouldCreateAdminUserSecret:
-    Fn::Not:
-      - Fn::Equals:
-        - Ref: adminUserPassword
-        - ""
-
-  ShouldCreateGuestUser:
-    Fn::And:
-      - Fn::Not:
-        - Fn::Equals:
-          - Ref: guestUserName
-          - "NONE"
-      - Condition: ShouldCreateUserPoolGroups
 
   ShouldCreateUserPoolGroups:
     Fn::Not:
@@ -97,6 +72,12 @@ Conditions:
     Fn::Not:
       - Fn::Equals:
         - Ref: domainName
+        - "NONE"
+
+  ShouldCreateCustomUnAuthPolicy:
+    Fn::Not:
+      - Fn::Equals:
+        - Ref: unAuthRoleName
         - "NONE"
 
   ShouldCreateCustomPolicy:
@@ -162,25 +143,6 @@ Resources:
       AlarmActions:
         - Ref: ErrorLogNotificationSns
         
-  AdminUserSecret:
-    Condition: ShouldCreateAdminUserSecret
-    Type: "AWS::SecretsManager::Secret"
-    Properties:
-      Name: AdminUserSecret
-      Description: "Admin User Secret"
-      SecretString: 
-        Fn::Join: 
-          - ''
-          - - '{"username":"'
-            - Ref: adminUserName
-            - '","email":"'
-            - Ref: adminUserEmail
-            - '","phone":"'
-            - Ref: adminUserPhone
-            - '","password":"'
-            - Ref: adminUserPassword
-            - '"}'
-
   DbSecret:
     Condition: ShouldCreateDbCluster
     Type: "AWS::SecretsManager::Secret"
@@ -225,43 +187,34 @@ Resources:
             Effect: "Allow"
             Action: 
               - "ses:SendEmail"
-            Resource: "arn:aws:ses:*"
+              - "cognito-idp:ListUsers"
+            Resource: "*"
       PolicyName: ServerlessCustomPolicy
       Roles:
         - Ref: authRoleName
-  
-  CognitoUserApiUser:
-    Condition: ShouldCreateGuestUser
-    Type: AWS::Cognito::UserPoolUser
-    Properties:
-      Username: 
-        Ref: guestUserName
-      DesiredDeliveryMediums:
-        - EMAIL
-      UserPoolId:
-        Ref: userPoolId
-      UserAttributes:
-        - Name: email
-          Value:
-            Ref: guestUserName
-        - Name: name
-          Value: "API"
-        - Name: email_verified
-          Value: "true"
+
+
+  AddUserToUnAuthIamPolicy:
+    Condition: ShouldCreateCustomUnAuthPolicy
+    Type: AWS::IAM::Policy
+    Properties: 
+      PolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Action: 
+              - "cognito-idp:ListUsers"
+            Resource: "*"
+      PolicyName: UnAuthCustomPolicy
+      Roles:
+        - Ref: unAuthRoleName
   
   CognitoUserPoolUsersGroup:
     Condition: ShouldCreateUserPoolGroups
     Type: AWS::Cognito::UserPoolGroup
     Properties:
       GroupName: Users
-      UserPoolId:
-        Ref: userPoolId
-
-  CognitoUserPoolAdminsGroup:
-    Condition: ShouldCreateUserPoolGroups
-    Type: AWS::Cognito::UserPoolGroup
-    Properties:
-      GroupName: Admins
       UserPoolId:
         Ref: userPoolId
 
@@ -427,15 +380,6 @@ Resources:
       ServiceToken:
         Fn::GetAtt:
           - VerifyDkimLambdaFunction
-          - Arn
-  AdminUserCreation:
-    Condition: ShouldCreateAdminUserSecret
-    Type: Custom::AdminUserCreation
-    Properties:
-      TriggerVersion: 1
-      ServiceToken:
-        Fn::GetAtt:
-          - CreateAdminUserLambdaFunction
           - Arn
   AdminCognitoGroupMapping:
     Type: Custom::AdminCognitoGroupMapping

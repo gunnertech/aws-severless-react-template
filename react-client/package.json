@@ -39,17 +39,21 @@
     "react-jss": "latest",
     "react-mdi-props": "latest",
     "react-router-dom": "latest",
-    "react-scripts": "2.1.1",
+    "react-scripts": "3.3.0",
     "react-text-mask": "^5.4.3",
     "recharts": "latest",
     "shortid": "^2.2.14",
     "uuid-v4": "^0.1.0"
   },
+  "resolutions": {
+    "apollo-client": "2.6.4"
+  },
   "scripts": {
     "start": "rm -rf ./.env.development && cp ./.env.$STAGE ./.env.development && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "preinstall": "npx npm-force-resolutions"
   },
   "eslintConfig": {
     "extends": "react-app"

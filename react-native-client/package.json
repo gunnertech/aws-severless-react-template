@@ -9,13 +9,14 @@
     "web": "./node_modules/.bin/expo-env --env=$STAGE && expo start --web",
     "eject": "expo eject",
     "build:ios": "expo build:ios",
-    "build:android": "expo build:android"
+    "build:android": "expo build:android",
+    "preinstall": "npx npm-force-resolutions"
   },
   "dependencies": {
     "@apollo/react-hooks": "latest",
     "@expo/react-native-action-sheet": "^3.4.0",
     "@react-native-community/netinfo": "4.6.0",
-    "apollo-client": "latest",
+    "apollo-client": "2.6.4",
     "apollo-link": "latest",
     "apollo-link-state": "latest",
     "aws-amplify": "latest",
@@ -52,6 +53,9 @@
     "rn-prompt": "^1.0.3",
     "sentry-expo": "~2.0.0",
     "uuid-v4": "^0.1.0"
+  },
+  "resolutions": {
+    "apollo-client": "2.6.4"
   },
   "devDependencies": {
     "babel-preset-expo": "^7.0.0",
