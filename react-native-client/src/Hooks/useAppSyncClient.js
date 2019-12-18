@@ -4,7 +4,7 @@ import { Auth } from 'aws-amplify';
 import AWSappSyncClient, { AUTH_TYPE } from "aws-appsync";
 
 
-import appSyncConfig from "../aws-exports";
+import appSyncConfig from "../../aws-exports";
 
 // Client 1 uses API_KEY as auth type
 const apiKeyClient = new AWSappSyncClient({

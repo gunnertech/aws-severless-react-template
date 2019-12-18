@@ -1,1 +1,1 @@
-export { default } from './SignOutScreen'
+export { default } from './SignOutContainer'

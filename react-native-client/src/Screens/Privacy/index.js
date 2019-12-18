@@ -1,1 +1,1 @@
-export { default } from './PrivacyScreen'
+export { default } from './PrivacyView'

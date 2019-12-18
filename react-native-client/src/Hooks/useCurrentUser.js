@@ -11,8 +11,8 @@ const useCurrentUser = cognitoUser => {
 
 
   const {error, loading, data: {getUser: user} = {}} = {error: null, loading: false, data: {getUser: null}};
-  const [_updateUser, updateUser] = () => [Promise.resolve(null), null];
-  const [_createUser, createUser] = () => [Promise.resolve(null), null];
+  const [_updateUser, updateUser] = [() => Promise.resolve(null), null];
+  const [_createUser, createUser] = [() => Promise.resolve(null), null];
 
   // const {loading, error, data: {getUser: user} = {}} = useQuery(User.queries.get, {variables: {id: ((cognitoUser||{}).username || '<>')}});
 
