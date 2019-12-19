@@ -11,10 +11,23 @@ import CognitoIdentityServiceProvider  from 'aws-sdk/clients/cognitoidentityserv
 import IAM  from 'aws-sdk/clients/iam';
 import CognitoIdentity  from 'aws-sdk/clients/cognitoidentity';
 import AWSAppSyncClient, { AUTH_TYPE } from "aws-appsync";
+import Firehose from  'aws-sdk/clients/firehose';
+import S3 from 'aws-sdk/clients/s3';
 
 
 
 import awsmobile from '../aws-exports';
+
+const s3 = new S3({
+  region: awsmobile.aws_appsync_region
+});
+
+const firehose = new Firehose({
+ 
+  region: awsmobile.aws_appsync_region,
+});
+
+
 
 const textract = new Textract({
   apiVersion: '2018-06-27',
@@ -73,5 +86,7 @@ export {
   cognito, 
   iam, 
   cognitoidentity,
-  textract
+  textract,
+  s3,
+  firehose
 };

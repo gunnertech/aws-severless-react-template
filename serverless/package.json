@@ -9,6 +9,7 @@
     "@babel/cli": "latest",
     "@babel/core": "latest",
     "@babel/preset-env": "latest",
+    "aws-sdk": "latest",
     "babel-loader": "latest",
     "babel-plugin-source-map-support": "latest",
     "serverless": "latest",
@@ -31,6 +32,7 @@
     "graphql": "latest",
     "graphql-tag": "latest",
     "js-yaml": "^3.13.1",
-    "source-map-support": "latest"
+    "source-map-support": "latest",
+    "uuid-v4": "^0.1.0"
   }
 }

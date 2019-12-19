@@ -29,6 +29,7 @@ package:
 
 plugins:
   - serverless-webpack
+  - serverless-prune-plugin
   - serverless-iam-roles-per-function
 
 
