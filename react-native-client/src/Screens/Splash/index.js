@@ -1,1 +1,1 @@
-export { default } from './SplashContainer'
+export { default } from './SplashScreen'
