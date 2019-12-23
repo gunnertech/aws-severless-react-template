@@ -28,10 +28,12 @@
     "aws-appsync": "latest",
     "axios": "^0.19.0",
     "cross-fetch": "^3.0.2",
+    "moment": "^2.24.0",
     "fs-extra": "^8.0.1",
     "graphql": "latest",
     "graphql-tag": "latest",
     "js-yaml": "^3.13.1",
+    "serverless-iam-roles-per-function": "^2.0.2",
     "source-map-support": "latest",
     "uuid-v4": "^0.1.0"
   }
