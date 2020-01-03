@@ -1,4 +1,0 @@
-doTest:
-  handler: handlers/doTest.js
-  events: 
-    - http: GET doTest

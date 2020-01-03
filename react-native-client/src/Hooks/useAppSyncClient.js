@@ -1,10 +1,12 @@
+/* eslint-disable */
+
 import { useEffect, useState } from 'react'
 import { Auth } from 'aws-amplify';
 
 import AWSappSyncClient, { AUTH_TYPE } from "aws-appsync";
 
 
-import appSyncConfig from "../../aws-exports";
+import appSyncConfig from "../aws-exports";
 
 // Client 1 uses API_KEY as auth type
 const apiKeyClient = new AWSappSyncClient({
@@ -18,20 +20,21 @@ const apiKeyClient = new AWSappSyncClient({
 const cognitoClient = new AWSappSyncClient({
   url: appSyncConfig.aws_appsync_graphqlEndpoint,
   region: appSyncConfig.aws_appsync_region,
+  disableOffline: true,
   auth: { 
     type: AUTH_TYPE.AMAZON_COGNITO_USER_POOLS,
     jwtToken: async () => (await Auth.currentSession()).getIdToken().getJwtToken(),
-  },
-  disableOffline: true,
+  }
 });
 
 
 
 const useAppSyncClient = cognitoUser => {
+
   const [appSyncClient, setAppSyncClient] = useState(null);
 
   useEffect(() => {
-    setAppSyncClient(!!cognitoUser ? cognitoClient : apiKeyClient)
+    setAppSyncClient(cognitoUser === undefined ? null : !!cognitoUser ? cognitoClient : apiKeyClient)
     
     return () => setAppSyncClient(null)
   }, [!!cognitoUser]);
