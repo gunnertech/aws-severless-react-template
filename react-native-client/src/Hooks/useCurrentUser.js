@@ -59,10 +59,10 @@ const useCurrentUser = cognitoUser => {
 
   useEffect(() => {
     !!lastUpdatedAt &&
-    user?.updatedAt > lastUpdatedAt &&
+    (user?.updatedAt > lastUpdatedAt || !currentUser) &&
     !!cognitoUser && 
     setCurrentUser({...user, ...cognitoUser, groups: (cognitoUser.signInUserSession.accessToken.payload['cognito:groups'] || [])})
-  }, [user?.updatedAt, lastUpdatedAt, !!cognitoUser])
+  }, [user?.updatedAt, lastUpdatedAt, !!cognitoUser, !!currentUser])
 
   useEffect(() => {
     !!createUser &&
