@@ -1,5 +1,7 @@
+/* eslint-disable */
+
 import { useState, useEffect } from "react";
-import { useQuery, useMutation } from '@apollo/react-hooks'
+// import { useQuery, useMutation } from '@apollo/react-hooks'
 
 /* Custom imports go here*/
 // import User from "../api/User"
@@ -8,11 +10,13 @@ import { useQuery, useMutation } from '@apollo/react-hooks'
 
 const useCurrentUser = cognitoUser => {
   const [currentUser, setCurrentUser] = useState(undefined);
+  const [lastUpdatedAt, setLastUpdatedAt] = useState(null);
 
-
-  const {error, loading, data: {getUser: user} = {}} = {error: null, loading: false, data: {getUser: null}};
-  const [_updateUser, updateUser] = [() => Promise.resolve(null), null];
-  const [_createUser, createUser] = [() => Promise.resolve(null), null];
+  const {loading, data: {getUser: user} = {}} = {loading: false, data: {getUser: null}};
+  const [_updateUser, updateUser] = [() => Promise.resolve(true), null];
+  const [_createUser, createUser] = [() => Promise.resolve(true), true];
+  const refetch = () => null;
+  const user = null;
 
   // const {loading, error, data: {getUser: user} = {}} = useQuery(User.queries.get, {variables: {id: ((cognitoUser||{}).username || '<>')}});
 
@@ -32,7 +36,8 @@ const useCurrentUser = cognitoUser => {
   //   }}
   // });
 
-  !!error && console.log(error);
+  // !!error && console.log(error);
+
 
   useEffect(() => {
     !cognitoUser ? (
@@ -42,18 +47,35 @@ const useCurrentUser = cognitoUser => {
     ) : !loading && !!user ? (
       _updateUser()
     ) : (
-      null
+      console.log(null)
     )
-  }, [cognitoUser, !!user, loading]);
+  }, [cognitoUser, users?.length, loading]);
+
+  useEffect(() => {
+    !!refetch &&
+    !!lastUpdatedAt &&
+    refetch()
+  }, [lastUpdatedAt])
+
+  useEffect(() => {
+    !!lastUpdatedAt &&
+    user?.updatedAt > lastUpdatedAt &&
+    !!cognitoUser && 
+    setCurrentUser({...user, ...cognitoUser, groups: (cognitoUser.signInUserSession.accessToken.payload['cognito:groups'] || [])})
+  }, [user?.updatedAt, lastUpdatedAt, !!cognitoUser])
 
   useEffect(() => {
     !!createUser &&
-    setCurrentUser({...createUser, ...cognitoUser, groups: (cognitoUser.signInUserSession.accessToken.payload['cognito:groups'] || [])})
+    !!cognitoUser &&
+    setLastUpdatedAt(createUser.updatedAt)
+    // setCurrentUser({...createUser, ...cognitoUser, groups: (cognitoUser.signInUserSession.accessToken.payload['cognito:groups'] || [])})
   }, [!!createUser, !!cognitoUser])
 
   useEffect(() => {
     !!updateUser &&
-    setCurrentUser({...updateUser, ...cognitoUser, groups: (cognitoUser.signInUserSession.accessToken.payload['cognito:groups'] || [])})
+    !!cognitoUser &&
+    setLastUpdatedAt(updateUser.updatedAt)
+    // setCurrentUser({...updateUser, ...cognitoUser, groups: (cognitoUser.signInUserSession.accessToken.payload['cognito:groups'] || [])})
   }, [!!updateUser, !!cognitoUser])
 
   return currentUser;

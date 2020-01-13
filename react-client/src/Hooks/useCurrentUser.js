@@ -10,11 +10,13 @@ import { useState, useEffect } from "react";
 
 const useCurrentUser = cognitoUser => {
   const [currentUser, setCurrentUser] = useState(undefined);
-
+  const [lastUpdatedAt, setLastUpdatedAt] = useState(null);
 
   const {loading, data: {getUser: user} = {}} = {loading: false, data: {getUser: null}};
   const [_updateUser, updateUser] = [() => Promise.resolve(true), null];
   const [_createUser, createUser] = [() => Promise.resolve(true), true];
+  const refetch = () => null;
+  const user = null;
 
   // const {loading, error, data: {getUser: user} = {}} = useQuery(User.queries.get, {variables: {id: ((cognitoUser||{}).username || '<>')}});
 
@@ -47,18 +49,33 @@ const useCurrentUser = cognitoUser => {
     ) : (
       console.log(null)
     )
-  }, [cognitoUser, !!user, loading]);
+  }, [cognitoUser, users?.length, loading]);
+
+  useEffect(() => {
+    !!refetch &&
+    !!lastUpdatedAt &&
+    refetch()
+  }, [lastUpdatedAt])
+
+  useEffect(() => {
+    !!lastUpdatedAt &&
+    user?.updatedAt > lastUpdatedAt &&
+    !!cognitoUser && 
+    setCurrentUser({...user, ...cognitoUser, groups: (cognitoUser.signInUserSession.accessToken.payload['cognito:groups'] || [])})
+  }, [user?.updatedAt, lastUpdatedAt, !!cognitoUser])
 
   useEffect(() => {
     !!createUser &&
     !!cognitoUser &&
-    setCurrentUser({...createUser, ...cognitoUser, groups: (cognitoUser.signInUserSession.accessToken.payload['cognito:groups'] || [])})
+    setLastUpdatedAt(createUser.updatedAt)
+    // setCurrentUser({...createUser, ...cognitoUser, groups: (cognitoUser.signInUserSession.accessToken.payload['cognito:groups'] || [])})
   }, [!!createUser, !!cognitoUser])
 
   useEffect(() => {
     !!updateUser &&
     !!cognitoUser &&
-    setCurrentUser({...updateUser, ...cognitoUser, groups: (cognitoUser.signInUserSession.accessToken.payload['cognito:groups'] || [])})
+    setLastUpdatedAt(updateUser.updatedAt)
+    // setCurrentUser({...updateUser, ...cognitoUser, groups: (cognitoUser.signInUserSession.accessToken.payload['cognito:groups'] || [])})
   }, [!!updateUser, !!cognitoUser])
 
   return currentUser;
