@@ -8,6 +8,7 @@ import AWSappSyncClient, { AUTH_TYPE } from "aws-appsync";
 
 import appSyncConfig from "../aws-exports";
 
+
 // Client 1 uses API_KEY as auth type
 const apiKeyClient = new AWSappSyncClient({
   url: appSyncConfig.aws_appsync_graphqlEndpoint,
@@ -37,7 +38,7 @@ const useAppSyncClient = cognitoUser => {
     setAppSyncClient(cognitoUser === undefined ? null : !!cognitoUser ? cognitoClient : apiKeyClient)
     
     return () => setAppSyncClient(null)
-  }, [!!cognitoUser]);
+  }, [JSON.stringify(cognitoUser)]);
 
   return appSyncClient;
 }
