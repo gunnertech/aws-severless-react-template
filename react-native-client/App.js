@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import Amplify, { Auth, Hub } from 'aws-amplify';
 // import { Rehydrated } from 'aws-appsync-react';
 import { ApolloProvider } from 'react-apollo';
+import { ActionSheetProvider } from '@expo/react-native-action-sheet'
 
 import * as Font from 'expo-font';
-import Sentry from 'sentry-expo';
+import { FormattedProvider } from 'react-native-globalize';
+// import * as Sentry from 'sentry-expo';
+
 import { ThemeProvider } from 'react-native-elements';
 import AppNavigator from './src/Navigators/App'
 import muiTheme from './src/Styles/combinedTheme'
@@ -25,7 +28,6 @@ import useCurrentUser from './src/Hooks/useCurrentUser';
 
 Amplify.configure({
   ...awsmobile,
-  // storage: MemoryStorageNew
 });
 
 const authScreenLabels = {
@@ -51,8 +53,11 @@ I18n.setLanguage('en');
 I18n.putVocabularies(authScreenLabels);
 
 if(!!ENV.sentry_url && !!ENV.sentry_url.replace("<sentry-url>","")) {
-  Sentry.enableInExpoDevelopment = false;
-  Sentry.config(ENV.sentry_url).install();
+  // Sentry.init({
+  //   dsn: ENV.sentry_url,
+  //   enableInExpoDevelopment: true,
+  //   debug: true
+  // });
 }
 
 
@@ -108,23 +113,28 @@ const App = () => {
 
   return (
     !fontLoaded ? null :
+    !client ? null :
     <ApolloProvider client={client}>
       {/* <Rehydrated> */}
+      <ActionSheetProvider>
       <CurrentUser cognitoUser={cognitoUser}>
         {currentUser =>
           <CurrentUserProvider currentUser={currentUser}>
             <ThemeProvider theme={getElementsTheme(muiTheme)}>
-              {
-                typeof(currentUser) === 'undefined' ? (
-                  <></>
-                ) : (
-                  <AppNavigator />
-                )
-              }
+              <FormattedProvider locale="en" currency="USD">
+                {
+                  typeof(currentUser) === 'undefined' ? (
+                    <></>
+                  ) : (
+                    <AppNavigator />
+                  )
+                }
+              </FormattedProvider>
             </ThemeProvider>
           </CurrentUserProvider>
         }
       </CurrentUser>
+      </ActionSheetProvider>
       {/* </Rehydrated> */}
     </ApolloProvider>
   );

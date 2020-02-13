@@ -90,6 +90,11 @@ provider:
         - cognito-idp:AdminAddUserToGroup
         - cognito-idp:AdminSetUserPassword
         - cognito-idp:AdminCreateUser
+        - cognito-idp:AdminGetUser
+        - cognito-idp:AddCustomAttributes
+        - cognito-idp:AdminEnableUser
+        - cognito-idp:AdminUpdateUserAttributes
+        - cognito-idp:listUsers
       Resource: "*"
     - Effect: Allow
       Action:

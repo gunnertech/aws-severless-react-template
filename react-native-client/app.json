@@ -8,7 +8,8 @@
     "sdkVersion": "36.0.0",
     "platforms": [
       "ios",
-      "android"
+      "android",
+      "web"
     ],
     "version": "1.0.4",
     "orientation": "portrait",
