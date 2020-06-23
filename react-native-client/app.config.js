@@ -3,7 +3,7 @@
 const addendum = process.env.STAGE === 'production' ? "" : "-"+process.env.STAGE
 const version = "1.0.8";
 const buildNumber = 33;
-const appName = 'PropSwap';
+const appName = '<project-name>';
 const bundleIdentifier = "com.gunnertech.<project-name>"
 
 export default ({ config }) => ({
@@ -37,7 +37,7 @@ export default ({ config }) => ({
           "config": {
             "organization": "gunner-technology",
             "project": appName.toLowerCase(),
-            "authToken": "affb46815519416b80ebd1f2a4b72c4092ce27d1fe4e44638d7c69ad513c735b"
+            "authToken": ""
           }
         }
       ]
@@ -71,7 +71,7 @@ export default ({ config }) => ({
       ],
       "config": {
         "branch": {
-          "apiKey": "key_live_ajSJ6mTBbDQYRArnoIMiganmwvdq3lew"
+          "apiKey": ""
         }
       }
     },
@@ -81,9 +81,7 @@ export default ({ config }) => ({
         "applinks:"+appName.toLowerCase()+addendum+"-alternate.app.link"
       ],
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Please enable Location Services so PropSwap may determine if you are in an approved location.",
-        "NSCameraUsageDescription": "PropSwap uses your camera to take photos that you can upload with your Listings.",
-        "NSPhotoLibraryUsageDescription": "PropSwap uses your photo library to allow you to upload photos with your Listings"
+        
       },
       "bundleIdentifier": bundleIdentifier+addendum,
       "supportsTablet": true,
@@ -91,7 +89,7 @@ export default ({ config }) => ({
       "config": {
         "usesNonExemptEncryption": false,
         "branch": {
-          "apiKey": "key_live_ajSJ6mTBbDQYRArnoIMiganmwvdq3lew"
+          "apiKey": ""
         }
       }
     },
