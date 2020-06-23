@@ -20,9 +20,13 @@ custom:
   webpack:
     webpackConfig: ./webpack.config.js 
     includeModules: true
-  # output:
-  #   handler: scripts/output.handler
-  #   file: .build/stack.yml
+  splitStacks:
+    perFunction: false
+    perType: true
+    perGroupFunction: false
+  scripts:
+    hooks:
+      'package:initialize': '../scripts/build.sh'
 
 package:
   individually: false
@@ -31,6 +35,8 @@ plugins:
   - serverless-webpack
   - serverless-prune-plugin
   - serverless-iam-roles-per-function
+  - serverless-plugin-split-stacks
+  - serverless-plugin-scripts
 
 
 provider:
@@ -47,6 +53,7 @@ provider:
     SYSTEM_EMAIL_ADDRESS: ${self:custom.environment.SYSTEM_EMAIL_ADDRESS}
     DOMAIN_NAME: ${self:custom.environment.DOMAIN_NAME}
     ERROR_QUEUE_NAME: ${self:custom.environment.ERROR_QUEUE_NAME}
+    TABLES: ${file(amplify/custom.js):custom.tableNamesJson}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -90,11 +97,16 @@ provider:
         - cognito-idp:AdminAddUserToGroup
         - cognito-idp:AdminSetUserPassword
         - cognito-idp:AdminCreateUser
+	- cognito-idp:CreateGroup
+        - cognito-idp:GetGroup
         - cognito-idp:AdminGetUser
         - cognito-idp:AddCustomAttributes
         - cognito-idp:AdminEnableUser
+        - cognito-idp:AdminDisableUser
         - cognito-idp:AdminUpdateUserAttributes
-        - cognito-idp:listUsers
+        - cognito-idp:ListUsers
+        - cognito-idp:AdminListGroupsForUser
+        - cognito-idp:AdminRemoveUserFromGroup
       Resource: "*"
     - Effect: Allow
       Action:

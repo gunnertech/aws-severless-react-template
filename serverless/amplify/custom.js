@@ -138,5 +138,6 @@ module.exports.custom = () => {
       user_pool_name: arr[2],
       tableNames: arr[3],
       unauth_role_name: arr[4],
+      tableNamesJson: JSON.stringify(arr[3]),
     }))
 }

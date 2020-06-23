@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView } from 'react-navigation'
+import { SafeAreaView, SafeAreaConsumer } from 'react-native-safe-area-context'
 import useContainerStyles from './ContainerStyles';
 
 

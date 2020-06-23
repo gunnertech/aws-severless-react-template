@@ -8,16 +8,18 @@
   "devDependencies": {
     "@babel/cli": "latest",
     "@babel/core": "latest",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.8.3",
     "@babel/plugin-proposal-optional-chaining": "^7.8.3",
     "@babel/preset-env": "latest",
     "aws-sdk": "latest",
     "babel-loader": "latest",
     "babel-plugin-source-map-support": "latest",
     "serverless": "latest",
-    "serverless-prune-plugin": "^1.4.1",
     "serverless-iam-roles-per-function": "^2.0.2",
     "serverless-plugin-ifelse": "^1.0.4",
+    "serverless-prune-plugin": "^1.4.1",
     "serverless-webpack": "latest",
+    "serverless-plugin-split-stacks": "^1.9.3",
     "shelljs": "^0.8.3",
     "webpack": "latest",
     "webpack-node-externals": "latest"
@@ -26,16 +28,18 @@
   "license": "MIT",
   "dependencies": {
     "amazon-cognito-identity-js": "latest",
-    "aws-appsync": "latest",
+    "aws-appsync": "^3.0.3",
     "axios": "^0.19.0",
     "cross-fetch": "^3.0.2",
-    "moment": "^2.24.0",
     "fs-extra": "^8.0.1",
     "graphql": "latest",
     "graphql-tag": "latest",
     "js-yaml": "^3.13.1",
+    "moment": "^2.24.0",
+    "serverless-plugin-scripts": "^1.0.2",
+    "serverless-stack-output": "^0.2.3",
+    "source-map-support": "^0.5.16",
     "serverless-iam-roles-per-function": "^2.0.2",
-    "source-map-support": "latest",
     "uuid-v4": "^0.1.0"
   }
 }

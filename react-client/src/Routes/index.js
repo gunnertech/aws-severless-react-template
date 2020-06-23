@@ -7,15 +7,16 @@ import PrivacyPolicyRoute from "./PrivacyPolicy";
 import SignOutRoute from "./SignOut";
 import SignInRoute from "./SignIn";
 
-import { LayoutProvider } from '../Contexts/Layout'
+import Layout from 'Components/Layout';
+import { useTracker, PrivateRoute, LayoutProvider } from 'gunner-react/web';
 
-import { useTracker } from '../Hooks/useTracker';
-
-import PrivateRoute from './PrivateRoute'
 
 const Router = () => 
   <BrowserRouter>
-    <LayoutProvider showNav={true}>
+    <LayoutProvider 
+      LayoutComponent={Layout}
+      showNav={true}
+    >
       <Switch>
         <Route path='/' exact component={useTracker(SplashRoute)} />
         <Route path='/sign-out' exact component={useTracker(SignOutRoute)} />

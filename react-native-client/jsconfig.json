@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es2018",
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "paths": {
+      "Hooks/*": ["src/Hooks/*"],
+      "Components/*": ["src/Components/*"],
+      "Contexts/*": ["src/Contexts/*"],
+      "Screens/*": ["src/Screens/*"],
+      "Navigators/*": ["src/Navigators/*"],
+      "Styles/*": ["src/Styles/*"],
+      "Util/*": ["src/Util/*"],
+      "react-shared/*": ["src/react-shared/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+}

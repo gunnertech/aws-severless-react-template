@@ -5,7 +5,7 @@ import useStyles from "./LayoutStyles";
 import LayoutView from "./LayoutView"
 
 
-const LayoutContainer = ({children, showNav}) => {
+export default ({children, showNav}) => {
   const classes = useStyles();
   const location = useLocation();
   return (
@@ -14,5 +14,3 @@ const LayoutContainer = ({children, showNav}) => {
     </LayoutView>
   )
 }
-
-export default LayoutContainer;

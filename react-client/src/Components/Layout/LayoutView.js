@@ -1,16 +1,12 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import { withRouter } from 'react-router-dom';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
 
 import MainNavigation from '../MainNavigation';
 
 
-  
-
-
-const LayoutView = ({location, data, children, showNav, classes}) =>
+export default ({location, data, children, showNav, classes}) =>
   <>
     <CssBaseline />
     <Helmet
@@ -37,6 +33,3 @@ const LayoutView = ({location, data, children, showNav, classes}) =>
       }
     </Container>
   </>
-  
-
-export default withRouter(LayoutView);

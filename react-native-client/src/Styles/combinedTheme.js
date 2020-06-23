@@ -1,15 +1,15 @@
-import React from 'react';
+// import React from 'react';
 // import { COLOR, ThemeContext, getTheme } from 'react-native-material-ui';
 import { ifIphoneX } from 'react-native-iphone-x-helper';
-import hoistNonReactStatics from 'hoist-non-react-statics';
-import { StyleSheet, Dimensions } from 'react-native';
+// import hoistNonReactStatics from 'hoist-non-react-statics';
+import { Dimensions } from 'react-native';
 
-import getElementsTheme from './elementsTheme';
-import getAmplifyTheme from './amplifyTheme';
+// import getElementsTheme from './elementsTheme';
+// import getAmplifyTheme from './amplifyTheme';
 
-const oliveGreen = '#94A545';
-const burgundy = '#8A2529';
-const black = '#231f20';
+// const oliveGreen = '#94A545';
+// const burgundy = '#8A2529';
+// const black = '#231f20';
 
 const dimensions = {
   fullHeight: Dimensions.get('window').height,
@@ -64,7 +64,7 @@ const uiTheme = {
 
 const combinedTheme = {
   ...uiTheme,
-  ...getAmplifyTheme(getElementsTheme(uiTheme)),
+  // ...getAmplifyTheme(getElementsTheme(uiTheme)),
 }
 
 

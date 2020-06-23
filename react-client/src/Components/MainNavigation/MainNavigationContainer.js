@@ -2,11 +2,14 @@ import React, { useState, useContext } from "react";
 
 import useStyles from "./MainNavigationStyles";
 import MainNavigationView from "./MainNavigationView"
-import { CurrentUserContext } from "../../Contexts/CurrentUser";
+import { CurrentUserContext } from "gunner-react";
+import { AppBarContext } from "gunner-react/web";
+import useUnseenComments from "Hooks/useUnseenComments";
 
 const MainNavigationContainer = ({children}) => {
   const classes = useStyles();
   const currentUser = useContext(CurrentUserContext);
+  const appBar = useContext(AppBarContext)
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (

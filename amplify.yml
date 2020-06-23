@@ -1,28 +1,33 @@
 version: 0.1
-backend:
-  phases:
-    build:
-      commands:
-        - amplifyPush --simple
-    postBuild:
-        commands:
-        - ls amplify/src
-        - mv amplify/src/graphql react-client/src
-        - cp amplify/src/aws-exports.js react-client/src
+# backend:
+#   phases:
+#     build:
+#       commands: hi there
+#         - amplifyPush --simple
+#     postBuild:
+#         commands:
+#         # - ls .
+#         # - ls amplify
+#         # - ls amplify/src
+#         # - ls src
+#         # - mv amplify/src/graphql react-client/src
+#         - cp amplify/src/aws-exports.js react-client/src
 frontend:
   phases:
     preBuild:
       commands:
         - cd react-client
-        - yarn global add create-react-app
+        - npm install
+        # - yarn global add create-react-app
     build:
       commands:
-        - yarn install
-        - yarn build
+        - npm run build
   artifacts:
     baseDirectory: /react-client/build
     discardPaths: true
     files:
       - '**/*'
   cache:
-    paths: []
+    paths:
+      - node_modules/**/*
+      - react-client/node_modules/**/*

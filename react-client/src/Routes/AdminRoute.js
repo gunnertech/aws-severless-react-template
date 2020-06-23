@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Route, Redirect } from "react-router-dom";
 
-import { CurrentUserContext } from '../Contexts/CurrentUser'
+import { CurrentUserContext } from 'gunner-react'
 
 
 const AdminRoute = ({ component: Component, ...rest }) => {
@@ -10,7 +10,7 @@ const AdminRoute = ({ component: Component, ...rest }) => {
   return (
     <Route {...rest} render={props => 
       !!currentUser && 
-      currentUser.groups.includes("Admins") ? (
+      /Admins/.test(currentUser.groups.join(",")) ? (
         <Component {...props} />
       ) : (
         <Redirect to='/home' />

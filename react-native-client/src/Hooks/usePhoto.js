@@ -6,17 +6,27 @@ import * as Permissions from 'expo-permissions';
 import { Storage } from 'aws-amplify';
 import ENV from '../environment';
 
+//TODO: gunner-react
 
 
-
-export default withPhoto = requestPhoto => {
+export default requestPhoto => {
   const { showActionSheetWithOptions } = useActionSheet();
   const [photoData, setPhotoData] = useState(null);
   const [buttonIndex, setButtonIndex] = useState(null);
   const [hasPermissions, setHasPermissions] = useState(null);
 
   useEffect(() => {
-    console.log("buttonIndex", buttonIndex)
+    !requestPhoto && 
+    photoData === 'cancelled' &&
+    setPhotoData(null)
+  }, [requestPhoto, JSON.stringify(photoData)])
+
+  useEffect(() => {
+    photoData === 'cancelled' &&
+    setButtonIndex(null)
+  }, [JSON.stringify(photoData)])
+
+  useEffect(() => {
     buttonIndex === 0 ? (
       Permissions.askAsync(Permissions.CAMERA)
         .then(({status}) =>
@@ -36,7 +46,7 @@ export default withPhoto = requestPhoto => {
     ) : buttonIndex === 2 ? (
       setPhotoData("cancelled")
     ) : (
-      console.log("NOPE")
+      null
     )
   }, [buttonIndex]);
 
@@ -52,7 +62,8 @@ export default withPhoto = requestPhoto => {
         })
           .then(result =>
             result.cancelled ? ([
-              setButtonIndex(null)
+              setButtonIndex(null),
+              setPhotoData("cancelled"),
             ]) : ([
               setButtonIndex(null),
               setPhotoData(result)
@@ -62,13 +73,14 @@ export default withPhoto = requestPhoto => {
         ImagePicker.launchCameraAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.Images,
           allowsEditing: true,
-          aspect: [1, 1],
+          // aspect: [1, 1],
           quality: 1,
           base64: true,
         })
           .then(result => 
             result.cancelled ? ([
-              setButtonIndex(null)
+              setButtonIndex(null),
+              setPhotoData("cancelled"),
             ]) : ([
               setButtonIndex(null),
               setPhotoData(result)
@@ -77,14 +89,13 @@ export default withPhoto = requestPhoto => {
       ) : buttonIndex === 2 ? (
         setPhotoData("cancelled")
       ) : (
-        console.log("Nope")
+        null
       )
     ) : hasPermissions === false ? ([
       alert('Sorry, we need camera roll permissions to make this work!'),
-      console.log("What?"),
       setPhotoData("cancelled")
     ]) : (
-      console.log("c")
+      null
     )
   }, [buttonIndex, hasPermissions])
 
@@ -109,7 +120,7 @@ export default withPhoto = requestPhoto => {
         })
         .then(({key}) => Storage.get(key))
         .then(url => url.replace(/^.+\.s3\.amazonaws\.com/,`https://${ENV.cdn}`).split("?")[0])
-        .then(url => console.log(url) || setPhotoData({
+        .then(url => setPhotoData({
           ...photoData,
           uri: url
         }))
@@ -118,7 +129,6 @@ export default withPhoto = requestPhoto => {
         console.log(err);
       });
   }, [(photoData||{}).uri]);
-
 
   return photoData;
 }

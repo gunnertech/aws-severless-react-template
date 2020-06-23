@@ -8,8 +8,8 @@ import { Card, Button } from 'react-native-elements'
 
 import Container from '../../Components/Container'
 
-import { CurrentUserContext } from '../../Contexts/CurrentUser';
-import makeStyles from '../../Hooks/makeStyles';
+import { CurrentUserContext } from 'gunner-react'
+import makeStyles from 'Hooks/makeStyles';
 
 const useStyles = makeStyles(theme => StyleSheet.create({
   welcomeContainer: {

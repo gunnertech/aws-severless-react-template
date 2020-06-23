@@ -12,6 +12,6 @@ ReactDOM.render(<App />, document.getElementById('root'));
 serviceWorker.register({
   onUpdate: () => {
     window.alert("A new version of this app is available. Please close any other tabs running this app and refresh this page.");
-    window.location.reload();
+    window.location.reload(true);
   }
-})
+});

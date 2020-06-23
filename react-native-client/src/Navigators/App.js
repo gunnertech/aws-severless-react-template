@@ -1,20 +1,26 @@
-import { createAppContainer } from 'react-navigation';
+import React from 'react'
 
-import { createStackNavigator, } from 'react-navigation-stack';
+import { createStackNavigator, } from '@react-navigation/stack';
 
-import GatedNavigator from './Gated';
-import SplashScreen from '../Screens/Splash'
-import SignOutScreen from '../Screens/SignOut'
-import PrivacyScreen from '../Screens/Privacy';
-import SignInScreen from '../Screens/SignIn';
+import DrawerNavigator from './Drawer';
+import BlockedScreen from '../Screens/Blocked';
+import useLocation from 'Hooks/useLocation';
+
+const Stack = createStackNavigator();
 
 
-export default createAppContainer(createStackNavigator({
-  Splash: SplashScreen,
-  Gated: GatedNavigator,
-  SignOut: SignOutScreen,
-  SignIn: createStackNavigator({ModalSignIn: {screen: SignInScreen}}, {mode: "modal", headerMode: "none"}),
-  Privacy: createStackNavigator({PrivacyScreen})
-}, {
-  headerMode: 'none',
-}));
+export default () => {
+  const geoAllowed = useLocation();
+  return geoAllowed === null ? (
+    null 
+  ) : !!geoAllowed || true ? (
+    // <Stack.Navigator headerMode="none">
+    //   <Stack.Screen name="Drawer" component={DrawerNavigator} />
+    // </Stack.Navigator>
+    <DrawerNavigator />
+  ) : (
+    <Stack.Navigator headerMode="none">
+      <Stack.Screen name="Blocked" component={BlockedScreen} />
+    </Stack.Navigator>
+  )
+}

@@ -5,10 +5,11 @@ import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
+import ListSubheader from '@material-ui/core/ListSubheader';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
-import { ListItem, ListItemIcon, ListItemText, Button } from '@material-ui/core';
+import { ListItem, ListItemIcon, ListItemText, Button, Divider } from '@material-ui/core';
 
 import MenuIcon from '@material-ui/icons/Menu';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
@@ -16,7 +17,6 @@ import HomeIcon from '@material-ui/icons/Home';
 import AccountKeyIcon from 'mdi-material-ui/AccountKey'
 
 
-import { ActionMenuConsumer } from '../../Contexts/ActionMenu';
 
 const navStyle = 'vertical'; //vertical or horizontal;
 
@@ -67,7 +67,7 @@ const DrawerContents = ({classes, handleDrawerToggle, currentUser}) =>
 
 
 
-const MainNavigationView = ({classes, handleDrawerToggle, mobileOpen, children, currentUser}) => 
+const MainNavigationView = ({classes, appBar, handleDrawerToggle, mobileOpen, children, currentUser}) =>
   <div className={classes.root}>
     <AppBar className={classes.appBar}>
       <Toolbar>
@@ -82,13 +82,53 @@ const MainNavigationView = ({classes, handleDrawerToggle, mobileOpen, children, 
             <MenuIcon />
           </IconButton>
         </Hidden>
-        <Link className={classes.logoLink} to="/" >
-          <img 
-            src={require('../../assets/images/nav-logo.png')}
-            className={classes.logo}
-            alt="Home"
-          />
-        </Link>
+        {
+          !appBar.title &&
+          <Link className={classes.logoLink} to="/" >
+            <img 
+              src={require('../../assets/images/logo-nav.png')}
+              className={classes.logo}
+              alt="Home"
+            />
+          </Link>
+        }
+        {
+          !!appBar.title &&
+          <>
+            <Hidden smDown>
+              <Link className={classes.logoLink} to="/" >
+                <img 
+                  src={require('../../assets/images/logo-nav.png')}
+                  className={classes.logo}
+                  alt="Home"
+                />
+              </Link>
+            </Hidden>
+            <Typography variant="h6">
+              {appBar.title}
+            </Typography>
+          </>
+        }
+        <div style={{flexGrow: 1}} />
+        {
+          (!!appBar.onClickHelp || !!appBar.rightButtons.length) &&
+          <div style={{display: 'flex'}}>
+            {
+              !!appBar.onClickHelp &&
+              <IconButton
+                aria-label="help"
+                aria-haspopup="true"
+                onClick={appBar.onClickHelp}
+                color="inherit"
+              >
+                <HelpIcon />
+              </IconButton>
+            }
+            {
+              appBar.rightButtons.map((button, i) => <React.Fragment key={i}>{button}</React.Fragment>)
+            }
+          </div>
+        }
         {
           navStyle === 'horizontal' &&
           <>
@@ -102,9 +142,6 @@ const MainNavigationView = ({classes, handleDrawerToggle, mobileOpen, children, 
             }
           </>
         }
-        <ActionMenuConsumer>
-          {({Element}) => Element ? Element : null}
-        </ActionMenuConsumer>
       </Toolbar>
     </AppBar>
     <Hidden mdUp>
@@ -112,7 +149,7 @@ const MainNavigationView = ({classes, handleDrawerToggle, mobileOpen, children, 
         variant="temporary"
         // anchor={theme.direction === 'rtl' ? 'right' : 'left'}
         anchor="left"
-        open={mobileOpen}
+        open={!!mobileOpen}
         onClose={handleDrawerToggle}
         classes={{
           paper: classes.drawerPaper,
@@ -121,7 +158,7 @@ const MainNavigationView = ({classes, handleDrawerToggle, mobileOpen, children, 
           keepMounted: true, // Better open performance on mobile.
         }}
       >
-        <DrawerContents currentUser={currentUser} classes={classes} />
+        <DrawerContents handleDrawerToggle={handleDrawerToggle} currentUser={currentUser} classes={classes} />
       </Drawer>
     </Hidden>
     {
@@ -134,7 +171,7 @@ const MainNavigationView = ({classes, handleDrawerToggle, mobileOpen, children, 
             paper: classes.drawerPaper,
           }}
         >
-          <DrawerContents currentUser={currentUser} classes={classes} />
+          <DrawerContents handleDrawerToggle={handleDrawerToggle} currentUser={currentUser} classes={classes} />
         </Drawer>
       </Hidden>
     }
@@ -171,7 +208,11 @@ const MainNavigationView = ({classes, handleDrawerToggle, mobileOpen, children, 
         */}
 
         <Typography variant="caption" paragraph className={classes.footerText}>
-          © {(new Date()).getFullYear()} <a href={process.env.REACT_APP_base_url}><project-name></a>&nbsp;|&nbsp;<Link to={`/privacy-policy`}>Privacy Policy</Link>
+          © {(new Date()).getFullYear()} <Link style={{color: "white"}} to={process.env.REACT_APP_base_url}><project-name></Link>
+          &nbsp;|&nbsp;
+          <Link style={{color: "white"}} to={`/privacy-policy`}>Privacy Policy</Link>
+          &nbsp;&nbsp;|&nbsp;
+          Version {process.env.REACT_APP_VERSION}
         </Typography>
       </footer>
     </div>

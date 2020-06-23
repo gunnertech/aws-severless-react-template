@@ -34,3 +34,7 @@ aws-exports.js
 awsconfiguration.json
 src/graphql
 src/api
+src/api.dump
+src/aws-exports.js
+src/aws-exports.js.bak
+src/aws-exports.js.bak.bak

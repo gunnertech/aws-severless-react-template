@@ -9,6 +9,9 @@ export default makeStyles(theme => ({
       'color': theme.palette.secondary.main,
       'text-decoration': 'none'
     },
+    '.add-to-home-banner': {
+      backgroundColor: "black !important"
+    },
     // 'li, p': {
     //   'color': 'rgba(0, 0, 0, 0.87)',
     //   'font-size': '1.125rem',

@@ -18,3 +18,5 @@ aws-exports.js
 awsconfiguration.json
 src/graphql
 src/api
+
+report.*
