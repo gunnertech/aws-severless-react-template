@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es2018",
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "paths": {
+      "Util/*": ["src/Util/*"],
+      "react-shared/*": ["src/react-shared/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+}

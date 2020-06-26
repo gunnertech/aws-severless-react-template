@@ -78,7 +78,7 @@ const appsync = new AWSAppSyncClient({
   url: awsmobile.aws_appsync_graphqlEndpoint,
   region: awsmobile.aws_appsync_region,
   disableOffline: true,
-  auth: { type: AUTH_TYPE.AWS_IAM, credentials: AWS.config.credentials },
+  auth: { type: AUTH_TYPE.AWS_IAM, credentials: () => AWS.config.credentials },
 });
 
 export { 

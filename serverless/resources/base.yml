@@ -36,6 +36,9 @@ Parameters:
   systemEmailAddress:
     Type: String
     Default: ${self:custom.environment.SYSTEM_EMAIL_ADDRESS, ""}
+  setupAmplifyHosting:
+    Type: String
+    Default: ${self:custom.environment.SETUP_AMPLIFY_HOSTING, ""}
   errorQueueName:
     Type: String
     Default: ${self:custom.environment.ERROR_QUEUE_NAME}
@@ -53,6 +56,12 @@ Conditions:
         - Ref: systemEmailAddress
         - ""
 
+  ShouldSetupAmplifyHosting:
+    Fn::Not:
+      - Fn::Equals:
+        - Ref: setupAmplifyHosting
+        - ""
+
   ShouldCreateDbCluster:
     Fn::And:
       - Fn::Not:
@@ -60,7 +69,6 @@ Conditions:
           - Ref: dbClusterMasterPassword
           - ""
       - Condition: HasClusterUserName
-
 
   ShouldCreateUserPoolGroups:
     Fn::Not:
@@ -85,7 +93,12 @@ Conditions:
       - Fn::Equals:
         - Ref: authRoleName
         - "NONE"
-    
+  
+  ShouldSetupAmplifyDomain:
+    Fn::And:
+      - Condition: ShouldSetupAmplifyHosting
+      - Condition: ShouldCreateHostedZone
+
 Outputs:
   CdnDomainName:
     Description: The domain name of the cloudfront distribution
@@ -119,10 +132,94 @@ Resources:
     Condition: ShouldSendVerificationEmail
     Properties:
       Subscription:
-      - Endpoint: 
-          Ref: systemEmailAddress
+      - Endpoint: "support@gunnertech.com"
         Protocol: email
 
+  AmplifyRole:
+    Type: AWS::IAM::Role
+    Condition: ShouldSetupAmplifyHosting
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - amplify.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: Amplify
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 'amplify:*'
+                Resource: '*'
+
+  AmplifyApp:
+    Type: "AWS::Amplify::App"
+    Condition: ShouldSetupAmplifyHosting
+    Properties:
+      Repository: 
+        Fn::Join: 
+          - ''
+          - - 'https://git-codecommit.us-east-1.amazonaws.com/v1/repos/'
+            - Ref: service
+            - '-'
+            - Ref: stage
+      Name:
+        Ref: service
+      IAMServiceRole: !GetAtt AmplifyRole.Arn
+      EnvironmentVariables: ${file(./resources/hosting.yml)}
+      CustomRules:
+        - Source: '</^[^.]+$|\.(?!(css|mp4|json|gif|ico|jpg|js|png|txt|svg|woff|ttf|map)$)([^.]+$)/>'
+          Target: /index.html
+          Status: '200'
+        - Source: '/<*>'
+          Target: /index.html
+          Status: '404'
+      BuildSpec: |-
+        version: 0.1
+        frontend:
+          phases:
+            preBuild:
+              commands:
+                - cd react-client
+                - npm install
+            build:
+              commands:
+                - npm run build
+          artifacts:
+            baseDirectory: /react-client/build
+            discardPaths: true
+            files:
+              - '**/*'
+          cache:
+            paths:
+              - node_modules/**/*
+              - react-client/node_modules/**/*
+
+  AmplifyBranch:
+    Type: AWS::Amplify::Branch
+    Condition: ShouldSetupAmplifyHosting
+    Properties:
+      BranchName: 
+        Ref: stage
+      AppId: !GetAtt AmplifyApp.AppId
+      EnableAutoBuild: true
+
+  AmplifyDomain:
+    Type: AWS::Amplify::Domain
+    Condition: ShouldSetupAmplifyDomain
+    Properties:
+      AppId: !GetAtt AmplifyApp.AppId
+      DomainName: 
+        Ref: domainName
+      SubDomainSettings:
+        - Prefix: www
+          BranchName: !GetAtt AmplifyBranch.BranchName
+      
   LambdaErrorAlarm:
     DependsOn: ErrorLogNotificationSns
     Type: AWS::CloudWatch::Alarm
@@ -142,7 +239,7 @@ Resources:
       EvaluationPeriods: 1
       AlarmActions:
         - Ref: ErrorLogNotificationSns
-        
+
   DbSecret:
     Condition: ShouldCreateDbCluster
     Type: "AWS::SecretsManager::Secret"
@@ -193,7 +290,6 @@ Resources:
       Roles:
         - Ref: authRoleName
 
-
   AddUserToUnAuthIamPolicy:
     Condition: ShouldCreateCustomUnAuthPolicy
     Type: AWS::IAM::Policy
@@ -217,6 +313,8 @@ Resources:
       GroupName: Users
       UserPoolId:
         Ref: userPoolId
+
+
 
   UploadBucketPolicy: 
     Type: AWS::S3::BucketPolicy
@@ -327,6 +425,7 @@ Resources:
               - "cognito-idp:AdminUpdateUserAttributes"
               - "cognito-idp:AdminListGroupsForUser"
               - "cognito-idp:AdminCreateUser"
+              - "cognito-idp:ListUsers"
             Resource: "arn:aws:cognito-idp:*:*:userpool/*"
           - 
             Effect: "Allow"

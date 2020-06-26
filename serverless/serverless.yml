@@ -26,7 +26,7 @@ custom:
     perGroupFunction: false
   scripts:
     hooks:
-      'package:initialize': '../scripts/build.sh'
+      'package:initialize': '../scripts/build.sh && ./amplify/hosting.js'
 
 package:
   individually: false
@@ -55,40 +55,34 @@ provider:
     ERROR_QUEUE_NAME: ${self:custom.environment.ERROR_QUEUE_NAME}
     TABLES: ${file(amplify/custom.js):custom.tableNamesJson}
   iamRoleStatements:
+    - Effect: "Allow" # xray permissions (required)
+      Action:
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecords"
+      Resource:
+        - "*"
     - Effect: "Allow"
       Action:
-        - "dynamodb:PutItem"
-        - "dynamodb:UpdateItem"
         - "dynamodb:*"
       Resource: "*"
-    - Effect: "Allow"
-      Action:
-        - "cloudformation:describeStacks"
-      Resource: "*"
+    # - Effect: "Allow"
+    #   Action:
+    #     - "cloudformation:describeStacks"
+      # Resource: "*"
     - Effect: "Allow"
       Action:
         - "ses:SendEmail"
-        - "ses:VerifyEmailIdentity"
-        - "ses:VerifyDomainIdentity"
-        - "ses:VerifyDomainDkim"
       Resource: "*"
     - Effect: "Allow"
       Action:
         - "sqs:SendMessage"
         - "sqs:GetQueueUrl"
         - "sqs:ChangeMessageVisibility"
-        - "sqs:DeleteMessage"
-        - "sqs:GetQueueAttributes"
-        - "sqs:ReceiveMessage"
-      Resource: "*"
-    - Effect: "Allow"
-      Action:
         - "sqs:ListQueues"
       Resource: "*"
     - Effect: Allow
       Action:
         - s3:*
-        - SNS:Publish
         - SNS:*
         - secretsmanager:GetSecretValue
       Resource: "*"
@@ -108,27 +102,22 @@ provider:
         - cognito-idp:AdminListGroupsForUser
         - cognito-idp:AdminRemoveUserFromGroup
       Resource: "*"
-    - Effect: Allow
-      Action:
-        - iam:ListRoles
-        - iam:PassRole
-      Resource: "*"
-    - Effect: Allow
-      Action:
-        - "cognito-identity:SetIdentityPoolRoles"
-        - "cognito-identity:ListIdentityPools"
-      Resource: "*"
+    # - Effect: Allow
+    #   Action:
+    #     - iam:ListRoles
+    #     - iam:PassRole
+    #   Resource: "*"
     - Effect: Allow
       Action:
         - "firehose:PutRecord"
         - "firehose:PutRecordBatch"
       Resource: "*"
-    - Effect: Allow
-      Action:
-        - logs:CreateLogGroup
-        - logs:CreateLogStream
-        - logs:PutLogEvents
-      Resource: "*"
+    # - Effect: Allow
+    #   Action:
+    #     - logs:CreateLogGroup
+    #     - logs:CreateLogStream
+    #     - logs:PutLogEvents
+    #   Resource: "*"
     - Effect: Allow
       Action:
         - appsync:GraphQL

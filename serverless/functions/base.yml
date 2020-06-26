@@ -1,11 +1,41 @@
 sendVerificationEmail:
   handler: handlers/cloudformation/sendVerificationEmail.js
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "ses:SendEmail"
+        - "ses:VerifyEmailIdentity"
+        - "ses:VerifyDomainIdentity"
+        - "ses:VerifyDomainDkim"
+      Resource: "*"
 verifyDomain:
   handler: handlers/cloudformation/verifyDomain.js
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "ses:SendEmail"
+        - "ses:VerifyEmailIdentity"
+        - "ses:VerifyDomainIdentity"
+        - "ses:VerifyDomainDkim"
+      Resource: "*"
 verifyDkim:
   Condition: ShouldCreateHostedZone
   handler: handlers/cloudformation/verifyDkim.js
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "ses:SendEmail"
+        - "ses:VerifyEmailIdentity"
+        - "ses:VerifyDomainIdentity"
+        - "ses:VerifyDomainDkim"
+      Resource: "*"
 createIdentityPoolMapping:
   handler: handlers/cloudformation/createIdentityPoolMapping.js
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "cognito-identity:SetIdentityPoolRoles"
+        - "cognito-identity:ListIdentityPools"
+      Resource: "*"
   # getStackLastUpdatedTime:
   #   handler: cfn.getStackLastUpdatedTime

@@ -1,5 +1,5 @@
 projects:
-  simplisurveyv2:
+  <project-name>:
     schemaPath: src/graphql/schema.json
     includes:
       - src/graphql/**/*.js

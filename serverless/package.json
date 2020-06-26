@@ -3,18 +3,20 @@
   "version": "1.0.0",
   "description": "Gunner Technology Serverless Starter Pack",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "package": "./amplify/hosting.js"
   },
   "devDependencies": {
     "@babel/cli": "latest",
     "@babel/core": "latest",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.8.3",
     "@babel/plugin-proposal-optional-chaining": "^7.8.3",
+    "@babel/plugin-proposal-pipeline-operator": "^7.10.1",
     "@babel/preset-env": "latest",
     "aws-sdk": "latest",
     "babel-loader": "latest",
+    "babel-plugin-module-resolver": "^4.0.0",
     "babel-plugin-source-map-support": "latest",
-    "serverless": "latest",
     "serverless-iam-roles-per-function": "^2.0.2",
     "serverless-plugin-ifelse": "^1.0.4",
     "serverless-prune-plugin": "^1.4.1",
@@ -22,7 +24,11 @@
     "serverless-plugin-split-stacks": "^1.9.3",
     "shelljs": "^0.8.3",
     "webpack": "latest",
-    "webpack-node-externals": "latest"
+    "webpack-node-externals": "latest",
+    "serverless-plugin-scripts": "^1.0.2",
+    "serverless-stack-output": "^0.2.3",
+    "source-map-support": "^0.5.16",
+    "serverless-iam-roles-per-function": "^2.0.2"
   },
   "author": "Gunner Technology",
   "license": "MIT",
@@ -36,10 +42,6 @@
     "graphql-tag": "latest",
     "js-yaml": "^3.13.1",
     "moment": "^2.24.0",
-    "serverless-plugin-scripts": "^1.0.2",
-    "serverless-stack-output": "^0.2.3",
-    "source-map-support": "^0.5.16",
-    "serverless-iam-roles-per-function": "^2.0.2",
     "uuid-v4": "^0.1.0"
   }
 }
