@@ -6,7 +6,7 @@ Parameters:
   stage:
     Type: String
     Default: ${self:custom.stage}
-  uploadBucketName:
+  UploadBucketName:
     Type: String
     Default: ${self:custom.uploadBucketName}
   awsRegion:
@@ -99,12 +99,6 @@ Conditions:
       - Condition: ShouldSetupAmplifyHosting
       - Condition: ShouldCreateHostedZone
 
-Outputs:
-  CdnDomainName:
-    Description: The domain name of the cloudfront distribution
-    Value: 
-      "Fn::GetAtt": [ CDN, DomainName ]
-
 Resources:
   ErrorQueue:
     Type: "AWS::SQS::Queue"
@@ -132,7 +126,8 @@ Resources:
     Condition: ShouldSendVerificationEmail
     Properties:
       Subscription:
-      - Endpoint: "support@gunnertech.com"
+      - Endpoint: 
+          Ref: systemEmailAddress
         Protocol: email
 
   AmplifyRole:
@@ -154,7 +149,7 @@ Resources:
             Version: "2012-10-17"
             Statement:
               - Effect: Allow
-                Action: 'amplify:*'
+                Action: '*'
                 Resource: '*'
 
   AmplifyApp:
@@ -208,6 +203,7 @@ Resources:
         Ref: stage
       AppId: !GetAtt AmplifyApp.AppId
       EnableAutoBuild: true
+      Stage: "PRODUCTION"
 
   AmplifyDomain:
     Type: AWS::Amplify::Domain
@@ -221,7 +217,6 @@ Resources:
           BranchName: !GetAtt AmplifyBranch.BranchName
       
   LambdaErrorAlarm:
-    DependsOn: ErrorLogNotificationSns
     Type: AWS::CloudWatch::Alarm
     Condition: ShouldSendVerificationEmail
     Properties:
@@ -238,7 +233,7 @@ Resources:
       Period: 60
       EvaluationPeriods: 1
       AlarmActions:
-        - Ref: ErrorLogNotificationSns
+        - !If [ ShouldSendVerificationEmail, !Ref ErrorLogNotificationSns, !Ref 'AWS::NoValue' ]
 
   DbSecret:
     Condition: ShouldCreateDbCluster
@@ -320,27 +315,29 @@ Resources:
     Type: AWS::S3::BucketPolicy
     Properties: 
       Bucket: 
-        Ref: uploadBucketName
+        Ref: UploadBucketName
       PolicyDocument: 
         Statement: 
           - 
             Action: 
               - "s3:GetObject"
             Effect: "Allow"
-            Resource: { 'Fn::Join': ['', ['arn:aws:s3:::', { 'Ref': "uploadBucketName" }, "/*"]] }
+            Resource: { 'Fn::Join': ['', ['arn:aws:s3:::', { 'Ref': UploadBucketName }, "/*"]] }
             Principal:
               AWS: { 'Fn::Join': ['', ['arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ', { 'Ref': "OriginAccessIdentity" }]] }
           - 
             Action: 
               - "s3:GetObject"
             Effect: "Allow"
-            Resource: { 'Fn::Join': ['', ['arn:aws:s3:::', { 'Ref': "uploadBucketName" }, "/*"]] }
+            Resource: { 'Fn::Join': ['', ['arn:aws:s3:::', { 'Ref': UploadBucketName }, "/*"]] }
             Principal: '*'
+
   OriginAccessIdentity:
     Type: "AWS::CloudFront::CloudFrontOriginAccessIdentity"
     Properties:
         CloudFrontOriginAccessIdentityConfig:
           Comment: "AccessFor"
+
   CDN:
     Type: "AWS::CloudFront::Distribution"
     Properties:
@@ -350,13 +347,13 @@ Resources:
         Enabled: true
         HttpVersion: http2
         Origins:
-          - DomainName: { 'Fn::Join': ['', [{ 'Ref': "uploadBucketName" }, ".s3.amazonaws.com"]] }
-            Id: { 'Fn::Join': ['', ['S3-', { 'Ref': "uploadBucketName" }]] }
+          - DomainName: { 'Fn::Join': ['', [{ 'Ref': UploadBucketName }, ".s3.amazonaws.com"]] }
+            Id: { 'Fn::Join': ['', ['S3-', { 'Ref': UploadBucketName }]] }
             S3OriginConfig:
               OriginAccessIdentity: { 'Fn::Join': ['/', ['origin-access-identity', 'cloudfront', { 'Ref': "OriginAccessIdentity" }]] }
         DefaultCacheBehavior:
           ViewerProtocolPolicy: https-only
-          TargetOriginId: { 'Fn::Join': ['', ['S3-', { 'Ref': "uploadBucketName" }]] }
+          TargetOriginId: { 'Fn::Join': ['', ['S3-', { 'Ref': UploadBucketName }]] }
           AllowedMethods:
             - GET
             - HEAD
@@ -364,6 +361,7 @@ Resources:
           MinTTL: 0
           ForwardedValues:
             QueryString: false
+  
   RepoSNSTopic:
     Type: "AWS::SNS::Topic"
     Properties:

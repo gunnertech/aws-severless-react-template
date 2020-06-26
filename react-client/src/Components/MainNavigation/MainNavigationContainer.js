@@ -4,16 +4,15 @@ import useStyles from "./MainNavigationStyles";
 import MainNavigationView from "./MainNavigationView"
 import { CurrentUserContext } from "gunner-react";
 import { AppBarContext } from "gunner-react/web";
-import useUnseenComments from "Hooks/useUnseenComments";
 
 const MainNavigationContainer = ({children}) => {
   const classes = useStyles();
   const currentUser = useContext(CurrentUserContext);
-  const appBar = useContext(AppBarContext)
+  const appBar = useContext(AppBarContext);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <MainNavigationView handleDrawerToggle={() => setMobileOpen(!mobileOpen)} mobileOpen={mobileOpen} currentUser={currentUser} classes={classes}>
+    <MainNavigationView appBar={appBar} handleDrawerToggle={() => setMobileOpen(!mobileOpen)} mobileOpen={mobileOpen} currentUser={currentUser} classes={classes}>
       {children}
     </MainNavigationView>
   )

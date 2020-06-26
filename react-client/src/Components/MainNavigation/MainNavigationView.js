@@ -1,15 +1,17 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+import HelpIcon from '@material-ui/icons/Help';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
-import ListSubheader from '@material-ui/core/ListSubheader';
+// import ListSubheader from '@material-ui/core/ListSubheader';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
-import { ListItem, ListItemIcon, ListItemText, Button, Divider } from '@material-ui/core';
+import { ListItem, ListItemIcon, ListItemText, Button } from '@material-ui/core';
+// import { Divider } from '@material-ui/core';
 
 import MenuIcon from '@material-ui/icons/Menu';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
@@ -83,7 +85,7 @@ const MainNavigationView = ({classes, appBar, handleDrawerToggle, mobileOpen, ch
           </IconButton>
         </Hidden>
         {
-          !appBar.title &&
+          !appBar?.title &&
           <Link className={classes.logoLink} to="/" >
             <img 
               src={require('../../assets/images/logo-nav.png')}
@@ -93,7 +95,7 @@ const MainNavigationView = ({classes, appBar, handleDrawerToggle, mobileOpen, ch
           </Link>
         }
         {
-          !!appBar.title &&
+          !!appBar?.title &&
           <>
             <Hidden smDown>
               <Link className={classes.logoLink} to="/" >
@@ -105,27 +107,27 @@ const MainNavigationView = ({classes, appBar, handleDrawerToggle, mobileOpen, ch
               </Link>
             </Hidden>
             <Typography variant="h6">
-              {appBar.title}
+              {appBar?.title}
             </Typography>
           </>
         }
         <div style={{flexGrow: 1}} />
         {
-          (!!appBar.onClickHelp || !!appBar.rightButtons.length) &&
+          (!!appBar?.onClickHelp || !!appBar?.rightButtons.length) &&
           <div style={{display: 'flex'}}>
             {
-              !!appBar.onClickHelp &&
+              !!appBar?.onClickHelp &&
               <IconButton
                 aria-label="help"
                 aria-haspopup="true"
-                onClick={appBar.onClickHelp}
+                onClick={appBar?.onClickHelp}
                 color="inherit"
               >
                 <HelpIcon />
               </IconButton>
             }
             {
-              appBar.rightButtons.map((button, i) => <React.Fragment key={i}>{button}</React.Fragment>)
+              appBar?.rightButtons?.map?.((button, i) => <React.Fragment key={i}>{button}</React.Fragment>)
             }
           </div>
         }
@@ -208,7 +210,7 @@ const MainNavigationView = ({classes, appBar, handleDrawerToggle, mobileOpen, ch
         */}
 
         <Typography variant="caption" paragraph className={classes.footerText}>
-          © {(new Date()).getFullYear()} <Link style={{color: "white"}} to={process.env.REACT_APP_base_url}><project-name></Link>
+          © {(new Date()).getFullYear()} <Link style={{color: "white"}} to={process.env.REACT_APP_base_url}>hotbox</Link>
           &nbsp;|&nbsp;
           <Link style={{color: "white"}} to={`/privacy-policy`}>Privacy Policy</Link>
           &nbsp;&nbsp;|&nbsp;

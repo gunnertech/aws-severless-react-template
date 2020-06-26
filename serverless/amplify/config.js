@@ -9,5 +9,6 @@ module.exports.env = () => {
     )
     .map(line => line.replace(/,$/, ""))
     .join(",")
+
   return JSON.parse('{' + contents + '}');
 }

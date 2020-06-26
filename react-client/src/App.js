@@ -12,9 +12,8 @@ import Router from "./Routes"
 import { I18n } from 'aws-amplify';
 
 import awsmobile from './aws-exports';
-import Modal from './Components/Modal';
-import useFindUser from "react-shared/Hooks/useFindUser"
-import useCreateUser from "react-shared/Hooks/useCreateUser"
+import { Modal } from 'gunner-react/web';
+
 
 
 const authScreenLabels = {
@@ -38,9 +37,7 @@ const AddToHomeScreenView = () => {
       <Modal
         title="Install App"
         body={
-          <video width="320" height="240" controls style={{width: '100%', height: 'auto'}} >
-            <source src={require(`../src/assets/videos/add.mp4`)} type="video/mp4" />
-          </video>
+          ""
         }
         onClose={() => setShowHelpModal(false)}
         submitting={false}
@@ -128,11 +125,10 @@ export default () => {
   return (
     <App 
       theme={theme} 
-      useFindUser={useFindUser}
-      useCreateUser={useCreateUser}
       sentryUrl={process.env.REACT_APP_sentry_url.replace("<sentry-url>","")} 
       amplifyConfig={awsmobile} 
       ga={process.env.REACT_APP_GA}
+      useFindUser={({cognitoUser}) => ({user: cognitoUser})}
     >
       <MuiPickersUtilsProvider utils={MomentUtils}>
         <Router />

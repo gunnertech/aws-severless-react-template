@@ -8,11 +8,11 @@ custom:
   environment: ${file(env.yml):${self:custom.stage}}
   secrets: ${file(secrets.yml):${self:custom.stage}}
   domainName: ${self:custom.environment.DOMAIN_NAME}
-  userPoolId: ${file(amplify/config.js):env.aws_user_pools_id}
-  authRoleName: ${file(amplify/custom.js):custom.auth_role_name}
-  unAuthRoleName: ${file(amplify/custom.js):custom.unauth_role_name}
-  uploadBucketName: ${file(amplify/config.js):env.aws_user_files_s3_bucket}
-  stage: ${file(amplify/stage.js):stage}
+  userPoolId: ${file(./amplify/config.js):env.aws_user_pools_id}
+  authRoleName: ${file(./amplify/custom.js):custom.auth_role_name}
+  unAuthRoleName: ${file(./amplify/custom.js):custom.unauth_role_name}
+  uploadBucketName: ${file(./amplify/config.js):env.aws_user_files_s3_bucket}
+  stage: ${file(./amplify/stage.js):stage}
   region: ${opt:region, self:provider.region}
   prune:
     automatic: true
@@ -35,7 +35,7 @@ plugins:
   - serverless-webpack
   - serverless-prune-plugin
   - serverless-iam-roles-per-function
-  - serverless-plugin-split-stacks
+  # - serverless-plugin-split-stacks
   - serverless-plugin-scripts
 
 
@@ -91,7 +91,6 @@ provider:
         - cognito-idp:AdminAddUserToGroup
         - cognito-idp:AdminSetUserPassword
         - cognito-idp:AdminCreateUser
-        - cognito-idp:CreateGroup
         - cognito-idp:GetGroup
         - cognito-idp:AdminGetUser
         - cognito-idp:AddCustomAttributes

@@ -1,6 +1,6 @@
 {
   "name": "<project-name>",
-  "version": "0.1.0",
+  "version": "0.1.6",
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.0.0-rc.4",
@@ -22,7 +22,7 @@
     "dotenv": "^6.0.0",
     "graphql": "^15.1.0",
     "graphql-tag": "^2.10.3",
-    "gunner-react": "^1.1.4",
+    "gunner-react": "^1.1.8",
     "hoist-non-react-statics": "^3.0.1",
     "material-ui-image": "^3.2.3",
     "mdi-material-ui": "^6.16.0",

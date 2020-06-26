@@ -6,7 +6,7 @@ import { Header, Card, Text  } from 'react-native-elements';
 
 import Container from '../../Components/Container'
 import makeStyles from '../../Hooks/makeStyles';
-import { CurrentUserContext } from '../../Contexts/CurrentUser';
+import { CurrentUserContext } from 'gunner-react';
 
 
 const useStyles = makeStyles(theme => StyleSheet.create({

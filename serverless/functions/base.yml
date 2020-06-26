@@ -1,5 +1,6 @@
 sendVerificationEmail:
   handler: handlers/cloudformation/sendVerificationEmail.js
+  iamRoleStatementsInherit: true
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -8,8 +9,14 @@ sendVerificationEmail:
         - "ses:VerifyDomainIdentity"
         - "ses:VerifyDomainDkim"
       Resource: "*"
+    - Effect: Allow
+      Action:
+        - "iam:ListRoles"
+        - "iam:PassRole"
+      Resource: "*"
 verifyDomain:
   handler: handlers/cloudformation/verifyDomain.js
+  iamRoleStatementsInherit: true
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -17,10 +24,16 @@ verifyDomain:
         - "ses:VerifyEmailIdentity"
         - "ses:VerifyDomainIdentity"
         - "ses:VerifyDomainDkim"
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - "iam:ListRoles"
+        - "iam:PassRole"
       Resource: "*"
 verifyDkim:
   Condition: ShouldCreateHostedZone
   handler: handlers/cloudformation/verifyDkim.js
+  iamRoleStatementsInherit: true
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -29,13 +42,25 @@ verifyDkim:
         - "ses:VerifyDomainIdentity"
         - "ses:VerifyDomainDkim"
       Resource: "*"
+    - Effect: Allow
+      Action:
+        - "iam:ListRoles"
+        - "iam:PassRole"
+      Resource: "*"
 createIdentityPoolMapping:
   handler: handlers/cloudformation/createIdentityPoolMapping.js
+  iamRoleStatementsInherit: true
   iamRoleStatements:
     - Effect: Allow
       Action:
         - "cognito-identity:SetIdentityPoolRoles"
         - "cognito-identity:ListIdentityPools"
       Resource: "*"
+    - Effect: Allow
+      Action:
+        - "iam:ListRoles"
+        - "iam:PassRole"
+      Resource: "*"
+      
   # getStackLastUpdatedTime:
   #   handler: cfn.getStackLastUpdatedTime
