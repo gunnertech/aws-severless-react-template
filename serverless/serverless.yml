@@ -91,7 +91,7 @@ provider:
         - cognito-idp:AdminAddUserToGroup
         - cognito-idp:AdminSetUserPassword
         - cognito-idp:AdminCreateUser
-	- cognito-idp:CreateGroup
+	      - cognito-idp:CreateGroup
         - cognito-idp:GetGroup
         - cognito-idp:AdminGetUser
         - cognito-idp:AddCustomAttributes
