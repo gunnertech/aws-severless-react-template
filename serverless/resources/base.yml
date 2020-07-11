@@ -217,6 +217,7 @@ Resources:
           BranchName: !GetAtt AmplifyBranch.BranchName
       
   LambdaErrorAlarm:
+    DependsOn: ErrorLogNotificationSns
     Type: AWS::CloudWatch::Alarm
     Condition: ShouldSendVerificationEmail
     Properties:

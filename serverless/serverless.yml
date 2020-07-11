@@ -35,7 +35,7 @@ plugins:
   - serverless-webpack
   - serverless-prune-plugin
   - serverless-iam-roles-per-function
-  # - serverless-plugin-split-stacks
+  - serverless-plugin-split-stacks
   - serverless-plugin-scripts
 
 
@@ -91,6 +91,7 @@ provider:
         - cognito-idp:AdminAddUserToGroup
         - cognito-idp:AdminSetUserPassword
         - cognito-idp:AdminCreateUser
+        - cognito-idp:CreateGroup
         - cognito-idp:GetGroup
         - cognito-idp:AdminGetUser
         - cognito-idp:AddCustomAttributes
@@ -105,7 +106,7 @@ provider:
     #   Action:
     #     - iam:ListRoles
     #     - iam:PassRole
-    #   Resource: "*"
+    #   Resource: "*" 
     - Effect: Allow
       Action:
         - "firehose:PutRecord"
