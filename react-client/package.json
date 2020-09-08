@@ -3,7 +3,7 @@
   "version": "0.1.6",
   "private": true,
   "dependencies": {
-    "@apollo/client": "^3.0.0-rc.4",
+    "@apollo/client": "^3.1.3",
     "@date-io/moment": "^1.3.13",
     "@material-ui/core": "^4.10.2",
     "@material-ui/icons": "^4.9.1",
@@ -18,11 +18,11 @@
     "aws-appsync-subscription-link": "^2.1.0",
     "aws-sdk": "^2.693.0",
     "classnames": "^2.2.6",
-    "convert-array-to-csv": "^1.0.8",
+    "convert-array-to-csv": "^1.0.12",
     "dotenv": "^6.0.0",
     "graphql": "^15.1.0",
     "graphql-tag": "^2.10.3",
-    "gunner-react": "^1.1.14",
+    "gunner-react": "^1.1.20",
     "hoist-non-react-statics": "^3.0.1",
     "material-ui-image": "^3.2.3",
     "mdi-material-ui": "^6.16.0",
@@ -45,10 +45,10 @@
     "uuid-v4": "^0.1.0"
   },
   "scripts": {
-    "start": "rm -rf ./.env.development && cp ./.env.$STAGE ./.env.development && npm run watch && react-scripts start",
+    "start": "rm -rf ./.env.development && cp ./.env.$STAGE ./.env.development && amplify env checkout $STAGE && npm run watch && react-scripts start",
     "watch": "../scripts/updatefiles.sh",
     "build_amplify": "../scripts/build.sh",
-    "deploy": "amplify env checkout $STAGE && npm run build_amplify && git add . && git commit -am 'deploy' --no-verify && git push --force",
+    "deploy": "amplify env checkout $STAGE && npm run build_amplify && git add . && git commit -am 'deploy' --no-verify && git push",
     "build": "amplify env checkout $STAGE && npm run build_amplify && react-scripts --max_old_space_size=8192 build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

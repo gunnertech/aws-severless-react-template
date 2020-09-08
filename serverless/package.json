@@ -4,7 +4,10 @@
   "description": "Gunner Technology Serverless Starter Pack",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "package": "./amplify/hosting.js"
+    "package": "./amplify/hosting.js",
+    "deploy:amplify": "amplify env checkout $STAGE && amplify push --yes",
+    "deploy:serverless": "amplify env checkout $STAGE && serverless deploy --stage $STAGE",
+    "deploy:function": "amplify env checkout $STAGE && serverless deploy function -f $F --stage $STAGE"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.3",
@@ -35,11 +38,13 @@
     "aws-appsync": "^3.0.3",
     "axios": "^0.19.0",
     "cross-fetch": "^3.0.2",
+    "expo-server-sdk": "^3.4.0",
     "fs-extra": "^8.0.1",
     "graphql": "latest",
     "graphql-tag": "latest",
     "js-yaml": "^3.13.1",
     "moment": "^2.24.0",
+    "serverless-cloudformation-sub-variables": "^0.2.1",
     "uuid-v4": "^0.1.0",
     "source-map-support": "^0.5.16"
   }

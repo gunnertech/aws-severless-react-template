@@ -14,10 +14,15 @@ import AWSAppSyncClient, { AUTH_TYPE } from "aws-appsync";
 import Firehose from  'aws-sdk/clients/firehose';
 import S3 from 'aws-sdk/clients/s3';
 import SNS from 'aws-sdk/clients/sns';
-
+import PersonalizeRuntime from 'aws-sdk/clients/personalizeruntime';
 
 
 import awsmobile from '../aws-exports';
+
+const personalizationruntime = new PersonalizeRuntime({
+  apiVersion: '2018-05-22',
+  region: awsmobile.aws_appsync_region
+})
 
 const s3 = new S3({
   region: awsmobile.aws_appsync_region
@@ -94,5 +99,6 @@ export {
   textract,
   s3,
   firehose,
-  sns
+  sns,
+  personalizationruntime
 };

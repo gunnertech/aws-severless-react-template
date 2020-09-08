@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Text, TextInput } from 'react-native';
-import { Linking } from 'expo';
+import * as Linking from 'expo-linking'
 
 import AppNavigator from './src/Navigators/App'
 import getElementsTheme from './src/Styles/elementsTheme'

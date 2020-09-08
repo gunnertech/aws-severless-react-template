@@ -12,7 +12,7 @@ custom:
   authRoleName: ${file(./amplify/custom.js):custom.auth_role_name}
   unAuthRoleName: ${file(./amplify/custom.js):custom.unauth_role_name}
   uploadBucketName: ${file(./amplify/config.js):env.aws_user_files_s3_bucket}
-  stage: ${file(./amplify/stage.js):stage}
+  stage: ${opt:stage, file(./amplify/stage.js):stage}
   region: ${opt:region, self:provider.region}
   prune:
     automatic: true
@@ -26,7 +26,7 @@ custom:
     perGroupFunction: false
   scripts:
     hooks:
-      'package:initialize': '../scripts/build.sh && ./amplify/hosting.js'
+      'package:initialize': 'amplify env checkout ${opt:stage, self:custom.stage} && ../scripts/build.sh && ./amplify/hosting.js'
 
 package:
   individually: false
@@ -37,6 +37,7 @@ plugins:
   - serverless-iam-roles-per-function
   - serverless-plugin-split-stacks
   - serverless-plugin-scripts
+  - serverless-cloudformation-sub-variables
 
 
 provider:
@@ -47,7 +48,7 @@ provider:
     lambda: true
   stage: ${file(amplify/stage.js):stage}
   region: ${file(amplify/config.js):env.aws_project_region, 'us-east-1'}
-  profile: "${self:service.name}-${file(amplify/stage.js):stage}developer"
+  profile: "${self:service.name}-${self:custom.stage}developer"
   environment:
     AWS_ACCOUNT_ID: { Ref: AWS::AccountId }
     SYSTEM_EMAIL_ADDRESS: ${self:custom.environment.SYSTEM_EMAIL_ADDRESS}
@@ -55,6 +56,11 @@ provider:
     ERROR_QUEUE_NAME: ${self:custom.environment.ERROR_QUEUE_NAME}
     TABLES: ${file(amplify/custom.js):custom.tableNamesJson}
   iamRoleStatements:
+    - Effect: "Allow" # xray permissions (required)
+      Action:
+        - "personalizeruntime:GetRecommendations"
+        - "personalize:GetRecommendations"
+      Resource: "*"
     - Effect: "Allow" # xray permissions (required)
       Action:
         - "xray:PutTraceSegments"

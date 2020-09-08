@@ -107,6 +107,10 @@ const getUnAuthRoleName = params => (
     )
 )
 
+const getUserPoolId = params => Promise.resolve(
+  awsconfig.env().aws_user_pools_id
+)
+
 const getUserPoolName = params => (
   awscreds({stage: params.stage, projectName: params.projectName})
     .then(credentials =>
@@ -131,6 +135,7 @@ module.exports.custom = () => {
     getUserPoolName({stage: stage, projectName: doc[stage].SERVICE, env: doc, secrets: secrets}),
     getTableNames({stage: stage, projectName: doc[stage].SERVICE, env: doc, secrets: secrets}),
     getUnAuthRoleName({stage: stage, projectName: doc[stage].SERVICE, env: doc, secrets: secrets}),
+    getUserPoolId({stage: stage, projectName: doc[stage].SERVICE, env: doc, secrets: secrets}),
   ])
     .then(arr => Promise.resolve({
       auth_role_name: arr[0],
@@ -139,5 +144,6 @@ module.exports.custom = () => {
       tableNames: arr[3],
       unauth_role_name: arr[4],
       tableNamesJson: JSON.stringify(arr[3]),
+      user_pool_id: arr[5],
     }))
 }

@@ -49,6 +49,7 @@ export default ({ config }) => ({
       "**/*"
     ],
     "android": {
+      "useNextNotificationsApi": true,
       "package": bundleIdentifier+addendum.replace(/\-/g, "_"),
       "playStoreUrl": "https://play.google.com/store/apps/details?id="+bundleIdentifier+addendum.replace(/\-/g, "_"),
       "versionCode": buildNumber,

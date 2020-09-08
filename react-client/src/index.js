@@ -1,6 +1,6 @@
+/* global caches */
 import React from 'react';
 import ReactDOM from 'react-dom';
-// import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
@@ -11,7 +11,10 @@ ReactDOM.render(<App />, document.getElementById('root'));
 // Learn more about service workers: http://bit.ly/CRA-PWA
 serviceWorker.register({
   onUpdate: () => {
-    window.alert("A new version of this app is available. Please close any other tabs running this app and refresh this page.");
-    window.location.reload(true);
+    window.alert("A new version of this app is available.");
+    caches.keys().then(keys =>
+      Promise.all(keys.map(key => caches.delete(key)))
+    )
+      .then(() => window.location.reload(true))
   }
 });
