@@ -1,7 +1,7 @@
 {
-  "name": "hotbox",
+  "name": "<project-name>",
   "version": "1.0.0",
-  "description": "hotbox project",
+  "description": "<project-name> project",
   "main": "index.js",
   "private": true,
   "scripts": {

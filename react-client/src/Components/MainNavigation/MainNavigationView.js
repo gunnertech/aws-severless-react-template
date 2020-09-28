@@ -210,7 +210,7 @@ const MainNavigationView = ({classes, appBar, handleDrawerToggle, mobileOpen, ch
         */}
 
         <Typography variant="caption" paragraph className={classes.footerText}>
-          © {(new Date()).getFullYear()} <Link style={{color: "white"}} to={process.env.REACT_APP_base_url}>hotbox</Link>
+          © {(new Date()).getFullYear()} <Link style={{color: "white"}} to={process.env.REACT_APP_base_url}><project-name></Link>
           &nbsp;|&nbsp;
           <Link style={{color: "white"}} to={`/privacy-policy`}>Privacy Policy</Link>
           &nbsp;&nbsp;|&nbsp;

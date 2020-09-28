@@ -302,13 +302,13 @@ Resources:
       Roles:
         - Ref: unAuthRoleName
   
-  CognitoUserPoolUsersGroup:
-    Condition: ShouldCreateUserPoolGroups
-    Type: AWS::Cognito::UserPoolGroup
-    Properties:
-      GroupName: Users
-      UserPoolId:
-        Ref: userPoolId
+  # CognitoUserPoolUsersGroup:
+  #   Condition: ShouldCreateUserPoolGroups
+  #   Type: AWS::Cognito::UserPoolGroup
+  #   Properties:
+  #     GroupName: Users
+  #     UserPoolId:
+  #       Ref: userPoolId
 
 
 
