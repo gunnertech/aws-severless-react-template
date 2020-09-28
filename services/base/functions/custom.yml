@@ -1,119 +1,119 @@
 
-bid:
-  timeout: 60
-  handler: handlers/bid/graphql.js
-bidPrivileges:
-  timeout: 60
-  handler: handlers/bid/privileges.js
-bidAfterCreate:
-  timeout: 60
-  handler: handlers/bid/afterCreate.js
-  events: 
-    - stream: ${file(amplify/custom.js):custom.streams.Bid}
-bidAfterUpdate:
-  timeout: 60
-  handler: handlers/bid/afterUpdate.js
-
-entry:
-  timeout: 60
-  handler: handlers/entry/graphql.js
-entryPrivileges:
-  timeout: 60
-  handler: handlers/entry/privileges.js
-entryAfterCreate:
-  timeout: 60
-  handler: handlers/entry/afterCreate.js
-  events: 
-    - stream: ${file(amplify/custom.js):custom.streams.Entry}
-entryAfterUpdate:
-  timeout: 800
-  handler: handlers/entry/afterUpdate.js
-  events: 
-    - stream: ${file(amplify/custom.js):custom.streams.Entry}
-
-user:
-  timeout: 60
-  handler: handlers/user/graphql.js
-
-entryHistoryAfterCreate:
-  timeout: 60
-  handler: handlers/entryHistory/afterCreate.js
-
-# periodAfterCreate:
+# bid:
 #   timeout: 60
-#   handler: handlers/period/afterCreate.js
-periodAfterUpdate:
-  timeout: 60
-  handler: handlers/period/afterUpdate.js
-  events: 
-    - stream: ${file(amplify/custom.js):custom.streams.Period}
-
-gameAfterCreate:
-  timeout: 60
-  handler: handlers/game/afterCreate.js
-  events: 
-    - stream: ${file(amplify/custom.js):custom.streams.Game}
-
-playAfterCreate:
-  timeout: 60
-  handler: handlers/play/afterCreate.js
-  events: 
-    - stream: ${file(amplify/custom.js):custom.streams.Play}
-
-# playAfterUpdate:
+#   handler: handlers/bid/graphql.js
+# bidPrivileges:
 #   timeout: 60
-#   handler: handlers/play/afterUpdate.js
-pool:
-  timeout: 60
-  handler: handlers/pool/graphql.js
-poolAfterCreate:
-  timeout: 800
-  handler: handlers/pool/afterCreate.js
-  events: 
-    - stream: ${file(amplify/custom.js):custom.streams.Pool}
-poolAfterUpdate:
-  timeout: 800
-  handler: handlers/pool/afterUpdate.js
-  events: 
-    - stream: ${file(amplify/custom.js):custom.streams.Pool}
-
-localePoolAfterCreate:
-  timeout: 60
-  handler: handlers/localePool/afterCreate.js
-  events: 
-    - stream: ${file(amplify/custom.js):custom.streams.LocalePool}
-localePoolAfterDelete:
-  timeout: 60
-  handler: handlers/localePool/afterDelete.js
-  events: 
-    - stream: ${file(amplify/custom.js):custom.streams.LocalePool}
-
-providerUser:
-  timeout: 60
-  handler: handlers/user/providerUser.js
-
-providerPoolAfterCreate:
-  timeout: 60
-  handler: handlers/providerPool/afterCreate.js
-  events: 
-    - stream: ${file(amplify/custom.js):custom.streams.ProviderPool}
-providerPoolAfterDelete:
-  timeout: 60
-  handler: handlers/providerPool/afterDelete.js
-  events: 
-    - stream: ${file(amplify/custom.js):custom.streams.ProviderPool}
-
-# userAfterCreate:
+#   handler: handlers/bid/privileges.js
+# bidAfterCreate:
 #   timeout: 60
-#   handler: handlers/user/afterCreate.js
-# userAfterUpdate:
+#   handler: handlers/bid/afterCreate.js
+#   events: 
+#     - stream: ${file(amplify/custom.js):custom.streams.Bid}
+# bidAfterUpdate:
 #   timeout: 60
-#   handler: handlers/user/afterUpdate.js
+#   handler: handlers/bid/afterUpdate.js
 
-# cognitoAfterSignIn:
-#   handler: handlers/cognito/afterSignIn.js
-#   events:
-#     - cognitoUserPool:
-#         pool: "${file(amplify/custom.js):custom.user_pool_name}"
-#         trigger: PostAuthentication
-#         existing: true
+# entry:
+#   timeout: 60
+#   handler: handlers/entry/graphql.js
+# entryPrivileges:
+#   timeout: 60
+#   handler: handlers/entry/privileges.js
+# entryAfterCreate:
+#   timeout: 60
+#   handler: handlers/entry/afterCreate.js
+#   events: 
+#     - stream: ${file(amplify/custom.js):custom.streams.Entry}
+# entryAfterUpdate:
+#   timeout: 800
+#   handler: handlers/entry/afterUpdate.js
+#   events: 
+#     - stream: ${file(amplify/custom.js):custom.streams.Entry}
+
+# user:
+#   timeout: 60
+#   handler: handlers/user/graphql.js
+
+# entryHistoryAfterCreate:
+#   timeout: 60
+#   handler: handlers/entryHistory/afterCreate.js
+
+# # periodAfterCreate:
+# #   timeout: 60
+# #   handler: handlers/period/afterCreate.js
+# periodAfterUpdate:
+#   timeout: 60
+#   handler: handlers/period/afterUpdate.js
+#   events: 
+#     - stream: ${file(amplify/custom.js):custom.streams.Period}
+
+# gameAfterCreate:
+#   timeout: 60
+#   handler: handlers/game/afterCreate.js
+#   events: 
+#     - stream: ${file(amplify/custom.js):custom.streams.Game}
+
+# playAfterCreate:
+#   timeout: 60
+#   handler: handlers/play/afterCreate.js
+#   events: 
+#     - stream: ${file(amplify/custom.js):custom.streams.Play}
+
+# # playAfterUpdate:
+# #   timeout: 60
+# #   handler: handlers/play/afterUpdate.js
+# pool:
+#   timeout: 60
+#   handler: handlers/pool/graphql.js
+# poolAfterCreate:
+#   timeout: 800
+#   handler: handlers/pool/afterCreate.js
+#   events: 
+#     - stream: ${file(amplify/custom.js):custom.streams.Pool}
+# poolAfterUpdate:
+#   timeout: 800
+#   handler: handlers/pool/afterUpdate.js
+#   events: 
+#     - stream: ${file(amplify/custom.js):custom.streams.Pool}
+
+# localePoolAfterCreate:
+#   timeout: 60
+#   handler: handlers/localePool/afterCreate.js
+#   events: 
+#     - stream: ${file(amplify/custom.js):custom.streams.LocalePool}
+# localePoolAfterDelete:
+#   timeout: 60
+#   handler: handlers/localePool/afterDelete.js
+#   events: 
+#     - stream: ${file(amplify/custom.js):custom.streams.LocalePool}
+
+# providerUser:
+#   timeout: 60
+#   handler: handlers/user/providerUser.js
+
+# providerPoolAfterCreate:
+#   timeout: 60
+#   handler: handlers/providerPool/afterCreate.js
+#   events: 
+#     - stream: ${file(amplify/custom.js):custom.streams.ProviderPool}
+# providerPoolAfterDelete:
+#   timeout: 60
+#   handler: handlers/providerPool/afterDelete.js
+#   events: 
+#     - stream: ${file(amplify/custom.js):custom.streams.ProviderPool}
+
+# # userAfterCreate:
+# #   timeout: 60
+# #   handler: handlers/user/afterCreate.js
+# # userAfterUpdate:
+# #   timeout: 60
+# #   handler: handlers/user/afterUpdate.js
+
+# # cognitoAfterSignIn:
+# #   handler: handlers/cognito/afterSignIn.js
+# #   events:
+# #     - cognitoUserPool:
+# #         pool: "${file(amplify/custom.js):custom.user_pool_name}"
+# #         trigger: PostAuthentication
+# #         existing: true
