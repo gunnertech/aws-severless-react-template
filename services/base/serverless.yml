@@ -1,0 +1,135 @@
+service:
+  name: ${self:custom.environment.SERVICE}
+
+custom:
+  serviceName: ${self:service.name}
+  accountId: { Ref: AWS::AccountId }
+  identifier: ${self:service.name}-${self:custom.stage}
+  environment: ${file(env.yml):${self:custom.stage}}
+  secrets: ${file(secrets.yml):${self:custom.stage}}
+  domainName: ${self:custom.environment.DOMAIN_NAME}
+  userPoolId: ${file(./amplify/config.js):env.aws_user_pools_id}
+  authRoleName: ${file(./amplify/custom.js):custom.auth_role_name}
+  unAuthRoleName: ${file(./amplify/custom.js):custom.unauth_role_name}
+  uploadBucketName: ${file(./amplify/config.js):env.aws_user_files_s3_bucket}
+  stage: ${opt:stage, file(./amplify/stage.js):stage}
+  region: ${opt:region, self:provider.region}
+  prune:
+    automatic: true
+    number: 3
+  webpack:
+    webpackConfig: ./webpack.config.js 
+    includeModules: true
+  # splitStacks:
+  #   # custom: splitter.js
+  #   perFunction: true
+  #   perType: false
+  #   # perGroupFunction: false
+  scripts:
+    hooks:
+      'package:initialize': 'amplify env checkout ${opt:stage, self:custom.stage} && ./amplify/hosting.js'
+
+package:
+  individually: false
+
+plugins:
+  - serverless-webpack
+  - serverless-prune-plugin
+  - serverless-iam-roles-per-function
+  # - serverless-plugin-split-stacks
+  - serverless-plugin-scripts
+  - serverless-cloudformation-sub-variables
+
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  tracing:
+    apiGateway: true
+    lambda: true
+  stage: ${file(amplify/stage.js):stage}
+  region: ${file(amplify/config.js):env.aws_project_region, 'us-east-1'}
+  profile: "${self:service.name}-${self:custom.stage}developer"
+  environment:
+    AWS_ACCOUNT_ID: { Ref: AWS::AccountId }
+    SYSTEM_EMAIL_ADDRESS: ${self:custom.environment.SYSTEM_EMAIL_ADDRESS}
+    DOMAIN_NAME: ${self:custom.environment.DOMAIN_NAME}
+    ERROR_QUEUE_NAME: ${self:custom.environment.ERROR_QUEUE_NAME}
+    TABLES: ${file(amplify/custom.js):custom.tableNamesJson}
+  iamRoleStatements:
+    - Effect: "Allow" # xray permissions (required)
+      Action:
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecords"
+      Resource:
+        - "*"
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:*"
+      Resource: "*"
+    # - Effect: "Allow"
+    #   Action:
+    #     - "cloudformation:describeStacks"
+      # Resource: "*"
+    - Effect: "Allow"
+      Action:
+        - "ses:SendEmail"
+      Resource: "*"
+    - Effect: "Allow"
+      Action:
+        - "sqs:SendMessage"
+        - "sqs:GetQueueUrl"
+        - "sqs:ChangeMessageVisibility"
+        - "sqs:ListQueues"
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - s3:*
+        - SNS:*
+        - secretsmanager:GetSecretValue
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - cognito-idp:AdminAddUserToGroup
+        - cognito-idp:AdminSetUserPassword
+        - cognito-idp:AdminCreateUser
+        - cognito-idp:CreateGroup
+        - cognito-idp:GetGroup
+        - cognito-idp:AdminGetUser
+        - cognito-idp:AddCustomAttributes
+        - cognito-idp:AdminEnableUser
+        - cognito-idp:AdminDisableUser
+        - cognito-idp:AdminUpdateUserAttributes
+        - cognito-idp:ListUsers
+        - cognito-idp:AdminListGroupsForUser
+        - cognito-idp:AdminRemoveUserFromGroup
+        - cognito-idp:AdminListUserAuthEvents
+      Resource: "*"
+    # - Effect: Allow
+    #   Action:
+    #     - iam:ListRoles
+    #     - iam:PassRole
+    #   Resource: "*" 
+    - Effect: Allow
+      Action:
+        - "firehose:PutRecord"
+        - "firehose:PutRecordBatch"
+      Resource: "*"
+    # - Effect: Allow
+    #   Action:
+    #     - logs:CreateLogGroup
+    #     - logs:CreateLogStream
+    #     - logs:PutLogEvents
+    #   Resource: "*"
+    - Effect: Allow
+      Action:
+        - appsync:GraphQL
+      Resource: "*"
+ 
+resources:
+  - ${file(./resources/base.yml)}
+  - ${file(./resources/custom.yml)}
+
+functions:
+  - ${file(./functions/base.yml)}
+  - ${file(./functions/custom.yml)}

@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es2018",
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "paths": {
+      "utils/*": ["utils/*"],
+      "react-shared/*": ["../../react-shared/*"],
+      "aws-exports": ["../../amplify/src/aws-exports.js"],
+      "amplify/*": ["../../amplify/src/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+}

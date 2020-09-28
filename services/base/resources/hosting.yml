@@ -1,0 +1,16 @@
+- Name: REACT_APP_cdn
+  Value: d3svpuma1hm70d.cloudfront.net
+- Name: REACT_APP_base_url
+  Value: 'https://cody.d3tbshba8gnw1l.amplifyapp.com'
+- Name: USER_BRANCH
+  Value: cody
+- Name: REACT_APP_STAGE
+  Value: cody
+- Name: REACT_APP_VERSION
+  Value: $npm_package_version
+- Name: REACT_APP_SYSTEM_EMAIL_ADDRESS
+  Value: ''
+- Name: REACT_APP_GA
+  Value: ''
+- Name: REACT_APP_sentry_url
+  Value: ''

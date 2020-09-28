@@ -1,0 +1,24 @@
+{
+  "name": "hotbox",
+  "version": "1.0.0",
+  "description": "hotbox project",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "./scripts/updatefiles.sh",
+    "start:web": "rm -rf ./react-client/.env.development && cp ./react-client/.env.$STAGE ./react-client/.env.development && amplify env checkout $STAGE && npm run watch && cd ./react-client && npm start",
+    "deploy:web": "amplify env checkout $STAGE && npm run build:amplify && git add . && git commit -am 'deploy' --no-verify && git push",
+    "build:amplify": "./scripts/build.sh",
+    "deploy:amplify": "amplify env checkout $STAGE && amplify push --yes",
+    "start:native": "amplify env checkout $STAGE && npm run watch && cd ./react-native-client && expo start",
+    "deploy:native": "amplify env checkout $STAGE && npm run build:amplify && cd ./react-native-client && expo publish --release-channel $STAGE",
+    "build:ios": "amplify env checkout $STAGE && npm run build:amplify && cd ./react-native-client && expo build:ios --release-channel $STAGE",
+    "build:android": "amplify env checkout $STAGE && npm run build:amplify && cd ./react-native-client && expo build:android --release-channel $STAGE",
+    "upload:ios": "amplify env checkout $STAGE && cd ./react-native-client && expo upload:ios",
+    "deploy:service:base": "amplify env checkout $STAGE && npm run build:amplify && cd ./services/base && serverless deploy --stage $STAGE",
+    "deploy:service:base:function": "amplify env checkout $STAGE && npm run build:amplify && cd ./services/base && serverless deploy function -f $F --stage $STAGE"
+  },
+  "author": "",
+  "license": "ISC"
+}

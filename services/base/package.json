@@ -1,0 +1,50 @@
+{
+  "name": "hotbox",
+  "version": "1.0.0",
+  "description": "Gunner Technology Serverless Starter Pack",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "package": "./amplify/hosting.js",
+    "deploy:amplify": "amplify env checkout $STAGE && amplify push --yes",
+    "deploy:serverless": "amplify env checkout $STAGE && serverless deploy --stage $STAGE",
+    "deploy:function": "amplify env checkout $STAGE && serverless deploy function -f $F --stage $STAGE"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.10.3",
+    "@babel/core": "^7.10.3",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.10.1",
+    "@babel/plugin-proposal-optional-chaining": "^7.8.3",
+    "@babel/plugin-proposal-pipeline-operator": "^7.10.1",
+    "@babel/preset-env": "^7.10.3",
+    "aws-sdk": "^2.705.0",
+    "babel-loader": "^8.1.0",
+    "babel-plugin-module-resolver": "^4.0.0",
+    "babel-plugin-source-map-support": "latest",
+    "serverless-iam-roles-per-function": "^2.0.2",
+    "serverless-plugin-ifelse": "^1.0.4",
+    "serverless-plugin-scripts": "^1.0.2",
+    "serverless-plugin-split-stacks": "^1.9.3",
+    "serverless-prune-plugin": "^1.4.1",
+    "serverless-stack-output": "^0.2.3",
+    "serverless-webpack": "^5.3.2",
+    "shelljs": "^0.8.3",
+    "webpack": "^4.43.0",
+    "webpack-node-externals": "^1.7.2"
+  },
+  "author": "Gunner Technology",
+  "license": "MIT",
+  "dependencies": {
+    "aws-appsync": "^3.0.3",
+    "cross-fetch": "^3.0.2",
+    "crypto-js": "^4.0.0",
+    "fs-extra": "^8.0.1",
+    "graphql": "^15.3.0",
+    "graphql-tag": "^2.11.0",
+    "js-yaml": "^3.13.1",
+    "moment": "^2.24.0",
+    "node-fetch": "^2.6.1",
+    "serverless-cloudformation-sub-variables": "^0.2.1",
+    "source-map-support": "^0.5.16",
+    "uuid-v4": "^0.1.0"
+  }
+}

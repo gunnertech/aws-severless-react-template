@@ -22,7 +22,7 @@
     "dotenv": "^6.0.0",
     "graphql": "^15.1.0",
     "graphql-tag": "^2.10.3",
-    "gunner-react": "^1.1.20",
+    "gunner-react": "^1.1.24",
     "hoist-non-react-statics": "^3.0.1",
     "material-ui-image": "^3.2.3",
     "mdi-material-ui": "^6.16.0",
